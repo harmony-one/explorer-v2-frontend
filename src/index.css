@@ -1,0 +1,40 @@
+@import-normalize;
+
+a {
+    text-decoration: none;
+    outline: 0;
+}
+
+.g-table-header thead tr th {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.g-table-header thead tr th:last-child {
+    text-align: right;
+}
+
+.g-table-body-last-col-right tbody td:last-child {
+    text-align: left !important;
+}
+
+.g-table-no-header thead {
+    display: none;
+}
+.g-table-body-last-col-right tbody tr td , .g-table-body-last-col-right tbody tr th {
+    background: transparent !important;
+}
+
+.g-table-header tbody tr td, .g-table-header tbody tr th  {
+    background: transparent !important;
+}
+
+body.light > div > div[aria-hidden=false] > div > div {
+    background: #fff  !important;
+    border: 1px solid #f3f3f3;
+}
+
+body.dark > div > div[aria-hidden=false] > div > div {
+    background: #1b2a5e  !important;
+    border: 1px solid #3a54b3;
+}
