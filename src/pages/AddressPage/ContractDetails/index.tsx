@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text } from "grommet";
+import { Box, Text, TextArea } from "grommet";
 import { AddressDetails } from "src/types";
 import { Item } from "../AddressDetails";
 import { useHistory } from "react-router-dom";
@@ -9,11 +9,10 @@ import { AbiMethodsView } from "./AbiMethodView";
 import { AbiItem } from "web3-utils";
 import { Wallet } from "./ConnectWallets";
 
-const StyledTextArea = styled("textarea")`
-  padding: 0.75rem;
-  border: 1px solid #e7eaf3;
-  background-color: #f8f9fa;
+const StyledTextArea = styled(TextArea)`
+  padding: 0.75rem; 
   border-radius: 0.35rem;
+  font-weight: normal;
 `;
 
 export const ContractDetails = (props: {
@@ -70,6 +69,7 @@ export const NoVerifiedContractDetails = (props: {
     <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
       <Box direction="column" gap="30px">
         <Box direction="row" gap="5px">
+          <TabButton text={"test"} selected={true} onClick={() => void 0} />
           Are you the contract creator?
           <Text
             size="small"
@@ -110,8 +110,10 @@ enum V_TABS {
   WRITE = "Write Contract",
 }
 
-const TabBox = styled(Box)`
-  border: 1px solid #dedede;
+const TabBox = styled(Box)<{ selected: boolean }>`
+  border: 1px solid ${(props) => props.theme.global.colors.border};
+  background: ${(props) =>
+    props.selected ? props.theme.global.colors.backgroundBack : "transparent"};
   padding: 7px 12px 6px 12px;
   border-radius: 4px;
   margin: 5px 10px;
@@ -125,9 +127,9 @@ const TabButton = (props: {
   return (
     <TabBox
       onClick={props.onClick}
-      style={{ background: props.selected ? "#77838f" : "transparent" }}
+      selected={props.selected} 
     >
-      <Text size="small" color={props.selected ? "white" : "black"}>
+      <Text size="small" color={'minorText'}>
         {props.text}
       </Text>
     </TabBox>
