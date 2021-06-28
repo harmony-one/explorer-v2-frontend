@@ -69,7 +69,6 @@ export const NoVerifiedContractDetails = (props: {
     <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
       <Box direction="column" gap="30px">
         <Box direction="row" gap="5px">
-          <TabButton text={"test"} selected={true} onClick={() => void 0} />
           Are you the contract creator?
           <Text
             size="small"
