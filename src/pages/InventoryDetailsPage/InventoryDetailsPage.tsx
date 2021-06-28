@@ -15,7 +15,7 @@ export function InventoryDetailsPage() {
   //  @ts-ignore
   const { address, tokenID, type } = useParams();
 
-  const item = erc721Map[address] || erc1155Map[address];
+  const item = erc721Map[address] || erc1155Map[address] || {};
   const name = item.name || "";
 
   useEffect(() => {
