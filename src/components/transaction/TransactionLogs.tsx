@@ -76,7 +76,7 @@ const LogItem = (props: LogItemProps) => {
         <Text color="minorText" size="small">
           Suggested Event
         </Text>
-        <Text size="small" color="black">
+        <Text size="small">
           {displaySignature || signatures[0].signature || ''}
         </Text>
       </Box>
