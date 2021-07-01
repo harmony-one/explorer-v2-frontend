@@ -203,7 +203,7 @@ function getColumns(props: any) {
             }
             plain
           >
-            <span style={{ marginLeft: "5px" }}>
+            <span style={{ marginLeft: "5px", marginTop: '2px' }}>
               <CircleQuestion size="small" />
             </span>
           </Tip>

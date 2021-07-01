@@ -172,7 +172,7 @@ const addressPropertyDisplayValues: Record<
         }
         plain
       >
-        <span style={{ marginLeft: "5px" }}>
+        <span style={{ marginLeft: "5px", marginTop: "2px" }}>
           <CircleQuestion size="small" />
         </span>
       </Tip>
@@ -193,7 +193,7 @@ const addressPropertyDisplayValues: Record<
           }
           plain
         >
-          <span style={{ marginLeft: "5px" }}>
+          <span style={{ marginLeft: "5px", marginTop: "2px" }}>
             <CircleQuestion size="small" />
           </span>
         </Tip>
@@ -203,7 +203,6 @@ const addressPropertyDisplayValues: Record<
   description: (value) => <>{value}</>,
   transactionHash: (value) => <Address address={value} type={"tx"} />,
   circulating_supply: (value, data) => (
-
     <Box direction={"row"}>
       <TokenValue
         value={value}
@@ -222,12 +221,11 @@ const addressPropertyDisplayValues: Record<
         }
         plain
       >
-        <span style={{ marginLeft: "5px" }}>
+        <span style={{ marginLeft: "5px", marginTop: "2px" }}>
           <CircleQuestion size="small" />
         </span>
       </Tip>
     </Box>
-
   ),
 };
 

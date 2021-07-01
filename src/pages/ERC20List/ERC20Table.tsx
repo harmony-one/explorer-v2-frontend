@@ -83,7 +83,7 @@ export function ERC20Table(props: TransactionTableProps) {
           className={"g-table-header"}
           style={{ width: "100%", minWidth }}
           columns={getColumns({ history })}
-          primaryKey={'address'}
+          primaryKey={"address"}
           data={data}
           border={{
             header: {
@@ -180,7 +180,7 @@ function getColumns(props: any) {
               }
               plain
             >
-              <span style={{ marginLeft: "5px" }}>
+              <span style={{ marginLeft: "5px", marginTop: "2px" }}>
                 <CircleQuestion size="small" />
               </span>
             </Tip>
@@ -217,7 +217,7 @@ function getColumns(props: any) {
               }
               plain
             >
-              <span style={{ marginLeft: "5px" }}>
+              <span style={{ marginLeft: "5px", marginTop: "2px" }}>
                 <CircleQuestion size="small" />
               </span>
             </Tip>
@@ -250,7 +250,7 @@ function getColumns(props: any) {
             }
             plain
           >
-            <span style={{ marginLeft: "5px" }}>
+            <span style={{ marginLeft: "5px", marginTop: "2px" }}>
               <CircleQuestion size="small" />
             </span>
           </Tip>

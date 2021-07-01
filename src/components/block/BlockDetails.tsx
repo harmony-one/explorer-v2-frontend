@@ -15,25 +15,29 @@ const columns = [
   {
     property: "key",
     render: (e: any) => (
-      <div>
+      <Box direction={"row"} align={"center"} justify={"start"}>
         <Tip
           dropProps={{ align: { left: "right" } }}
           content={<TipContent message={blockPropertyDescriptions[e.key]} />}
           plain
         >
-          <span>
+          <span style={{ marginTop: "3px" }}>
             <CircleQuestion size="small" />
           </span>
         </Tip>
         &nbsp;{blockPropertyDisplayNames[e.key] || e.key}
-      </div>
+      </Box>
     ),
     size: "1/3",
   },
   {
     property: "value",
     size: "2/3",
-    render: (e: any) => e.value,
+    render: (e: any) => (
+      <Box align={"center"} justify={"start"} direction={"row"}>
+        {e.value}
+      </Box>
+    ),
   },
 ];
 

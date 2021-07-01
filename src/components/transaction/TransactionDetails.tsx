@@ -21,7 +21,7 @@ const getColumns = ({ type = "" }) => [
   {
     property: "key",
     render: (e: any) => (
-      <div>
+      <Box direction={"row"} align={"center"} justify={"start"}>
         <Tip
           dropProps={{ align: { left: "right" } }}
           content={
@@ -34,7 +34,7 @@ const getColumns = ({ type = "" }) => [
           }
           plain
         >
-          <span>
+          <span style={{ marginTop: "3px" }}>
             <CircleQuestion size="small" />
           </span>
         </Tip>
@@ -42,7 +42,7 @@ const getColumns = ({ type = "" }) => [
         {transactionPropertyDisplayNames[e.key + type] ||
           transactionPropertyDisplayNames[e.key] ||
           e.key}
-      </div>
+      </Box>
     ),
     size: "1/3",
   },
@@ -134,7 +134,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
     Status:
       errorMsg === undefined ? (
         +transaction.shardID > 0 ? (
-          <TxStatusComponent msg={''} />
+          <TxStatusComponent msg={""} />
         ) : (
           <> </>
         )

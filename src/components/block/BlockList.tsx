@@ -14,7 +14,7 @@ import {
   Anchor
 } from 'grommet'
 
-import { CircleQuestion, CaretDownFill, CaretUpFill } from 'grommet-icons'
+import {  CaretDownFill, CaretUpFill } from 'grommet-icons'
 
 const columns = [
   {
