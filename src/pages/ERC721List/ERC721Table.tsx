@@ -84,6 +84,7 @@ export function ERC721Table(props: TransactionTableProps) {
           style={{ width: "100%", minWidth }}
           columns={getColumns({ history })}
           data={data}
+          primaryKey={'address'}
           border={{
             header: {
               color: "brand",
@@ -149,8 +150,7 @@ function getColumns(props: any) {
         </Text>
       ),
       render: (data: Erc20) => {
-console.log(data)
-        return <Address address={data.address} displayHash />
+        return <Address address={data.address} displayHash />;
       },
     },
     // {

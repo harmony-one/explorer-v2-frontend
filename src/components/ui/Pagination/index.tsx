@@ -34,7 +34,7 @@ export function PaginationNavigator(props: PaginationNavigator) {
 
   const onPrevClick = () => {
     const newFilter = JSON.parse(JSON.stringify(filter)) as Filter;
-    newFilter.offset = newFilter.offset - 10;
+    newFilter.offset = newFilter.offset - (filter.limit || 10);
 
     if (!isLoading) {
       onChange(newFilter, "prevPage");
@@ -43,7 +43,7 @@ export function PaginationNavigator(props: PaginationNavigator) {
 
   const onNextClick = () => {
     const newFilter = JSON.parse(JSON.stringify(filter)) as Filter;
-    newFilter.offset += 10;
+    newFilter.offset += filter.limit || 10;
     if (!isLoading) {
       onChange(newFilter, "nextPage");
     }

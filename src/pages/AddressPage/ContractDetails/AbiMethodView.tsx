@@ -16,7 +16,8 @@ const ViewWrapper = styled(Box)`
 const NameWrapper = styled(Box)`
   border-bottom: 1px solid #e7ecf7;
   padding: 10px;
-  background: #f8f9fa;
+  opacity: 0.7;
+  border-radius: 5px;
 `;
 
 const SmallTextInput = styled(TextInput)`
@@ -127,7 +128,7 @@ export const AbiMethodsView = (props: {
 
   return (
     <ViewWrapper direction="column" margin={{ bottom: "medium" }}>
-      <NameWrapper>
+      <NameWrapper background={"backgroundBack"}>
         <Text size="small">
           {index + 1}. {abiMethod.name}
         </Text>

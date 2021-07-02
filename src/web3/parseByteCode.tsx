@@ -130,9 +130,10 @@ export const DisplaySignature = (props: any = {}) => {
   if (!parsed || !event || !abi) {
     return <>—</>;
   }
+ 
 
   return (
-    <>
+    <Text size={"small"}>
       {event.name}(
       <>
         {abi.inputs.map((input: any, i: number) => {
@@ -158,7 +159,7 @@ export const DisplaySignature = (props: any = {}) => {
               ) : Array.isArray(parsed[input.name]) ? (
                 parsed[input.name].join(", ")
               ) : (
-                parsed[input.name]
+                parsed[input.name].toString()
               )}
               {i < abi.inputs.length - 1 ? ", " : null}
             </div>
@@ -166,7 +167,7 @@ export const DisplaySignature = (props: any = {}) => {
         })}
       </>
       )
-    </>
+    </Text>
   );
 };
 

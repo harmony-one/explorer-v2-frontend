@@ -83,6 +83,7 @@ export function ERC20Table(props: TransactionTableProps) {
           className={"g-table-header"}
           style={{ width: "100%", minWidth }}
           columns={getColumns({ history })}
+          primaryKey={'address'}
           data={data}
           border={{
             header: {
@@ -160,7 +161,6 @@ function getColumns(props: any) {
         </Text>
       ),
       render: (data: Erc20) => {
-        console.log(data);
         return (
           <Box direction={"row"}>
             <TokenValue

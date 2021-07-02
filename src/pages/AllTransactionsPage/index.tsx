@@ -87,7 +87,7 @@ export function AllTransactionsPage() {
           limit={+limit}
           filter={filter}
           setFilter={setFilter}
-          primaryKey={'blockHash'}
+          primaryKey={'hash'}
         />
       </BasePage>
     </BaseContainer>
