@@ -33,4 +33,3 @@ yarn.lock
 firebase.json
 firebase-debug.log
 .firebase
-.env
