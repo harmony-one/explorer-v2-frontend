@@ -130,10 +130,9 @@ export const DisplaySignature = (props: any = {}) => {
   if (!parsed || !event || !abi) {
     return <>—</>;
   }
- 
 
   return (
-    <Text size={"small"}>
+    <>
       {event.name}(
       <>
         {abi.inputs.map((input: any, i: number) => {
@@ -148,18 +147,20 @@ export const DisplaySignature = (props: any = {}) => {
                   parsed[input.name].map((a: any, i: number) => {
                     return (
                       <>
-                        <Address key={a} address={a.toLowerCase()} />
+                        <Address key={a} address={a?.toLowerCase()} />
                         {i < parsed[input.name].length - 1 && ", "}
                       </>
                     );
                   })
-                ) : (
-                  <Address address={parsed[input.name].toLowerCase()} />
-                )
+                ) : parsed[input?.name?.toString()] ? (
+                  <Address
+                    address={parsed[input?.name?.toString()]?.toLowerCase()}
+                  />
+                ) : null
               ) : Array.isArray(parsed[input.name]) ? (
                 parsed[input.name].join(", ")
               ) : (
-                parsed[input.name].toString()
+                parsed[input.name]
               )}
               {i < abi.inputs.length - 1 ? ", " : null}
             </div>
@@ -167,7 +168,7 @@ export const DisplaySignature = (props: any = {}) => {
         })}
       </>
       )
-    </Text>
+    </>
   );
 };
 
