@@ -148,14 +148,16 @@ export const DisplaySignature = (props: any = {}) => {
                   parsed[input.name].map((a: any, i: number) => {
                     return (
                       <>
-                        <Address key={a} address={a.toLowerCase()} />
+                        <Address key={a} address={a?.toLowerCase()} />
                         {i < parsed[input.name].length - 1 && ", "}
                       </>
                     );
                   })
-                ) : (
-                  <Address address={parsed[input.name].toLowerCase()} />
-                )
+                ) : parsed[input?.name?.toString()] ? (
+                  <Address
+                    address={parsed[input?.name?.toString()]?.toLowerCase()}
+                  />
+                ) : null
               ) : Array.isArray(parsed[input.name]) ? (
                 parsed[input.name].join(", ")
               ) : (
