@@ -159,9 +159,9 @@ export const DisplaySignature = (props: any = {}) => {
                 ) : null
               ) : Array.isArray(parsed[input.name]) ? (
                 parsed[input.name].join(", ")
-              ) : (
-                parsed[input.name]
-              )}
+              ) : parsed[input.name] ? (
+                parsed[input.name]?.toString()
+              ) : null}
               {i < abi.inputs.length - 1 ? ", " : null}
             </div>
           );
