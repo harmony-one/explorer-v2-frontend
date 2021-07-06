@@ -63,6 +63,14 @@ export function Routes() {
           <InventoryDetailsPage />
         </Route>
 
+        <Route path="/tokens">
+          <ERC20List />
+        </Route>
+
+        <Route path="/tokens721">
+          <ERC721List />
+        </Route>
+
         <Route path="/hrc20">
           <ERC20List />
         </Route>
