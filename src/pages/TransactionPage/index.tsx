@@ -38,7 +38,7 @@ export const TransactionPage = () => {
   } catch {
     activeTab = 0;
   }
-  
+
   // hash or number
   // @ts-ignore
   const { id } = useParams();
@@ -168,11 +168,12 @@ export const TransactionPage = () => {
           justify="start"
           activeIndex={activeIndex}
           onActive={(newActive) => {
-            history.replace(
-              `${history.location.pathname}?activeTab=${newActive}`
-            );
-            console.log(history);
-            setActiveIndex(newActive);
+            if (newActive !== activeIndex) {
+              history.replace(
+                `${history.location.pathname}?activeTab=${newActive}`
+              );
+              setActiveIndex(newActive);
+            }
           }}
         >
           <Tab title={<Text size="small">Transaction Details</Text>}>
