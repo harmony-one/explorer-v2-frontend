@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./index.css";
 import { Box, Grommet } from "grommet";
-import { BrowserRouter as Router, useHistory } from "react-router-dom";
+import { HashRouter as Router, useHistory } from "react-router-dom";
 
 import { Routes } from "src/Routes";
 import { AppHeader } from "src/components/appHeader";
