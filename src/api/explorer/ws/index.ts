@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
  
-const socket = io(process.env.REACT_APP_DEV_ADDRESS as string, {
+const socket = io(process.env.REACT_APP_PROD_ADDRESS as string, {
   transports: ["websocket"],
 });
 
