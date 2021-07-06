@@ -4,6 +4,8 @@ import { setERC20Pool, Erc20 } from "src/hooks/ERC20_Pool";
 
 export function ERC20_Pool() {
   useEffect(() => {
+    let tId = 0;
+
     const getRates = async () => {
       const erc20: Erc20[] = await getAllERC20();
       const erc20Map = {} as Record<string, Erc20>;
@@ -13,14 +15,17 @@ export function ERC20_Pool() {
 
       window.localStorage.setItem("ERC20_Pool", JSON.stringify(erc20Map));
       setERC20Pool(erc20Map);
+
+      window.clearTimeout(tId);
+      tId = window.setTimeout(getRates, 10 * 60 * 1e3);
     };
 
-    let tId = 0;
-
-    setTimeout(() => {
-      getRates();
-      tId = window.setInterval(getRates, 10 * 60 * 1e3);
-    }, 2000);
+    tId = window.setTimeout(
+      () => {
+        getRates();
+      },
+      window.localStorage.getItem("ERC20_Pool") ? 2000 : 0
+    );
 
     return () => {
       clearTimeout(tId);
