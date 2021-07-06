@@ -23,6 +23,7 @@ import {
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
+import { getAddress } from "src/utils";
 
 const initFilter: Filter = {
   offset: 0,
@@ -402,7 +403,9 @@ export function Transactions(props: {
   const { limit = 10 } = filter[props.type];
 
   // @ts-ignore
-  const { id } = useParams();
+  let { id } = useParams();
+  id = `${id}`.toLowerCase();
+  id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
 
   useEffect(() => {
     const getElements = async () => {

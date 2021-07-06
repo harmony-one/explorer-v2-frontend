@@ -247,7 +247,7 @@ export const transactionDisplayValues = (
 
   const text = typeof value === "string" ? value : <>{value}</>;
   const copyText =
-    typeof text === "string" && !["from", "to"].find((item) => item === key)
+    typeof text === "string" && !["from", "to", 'type', 'delegatorAddress', 'validatorAddress'].find((item) => item === key)
       ? text
       : "";
 

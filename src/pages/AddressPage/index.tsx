@@ -54,6 +54,7 @@ export function AddressPage() {
   //TODO remove hardcode
   // @ts-ignore
   let { id } = useParams();
+  id = `${id}`.toLowerCase()
   id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
 
   const erc20Token = erc20Map[id] || null;
