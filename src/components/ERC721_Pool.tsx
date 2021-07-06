@@ -16,7 +16,7 @@ export function ERC721_Pool() {
       window.localStorage.setItem("ERC721_Pool", JSON.stringify(erc721Map));
       setERC721Pool(erc721Map);
       clearTimeout(tId);
-      tId = window.setInterval(getRates, 10 * 60 * 1e3);
+      tId = window.setTimeout(getRates, 10 * 60 * 1e3);
     };
 
     tId = window.setTimeout(
