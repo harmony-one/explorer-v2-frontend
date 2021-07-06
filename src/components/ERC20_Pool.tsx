@@ -16,8 +16,6 @@ export function ERC20_Pool() {
 
         window.localStorage.setItem("ERC20_Pool", JSON.stringify(erc20Map));
         setERC20Pool(erc20Map);
-      } catch {
-        setERC20Pool({});
       } finally {
         window.clearTimeout(tId);
         tId = window.setTimeout(getRates, 10 * 60 * 1e3);

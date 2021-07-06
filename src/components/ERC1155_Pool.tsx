@@ -16,8 +16,6 @@ export function ERC1155_Pool() {
 
         window.localStorage.setItem("ERC1155_Pool", JSON.stringify(erc1155Map));
         setERC1155Pool(erc1155Map);
-      } catch {
-        setERC1155Pool({});
       } finally {
         clearTimeout(tId);
         tId = window.setTimeout(getRates, 10 * 60 * 1e3);
