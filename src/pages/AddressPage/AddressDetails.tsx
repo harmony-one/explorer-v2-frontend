@@ -123,7 +123,7 @@ const addressPropertyDisplayNames: Record<
   holders: () => "Holders",
   description: () => "Description",
   transactionHash: () => "Transaction Hash",
-  circulating_supply: () => "Circulating Supply",
+  circulatingSupply: () => "Circulating Supply",
 };
 
 const addressPropertyDisplayValues: Record<
@@ -202,7 +202,7 @@ const addressPropertyDisplayValues: Record<
   },
   description: (value) => <>{value}</>,
   transactionHash: (value) => <Address address={value} type={"tx"} />,
-  circulating_supply: (value, data) => (
+  circulatingSupply: (value, data) => (
 
     <Box direction={"row"}>
       <TokenValue
@@ -247,7 +247,7 @@ const addressPropertyOrder: Record<string, number> = {
   symbol: 21,
   decimals: 22,
   totalSupply: 23,
-  circulating_supply: 23,
+  circulatingSupply: 23,
   holders: 24,
 
   solidityVersion: 31,
