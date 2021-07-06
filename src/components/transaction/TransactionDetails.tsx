@@ -58,6 +58,7 @@ type TransactionDetailsProps = {
   type?: TransactionSubType;
   logs?: Log[];
   errorMsg: string | undefined;
+  shorMoreHide?: boolean;
 };
 
 type tableEntry = {
@@ -127,6 +128,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   type,
   logs = [],
   errorMsg,
+  shorMoreHide
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -134,7 +136,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
     Status:
       errorMsg === undefined ? (
         +transaction.shardID > 0 ? (
-          <TxStatusComponent msg={''} />
+          <TxStatusComponent msg={""} />
         ) : (
           <> </>
         )
@@ -190,24 +192,26 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
           }}
         />
       </Box>
-      <Box align="center" justify="center" style={{ userSelect: "none" }}>
-        <Anchor
-          onClick={() => setShowDetails(!showDetails)}
-          margin={{ top: "medium" }}
-        >
-          {showDetails ? (
-            <>
-              Show less&nbsp;
-              <CaretUpFill size="small" />
-            </>
-          ) : (
-            <>
-              Show more&nbsp;
-              <CaretDownFill size="small" />
-            </>
-          )}
-        </Anchor>
-      </Box>
+      {shorMoreHide ? null : (
+        <Box align="center" justify="center" style={{ userSelect: "none" }}>
+          <Anchor
+            onClick={() => setShowDetails(!showDetails)}
+            margin={{ top: "medium" }}
+          >
+            {showDetails ? (
+              <>
+                Show less&nbsp;
+                <CaretUpFill size="small" />
+              </>
+            ) : (
+              <>
+                Show more&nbsp;
+                <CaretDownFill size="small" />
+              </>
+            )}
+          </Anchor>
+        </Box>
+      )}
     </>
   );
 };

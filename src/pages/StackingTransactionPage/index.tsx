@@ -49,6 +49,7 @@ export const StakingTransactionPage = () => {
         transaction={tx.msg}
         type={subTypeMap[tx.type] || ""}
         errorMsg={''}
+        shorMoreHide={true}
       />
     </BasePage>
   );

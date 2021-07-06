@@ -53,8 +53,12 @@ export function AddressPage() {
 
   //TODO remove hardcode
   // @ts-ignore
-  const { id } = useParams();
+  let { id } = useParams();
+  id = `${id}`.toLowerCase()
+  id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
+
   const erc20Token = erc20Map[id] || null;
+
   let oneAddress = id;
 
   let type = erc721Map[id]
@@ -122,7 +126,9 @@ export function AddressPage() {
           let inventory =
             type === "erc721"
               ? await getTokenERC721Assets([id])
-              : await (await getTokenERC1155Assets([id])).map((item) => {
+              : await (
+                  await getTokenERC1155Assets([id])
+                ).map((item) => {
                   if (item.meta && item.meta.image) {
                     item.meta.image = `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${item.meta.image}`;
                   }
