@@ -164,7 +164,7 @@ function getColumns(props: any) {
         return (
           <Box direction={"row"}>
             <TokenValue
-              value={data.circulating_supply}
+              value={data.circulatingSupply}
               tokenAddress={data.address}
               formatNumber
               hideSymbol
