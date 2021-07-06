@@ -20,7 +20,7 @@ export function ERC20_Pool() {
     setTimeout(() => {
       getRates();
       tId = window.setInterval(getRates, 10 * 60 * 1e3);
-    });
+    }, 2000);
 
     return () => {
       clearTimeout(tId);

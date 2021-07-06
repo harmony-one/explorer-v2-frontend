@@ -20,7 +20,7 @@ export function ERC1155_Pool() {
     setTimeout(() => {
       getRates();
       tId = window.setInterval(getRates, 10 * 60 * 1e3);
-    });
+    }, 2200);
 
     return () => {
       clearTimeout(tId);
