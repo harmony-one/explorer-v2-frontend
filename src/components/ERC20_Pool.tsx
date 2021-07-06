@@ -7,17 +7,21 @@ export function ERC20_Pool() {
     let tId = 0;
 
     const getRates = async () => {
-      const erc20: Erc20[] = await getAllERC20();
-      const erc20Map = {} as Record<string, Erc20>;
-      erc20.forEach((i: any) => {
-        erc20Map[i.address] = i;
-      });
+      try {
+        const erc20: Erc20[] = await getAllERC20();
+        const erc20Map = {} as Record<string, Erc20>;
+        erc20.forEach((i: any) => {
+          erc20Map[i.address] = i;
+        });
 
-      window.localStorage.setItem("ERC20_Pool", JSON.stringify(erc20Map));
-      setERC20Pool(erc20Map);
-
-      window.clearTimeout(tId);
-      tId = window.setTimeout(getRates, 10 * 60 * 1e3);
+        window.localStorage.setItem("ERC20_Pool", JSON.stringify(erc20Map));
+        setERC20Pool(erc20Map);
+      } catch {
+        setERC20Pool({});
+      } finally {
+        window.clearTimeout(tId);
+        tId = window.setTimeout(getRates, 10 * 60 * 1e3);
+      }
     };
 
     tId = window.setTimeout(

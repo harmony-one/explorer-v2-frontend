@@ -7,16 +7,21 @@ export function ERC1155_Pool() {
     let tId = 0;
 
     const getRates = async () => {
-      const erc1155: ERC1155[] = await getAllERC1155();
-      const erc1155Map = {} as Record<string, ERC1155>;
-      erc1155.forEach((i: any) => {
-        erc1155Map[i.address] = i;
-      });
+      try {
+        const erc1155: ERC1155[] = await getAllERC1155();
+        const erc1155Map = {} as Record<string, ERC1155>;
+        erc1155.forEach((i: any) => {
+          erc1155Map[i.address] = i;
+        });
 
-      window.localStorage.setItem("ERC1155_Pool", JSON.stringify(erc1155Map));
-      setERC1155Pool(erc1155Map);
-      clearTimeout(tId);
-      tId = window.setTimeout(getRates, 10 * 60 * 1e3);
+        window.localStorage.setItem("ERC1155_Pool", JSON.stringify(erc1155Map));
+        setERC1155Pool(erc1155Map);
+      } catch {
+        setERC1155Pool({});
+      } finally {
+        clearTimeout(tId);
+        tId = window.setTimeout(getRates, 10 * 60 * 1e3);
+      }
     };
 
     tId = window.setTimeout(
