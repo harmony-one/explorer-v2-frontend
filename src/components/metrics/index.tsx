@@ -167,7 +167,7 @@ function TransactionsCount() {
       </Box>
       <Box align="start">
         <Text size="small" color="minorText">
-          {"TRANSACTION VOLUME"}
+          {"TRANSACTION VOLUME"} 
         </Text>
         <Text size="small" weight="bold">
           {formatNumber(+count)}
