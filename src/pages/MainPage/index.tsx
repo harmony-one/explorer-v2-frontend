@@ -10,7 +10,7 @@ import { LatestBlocksTable } from "./LatestBlocksTable";
 import { LatestTransactionsTable } from "./LatestTransactionsTable";
 import { Block } from "src/types";
 import { getBlocks } from "src/api/client";
-import { calculateSecondPerBlocks } from "./helpers";
+import { calculateSecondPerBlocks, calculateSecondsPerBlock } from "./helpers";
 
 const filter = {
   offset: 0,
@@ -27,8 +27,11 @@ export function MainPage() {
 
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [blockLatency, setBlockLatency] = useState<number>(2.01);
-  const availableShards = (process.env
-    .REACT_APP_AVAILABLE_SHARDS as string).split(",");
+
+  const [blockLatencyMap, setBlockLatencyMap] = useState<number[]>([2.01]);
+  const availableShards = (
+    process.env.REACT_APP_AVAILABLE_SHARDS as string
+  ).split(",");
 
   useEffect(() => {
     let tId = 0 as any;
@@ -58,6 +61,7 @@ export function MainPage() {
         );
 
         setBlockLatency(calculateSecondPerBlocks(blocks));
+        setBlockLatencyMap(calculateSecondsPerBlock(blocks))
       } catch (err) {
         console.log(err);
       }
@@ -73,7 +77,7 @@ export function MainPage() {
 
   return (
     <BaseContainer pad="0">
-      <Metrics latency={blockLatency} />
+      <Metrics latency={blockLatency} latencyPerBlock={blockLatencyMap} />
       <Box direction={isLessDesktop ? "column" : "row"} gap="medium">
         <BasePage style={{ flex: "1 1 100%" }}>
           <Box

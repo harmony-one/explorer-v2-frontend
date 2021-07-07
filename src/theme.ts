@@ -18,6 +18,7 @@ export const theme = {
     },
 
     colors: {
+      text: '#55626d',
       brand: palette.Purple,
       background: "white",
       backgroundBack: "#f3f3f3",
@@ -43,9 +44,11 @@ export const theme = {
         color: "brand",
       },
     },
+ 
+
     font: {
-      // family: 'Nunito',
-      family: "Fira Sans",
+      family: "Nunito",
+      // family: "Fira Sans",
       size: "14px",
       height: "20px",
     },
@@ -127,8 +130,8 @@ export const darkTheme = {
     },
     palette,
     font: {
-      // family: 'Nunito',
-      family: "Fira Sans",
+      family: "Nunito",
+      // family: "Fira Sans",
       size: "14px",
       height: "20px",
     },

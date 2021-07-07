@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, DataChart, Spinner } from "grommet";
-import { BasePage } from "src/components/ui";
+import { Box, Text, DataChart, Spinner, Tip } from "grommet";
+import { BasePage, TipContent } from "src/components/ui";
 import { formatNumber } from "src/components/ui/utils";
 import { LatencyIcon } from "src/components/ui/icons";
 import dayjs from "dayjs";
@@ -13,7 +13,10 @@ import { getTransactionCountLast14Days } from "src/api/client";
 
 import { getCount } from "src/api/client";
 
-export const Metrics = (params: { latency: number }) => {
+export const Metrics = (params: {
+  latency: number;
+  latencyPerBlock: number[];
+}) => {
   const isLessLaptop = useMediaQuery({ maxDeviceWidth: "852px" });
   const isLessTablet = useMediaQuery({ maxDeviceWidth: breakpoints.tablet });
   const isLessMobileM = useMediaQuery({ maxDeviceWidth: "468px" });
@@ -58,7 +61,10 @@ export const Metrics = (params: { latency: number }) => {
       >
         <ShardCount />
         {!isLessMobileM && <Line horizontal />}
-        <BlockLatency latency={params.latency} />
+        <BlockLatency
+          latency={params.latency}
+          latencyPerBlock={params.latencyPerBlock}
+        />
       </Box>
       {isLessLaptop && (
         <Line
@@ -98,7 +104,7 @@ function ONEPrice() {
         </Text>
         <Box direction="row" gap="xsmall" align="baseline">
           <Text size="small" weight="bold">
-            $ {(+lastPrice).toFixed(2)}
+            $ {(+lastPrice).toFixed(4)}
           </Text>
           <Text
             size="11px"
@@ -117,12 +123,27 @@ function ONEPrice() {
 function TransactionsCount() {
   const [count, setCount] = useState<string>("");
 
+  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
+    .split(",")
+    .map((t) => +t);
+
   useEffect(() => {
     let tId = 0;
     const getRes = async () => {
       try {
-        let res = await getCount([0, "transactions"]);
-        setCount(res.count);
+        let res = await Promise.all(
+          availableShards.map((shardNumber) =>
+            getCount([shardNumber, "transactions"])
+          )
+        );
+        setCount(
+          res
+            .reduce((prev, cur) => {
+              prev = prev + +cur.count;
+              return prev;
+            }, 0)
+            .toString()
+        );
       } catch (err) {
         console.log(err);
       }
@@ -146,7 +167,7 @@ function TransactionsCount() {
       </Box>
       <Box align="start">
         <Text size="small" color="minorText">
-          {"TRANSACTIONS COUNT"}
+          {"TRANSACTIONS VOLUME"}
         </Text>
         <Text size="small" weight="bold">
           {formatNumber(+count)}
@@ -180,7 +201,7 @@ function ShardCount() {
   );
 }
 
-function BlockLatency(params: { latency: number }) {
+function BlockLatency(params: { latency: number; latencyPerBlock: number[] }) {
   return (
     <Box direction="row" align="stretch">
       <Box
@@ -194,9 +215,34 @@ function BlockLatency(params: { latency: number }) {
         <Text size="small" color="minorText">
           {"BLOCK LATENCY"}
         </Text>
-        <Text size="small" weight="bold">
-          {params.latency.toFixed(2)}s
-        </Text>
+        <Tip
+          // dropProps={{ align: { left: "right" }, margin: { left: "small" } }}
+          content={
+            <TipContent
+              message={
+                <Box direction={"row"}>
+                  {params.latencyPerBlock.map((item, index) => (
+                    <Box
+                      key={`${index}`}
+                      direction={"column"}
+                      align={"start"}
+                      justify={"center"}
+                      margin={'small'}
+                    >
+                      <Text size={"small"}>Shard {index}</Text>
+                      <Text size="small" weight="bold">{item.toFixed(2)}s</Text>
+                    </Box>
+                  ))}
+                </Box>
+              }
+            />
+          }
+          plain
+        >
+          <Text size="small" weight="bold">
+            {params.latency.toFixed(2)}s
+          </Text>
+        </Tip>
       </Box>
     </Box>
   );
