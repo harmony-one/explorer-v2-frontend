@@ -74,7 +74,7 @@ export const TransactionPage = () => {
         trx = await getTransactionByField([3, "hash", id]);
       }
 
-      setTx(trx as RPCStakingTransactionHarmony);
+      setTx((trx || {}) as RPCStakingTransactionHarmony);
     };
 
     getTx();
