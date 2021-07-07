@@ -24,6 +24,7 @@ interface IAddress {
   color?: string;
   displayHash?: boolean;
   noHistoryPush?: boolean;
+  hideCopyBtn?: boolean;
 }
 
 export const Address = (props: IAddress) => {
@@ -34,6 +35,7 @@ export const Address = (props: IAddress) => {
     type = "address",
     color = "brand",
     displayHash,
+    hideCopyBtn = false,
   } = props;
   const history = useHistory();
   const ERC20Map = useERC20Pool();
@@ -77,26 +79,28 @@ export const Address = (props: IAddress) => {
   return (
     <div style={{ display: "inline-block" }}>
       <Box direction={"row"} align={"center"} justify={"start"}>
-        <CopyBtn
-          value={outPutAddress}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toaster.show({
-              message: () => (
-                <Box direction={"row"} align={"center"} pad={"small"}>
-                  <Icon size={"small"} color={"headerText"} />
-                  <Text size={"small"}>Copied to clipboard</Text>
-                </Box>
-              ),
-            });
-          }}
-        />
+        {hideCopyBtn ? null : (
+          <CopyBtn
+            value={outPutAddress}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toaster.show({
+                message: () => (
+                  <Box direction={"row"} align={"center"} pad={"small"}>
+                    <Icon size={"small"} color={"headerText"} />
+                    <Text size={"small"}>Copied to clipboard</Text>
+                  </Box>
+                ),
+              });
+            }}
+          />
+        )}
         <Text
           size="small"
           color={color}
           style={{
-            marginLeft: "7px",
+            marginLeft: hideCopyBtn ? "0px" : "7px",
             cursor: "pointer",
             textDecoration:
               address === EMPTY_ADDRESS

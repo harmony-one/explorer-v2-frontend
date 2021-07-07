@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { CaretDownFill } from "grommet-icons";
 import { Box, DropButton, Anchor, Text } from "grommet";
 import { useHistory } from "react-router-dom";
 
 export function InfoButton() {
   const history = useHistory();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <DropButton
@@ -16,6 +17,10 @@ export function InfoButton() {
           <CaretDownFill color="white" />
         </Box>
       }
+      onClick={() => {
+        setIsOpen(true);
+      }}
+      open={isOpen}
       dropAlign={{ top: "bottom", right: "right" }}
       dropContent={
         <Box
@@ -27,9 +32,8 @@ export function InfoButton() {
         >
           <Anchor
             style={{ textDecoration: "underline" }}
-            href={"/hrc20"}
             onClick={(e) => {
-              e.preventDefault();
+              setIsOpen(false);
               history.push("/hrc20");
             }}
           >
@@ -37,9 +41,8 @@ export function InfoButton() {
           </Anchor>
           <Anchor
             style={{ textDecoration: "underline" }}
-            href={"/hrc721"}
             onClick={(e) => {
-              e.preventDefault();
+              setIsOpen(false);
               history.push("/hrc721");
             }}
           >
@@ -47,9 +50,8 @@ export function InfoButton() {
           </Anchor>
           <Anchor
             style={{ textDecoration: "underline" }}
-            href={"/hrc1155"}
             onClick={(e) => {
-              e.preventDefault();
+              setIsOpen(false);
               history.push("/hrc1155");
             }}
           >

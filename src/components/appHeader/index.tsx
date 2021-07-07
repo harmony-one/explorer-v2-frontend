@@ -27,7 +27,10 @@ const HeaderLine = (props: any) => {
 };
 
 const ProjectName = styled(Box)`
-  margin-left: 3px;
+  margin-top: 7px;
+  margin-left: 7px;
+  font-size: 1.2em;
+  line-height: 0.7em;
 `;
 
 export function AppHeader(props: { style: CSSProperties }) {
@@ -50,17 +53,11 @@ export function AppHeader(props: { style: CSSProperties }) {
         >
           <Box direction={"row"} align={"center"}>
             <img src={require("../../assets/Logo.svg").default} />
-            <ProjectName direction={"row"} align={'center'}>
-              Harmony Block Explorer{" "}
-              <Box
-                background={"mintGreen"}
-                style={{ borderRadius: "8px", height: "20px", marginLeft: '5px', padding: '1px 7px' }}
-              >
-                <Text size={"xsmall"}>beta</Text>
-              </Box>
+            <ProjectName direction={"column"} align={"start"}>
+              Harmony
+              <Text size={"small"}>Block Explorer</Text>
             </ProjectName>
           </Box>
-          <FiatPrice />
         </Heading>
         <Box direction="row">
           <InfoButton />

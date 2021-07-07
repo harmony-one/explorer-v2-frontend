@@ -6,7 +6,7 @@ import { Trash } from 'grommet-icons'
 // @ts-ignore
 export const TipContent = ({ message }) => (
   <Box direction="row" align="center">
-    <Box background="background" direction="row" pad="small" round="xsmall" border={{color: 'border' }}>
+    <Box background="background" direction="row" pad="small" border={{color: 'border', size: '0px' }}>
       <div>{message}</div>
     </Box>
   </Box>

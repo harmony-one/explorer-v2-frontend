@@ -45,7 +45,7 @@ function getColumns(props: any) {
           }}
           color="brand"
         >
-          <Address address={data.hash} isShort noHistoryPush />
+          <Address address={data.hash} isShort noHistoryPush hideCopyBtn />
         </Text>
       ),
     },
@@ -57,7 +57,7 @@ function getColumns(props: any) {
         </Text>
       ),
       render: (data: RPCTransactionHarmony) => (
-        <Address address={data.from} isShort />
+        <Address address={data.from} isShort hideCopyBtn />
       ),
     },
     {
@@ -68,7 +68,7 @@ function getColumns(props: any) {
         </Text>
       ),
       render: (data: RPCTransactionHarmony) => (
-        <Address address={data.to} isShort />
+        <Address address={data.to} isShort hideCopyBtn />
       ),
     },
     {

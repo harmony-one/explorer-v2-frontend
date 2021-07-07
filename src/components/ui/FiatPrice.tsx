@@ -10,8 +10,8 @@ export const FiatPrice = () => {
   }
 
   const price = parseFloat(lastPrice).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
     currency: "USD",
   });
   const change = (+priceChangePercent).toFixed(2);

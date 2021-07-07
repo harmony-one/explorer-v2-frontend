@@ -22,3 +22,9 @@ export const calculateSecondPerBlocks = (
     all_blocks.length
   );
 };
+
+export const calculateSecondsPerBlock = (
+  all_blocks: Array<Block[]>
+): number[] => {
+  return all_blocks.map(getLatency);
+};
