@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./index.css";
 import { Box, Grommet } from "grommet";
-import { HashRouter as Router, useHistory } from "react-router-dom";
+import { HashRouter, BrowserRouter, useHistory } from "react-router-dom";
 
 import { Routes } from "src/Routes";
 import { AppHeader } from "src/components/appHeader";
@@ -19,10 +19,14 @@ import { Toaster, ToasterComponent } from "./components/ui/toaster";
 export const toaster = new Toaster();
 
 function App() {
-  return (
-    <Router>
+  return document.location.hash ? (
+    <HashRouter>
       <AppWithHistory />
-    </Router>
+    </HashRouter>
+  ) : (
+    <BrowserRouter>
+      <AppWithHistory />
+    </BrowserRouter>
   );
 }
 
