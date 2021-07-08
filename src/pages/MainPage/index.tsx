@@ -11,6 +11,7 @@ import { LatestTransactionsTable } from "./LatestTransactionsTable";
 import { Block } from "src/types";
 import { getBlocks } from "src/api/client";
 import { calculateSecondPerBlocks, calculateSecondsPerBlock } from "./helpers";
+import { ShardDropdown } from "src/components/ui/ShardDropdown";
 
 const filter = {
   offset: 0,
@@ -25,6 +26,7 @@ export function MainPage() {
   const history = useHistory();
   const isLessDesktop = useMediaQuery({ maxDeviceWidth: breakpoints.desktop });
 
+  const [selectedShard, setSelectedShard] = useState<string>("0");
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [blockLatency, setBlockLatency] = useState<number>(2.01);
 
@@ -38,9 +40,11 @@ export function MainPage() {
     const exec = async () => {
       try {
         let blocks = await Promise.all(
-          availableShards.map((shardNumber) =>
-            getBlocks([+shardNumber, filter])
-          )
+          selectedShard === "All shards"
+            ? availableShards.map((shardNumber) =>
+                getBlocks([+shardNumber, filter])
+              )
+            : [getBlocks([+selectedShard, filter])]
         );
 
         const blocksList = blocks.reduce((prev, cur, index) => {
@@ -48,7 +52,10 @@ export function MainPage() {
             ...prev,
             ...cur.map((item) => ({
               ...item,
-              shardNumber: +availableShards[index],
+              shardNumber:
+                selectedShard === "All shards"
+                  ? +availableShards[index]
+                  : +selectedShard,
             })),
           ];
           return prev;
@@ -61,7 +68,7 @@ export function MainPage() {
         );
 
         setBlockLatency(calculateSecondPerBlocks(blocks));
-        setBlockLatencyMap(calculateSecondsPerBlock(blocks))
+        setBlockLatencyMap(calculateSecondsPerBlock(blocks));
       } catch (err) {
         console.log(err);
       }
@@ -73,7 +80,7 @@ export function MainPage() {
     return () => {
       clearTimeout(tId);
     };
-  }, []);
+  }, [selectedShard]);
 
   return (
     <BaseContainer pad="0">
@@ -82,12 +89,22 @@ export function MainPage() {
         <BasePage style={{ flex: "1 1 100%" }}>
           <Box
             border={{ size: "xsmall", side: "bottom" }}
-            pad={{ bottom: "small" }}
             margin={{ bottom: "small" }}
+            direction={"row"}
+            align={"baseline"}
+            justify={"between"}
+            style={{ marginTop: "-7px" }}
           >
             <Text size="large" weight="bold">
               Latest Blocks
             </Text>
+            <Box style={{ maxWidth: "120px", minWidth: '120px' }} align={"start"}>
+              <ShardDropdown
+                allShardsAvailable={true}
+                selected={selectedShard}
+                onClick={(shardNumber) => setSelectedShard(shardNumber)}
+              />
+            </Box>
           </Box>
 
           <LatestBlocksTable blocks={blocks} />
