@@ -152,6 +152,7 @@ export type RPCStakingTransactionHarmony = {
   transactionIndex: string;
   v: string;
   msg: any; // todo
+  amount?: string
 };
 
 // todo

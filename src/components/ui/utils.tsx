@@ -80,8 +80,6 @@ export function CalculateTransactionFee(transaction: any) {
     maximumFractionDigits: 18,
   }).format(fee);
 
-  console.log(normalizedFee);
-
   const price = lastPrice;
 
   const bi =
