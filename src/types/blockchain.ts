@@ -248,6 +248,7 @@ export interface RelatedTransaction {
   timestamp: string;
   type?: string;
   msg?: { amount: string; delegatorAddress: string; validatorAddress: string };
+  amount?: string
 }
 
 export type RelatedTransactionType =

@@ -297,7 +297,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
           {data.msg?.validatorAddress ? (
             <Address address={data.msg?.validatorAddress || data.from} />
           ) : (
-            "-"
+            "—"
           )}
         </Text>
       ),
@@ -329,7 +329,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
           {data.msg?.delegatorAddress ? (
             <Address address={data.msg?.delegatorAddress} />
           ) : (
-            "-"
+            "—"
           )}
         </Text>
       ),
@@ -349,8 +349,10 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Box justify="center">
           {data.msg?.amount ? (
             <ONEValue value={data.msg?.amount} timestamp={data.timestamp} />
+          ) : data.amount ? (
+            <ONEValue value={data.amount} timestamp={data.timestamp} />
           ) : (
-            "-"
+            "—"
           )}
         </Box>
       ),
