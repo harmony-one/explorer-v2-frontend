@@ -96,6 +96,8 @@ export function CalculateTransactionFee(transaction: any) {
     });
   }
 
+  console.log(normalizedFee);
+
   return (
     <>
       {normalizedFee} ONE
