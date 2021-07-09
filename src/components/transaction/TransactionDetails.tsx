@@ -134,8 +134,8 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   type,
   logs = [],
   errorMsg,
-  shorMoreHide,
-  stakingData,
+  shorMoreHide, 
+  stakingData, 
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -168,7 +168,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
     } else {
       return key !== "gas";
     }
-  });
+  }); 
   const sortedKeys = keys
     .sort((a, b) => transactionPropertySort[b] - transactionPropertySort[a])
     .filter((k) => showDetails || ["r", "s", "v"].indexOf(k) === -1);

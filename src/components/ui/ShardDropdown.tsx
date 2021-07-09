@@ -17,7 +17,7 @@ export function ShardDropdown(props: {
       padDataList={"none"}
       items={
         [
-          props.allShardsAvailable ? { value: "All Shards" } : undefined,
+props.allShardsAvailable ? { value: "All Shards" } : undefined,
           ...(process.env.REACT_APP_AVAILABLE_SHARDS?.split(",").map(
             (item) => ({
               value: item,
@@ -36,13 +36,14 @@ export function ShardDropdown(props: {
         <Box
           direction={"row"}
           align={"baseline"}
-          style={{
+          style={{ 
             paddingLeft: "7px",
             marginBottom: "5px",
             marginTop: dataItem.value === "All Shards" ? "5px" : "0px",
           }}
         >
           {dataItem.value === "All Shards"
+
             ? dataItem.value
             : `Shard ${dataItem.value}`}
         </Box>
