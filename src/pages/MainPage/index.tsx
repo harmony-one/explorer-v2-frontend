@@ -39,13 +39,24 @@ export function MainPage() {
     let tId = 0 as any;
     const exec = async () => {
       try {
+        let allBlocks = [];
         let blocks = await Promise.all(
-          selectedShard === "All shards"
+          selectedShard === "All Shards"
             ? availableShards.map((shardNumber) =>
                 getBlocks([+shardNumber, filter])
               )
             : [getBlocks([+selectedShard, filter])]
         );
+
+        if (selectedShard === "All Shards") {
+          allBlocks = blocks;
+        } else {
+          allBlocks = await Promise.all(
+            availableShards.map((shardNumber) =>
+              getBlocks([+shardNumber, filter])
+            )
+          );
+        }
 
         const blocksList = blocks.reduce((prev, cur, index) => {
           prev = [
@@ -53,7 +64,7 @@ export function MainPage() {
             ...cur.map((item) => ({
               ...item,
               shardNumber:
-                selectedShard === "All shards"
+                selectedShard === "All Shards"
                   ? +availableShards[index]
                   : +selectedShard,
             })),
@@ -67,8 +78,8 @@ export function MainPage() {
             .slice(0, 10)
         );
 
-        setBlockLatency(calculateSecondPerBlocks(blocks));
-        setBlockLatencyMap(calculateSecondsPerBlock(blocks));
+        setBlockLatency(calculateSecondPerBlocks(allBlocks));
+        setBlockLatencyMap(calculateSecondsPerBlock(allBlocks));
       } catch (err) {
         console.log(err);
       }
@@ -98,7 +109,10 @@ export function MainPage() {
             <Text size="large" weight="bold">
               Latest Blocks
             </Text>
-            <Box style={{ maxWidth: "120px", minWidth: '120px' }} align={"start"}>
+            <Box
+              style={{ maxWidth: "120px", minWidth: "120px" }}
+              align={"start"}
+            >
               <ShardDropdown
                 allShardsAvailable={true}
                 selected={selectedShard}

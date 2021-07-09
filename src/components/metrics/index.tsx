@@ -167,7 +167,7 @@ function TransactionsCount() {
       </Box>
       <Box align="start">
         <Text size="small" color="minorText">
-          {"TRANSACTION VOLUME"} 
+          {"TRANSACTION VOLUME"}
         </Text>
         <Text size="small" weight="bold">
           {formatNumber(+count)}
@@ -227,10 +227,12 @@ function BlockLatency(params: { latency: number; latencyPerBlock: number[] }) {
                       direction={"column"}
                       align={"start"}
                       justify={"center"}
-                      margin={'small'}
+                      margin={"small"}
                     >
                       <Text size={"small"}>Shard {index}</Text>
-                      <Text size="small" weight="bold">{item.toFixed(2)}s</Text>
+                      <Text size="small" weight="bold">
+                        {item.toFixed(2)}s
+                      </Text>
                     </Box>
                   ))}
                 </Box>
