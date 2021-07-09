@@ -44,8 +44,8 @@ export const transactionPropertyDisplayNames: Record<string, string> = {
   blockNumber: "Block Number",
   from: "From",
   txnFee: "Txn fee",
-  gas: "Gas",
   gasPrice: "Gas Price",
+  transactionFee: "Transaction Fee",
   input: "Input",
   nonce: "Nonce",
   r: "r",
@@ -89,7 +89,7 @@ export const transactionPropertySort: Record<string, number> = {
   from: 700,
   to: 650,
   txnFee: 560,
-  gas: 550,
+  transactionFee: 550,
   gasPrice: 500,
   input: 300,
   nonce: 350,
@@ -104,16 +104,14 @@ export const transactionPropertySort: Record<string, number> = {
 export const transactionPropertyDescriptions: Record<string, string> = {
   shardID: "The shard number where the transaction belongs.",
   blockNumber: "The number of the block in which the transaction was recorded.",
-  hash:
-    "A TxHash or transaction hash is a unique 66 characters identifier that is generated whenever a transaction is executed.",
+  hash: "A TxHash or transaction hash is a unique 66 characters identifier that is generated whenever a transaction is executed.",
   hash_harmony:
     "A TxHash or transaction hash is a unique 66 characters identifier that is generated whenever a transaction is executed. Shard ID is also involved in calculation of Harmony Hash.",
-  from:
-    "The sending party of the transaction (could be from a contract address).",
+  from: "The sending party of the transaction (could be from a contract address).",
   to: "The receiving party of the transaction (could be a contract address).",
   value: "The value being transacted in ONE and fiat value.",
   txnFee: "Transaction fee",
-  gas: "The exact units of gas that was used for the transaction.",
+  // gas: "The exact units of gas that was used for the transaction.",
   transactionIndex: "Transaction's number in the block",
   gasUsed: "The exact units of gas that was used for the transaction.",
   gasPrice:
@@ -156,7 +154,9 @@ export const transactionPropertyDescriptions: Record<string, string> = {
 
 export const transactionPropertyDisplayValues: any = {
   // @ts-ignore
-  blockNumber: (value: any,data: any) => <BlockNumber number={value} hash={data['blockHash']} />,
+  blockNumber: (value: any, data: any) => (
+    <BlockNumber number={value} hash={data["blockHash"]} />
+  ),
   from: (value: any) => <Address address={value} />,
   value: (value: any, tx: any) => (
     <ONEValue value={value} timestamp={tx.timestamp} />
@@ -202,7 +202,9 @@ export const transactionPropertyDisplayValues: any = {
   slotPubKeyToAdd: (value: any) => <span>{value}</span>,
   slotPubKeyToRemove: (value: any) => <span>{value}</span>,
   tokenTransfers: (value: any) => <span>{value}</span>,
-  gas: (value: any) => <>{formatNumber(+value)}</>,
+  transactionFee: (value: any, tx: any) => {
+    return <>{value}</>;
+  },
 };
 
 export const transactionDisplayValues = (
@@ -247,7 +249,10 @@ export const transactionDisplayValues = (
 
   const text = typeof value === "string" ? value : <>{value}</>;
   const copyText =
-    typeof text === "string" && !["from", "to", 'type', 'delegatorAddress', 'validatorAddress'].find((item) => item === key)
+    typeof text === "string" &&
+    !["from", "to", "type", "delegatorAddress", "validatorAddress"].find(
+      (item) => item === key
+    )
       ? text
       : "";
 

@@ -29,6 +29,10 @@ export const StakingTransactionPage = () => {
     return null;
   }
 
+  const { amount, ...restTx } = tx;
+
+  const { amount: amountMsg, ...restTxMsg } = tx.msg || {};
+
   return (
     <BasePage>
       <Box border={{ size: "xsmall", side: "bottom", color: "border" }}>
@@ -37,7 +41,7 @@ export const StakingTransactionPage = () => {
         </Text>
       </Box>
 
-      <TransactionDetails transaction={tx} type="__staking" errorMsg={''} />
+      <TransactionDetails transaction={restTx} type="__staking" errorMsg={""} />
       <Box
         margin={{ top: "medium" }}
         pad={{ bottom: "small" }}
@@ -46,9 +50,16 @@ export const StakingTransactionPage = () => {
         <Text size="large">Staking Data</Text>
       </Box>
       <TransactionDetails
-        transaction={tx.msg}
+        transaction={
+          tx.type === "CollectRewards"
+            ? {
+                ...tx.msg,
+                amount: amount,
+              }
+            : restTxMsg
+        }
         type={subTypeMap[tx.type] || ""}
-        errorMsg={''}
+        errorMsg={""}
         shorMoreHide={true}
       />
     </BasePage>

@@ -152,6 +152,7 @@ export type RPCStakingTransactionHarmony = {
   transactionIndex: string;
   v: string;
   msg: any; // todo
+  amount?: string
 };
 
 // todo
@@ -247,6 +248,7 @@ export interface RelatedTransaction {
   timestamp: string;
   type?: string;
   msg?: { amount: string; delegatorAddress: string; validatorAddress: string };
+  amount?: string
 }
 
 export type RelatedTransactionType =

@@ -7,7 +7,12 @@ import {
   transactionPropertySort,
   transactionPropertyDescriptions,
 } from "./helpers";
-import { Address, CalculateFee, TipContent } from "src/components/ui";
+import {
+  Address,
+  CalculateFee,
+  CalculateTransactionFee,
+  TipContent,
+} from "src/components/ui";
 import { Anchor, Box, DataTable, Text, Tip } from "grommet";
 import { TransactionSubType } from "src/components/transaction/helpers";
 import { parseSuggestedEvent, DisplaySignature } from "src/web3/parseByteCode";
@@ -128,7 +133,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   type,
   logs = [],
   errorMsg,
-  shorMoreHide
+  shorMoreHide,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -145,9 +150,13 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
       ),
     ...transaction,
     tokenTransfers: tokenTransfers(logs),
+    transactionFee: (
+      <Box justify="center">{CalculateTransactionFee(transaction)}</Box>
+    ),
     gasPrice: <Box justify="center">{CalculateFee(transaction)}</Box>,
   };
-  const keys = Object.keys(newTransaction);
+
+  const keys = Object.keys(newTransaction).filter((key) => key !== "gas");
   const sortedKeys = keys
     .sort((a, b) => transactionPropertySort[b] - transactionPropertySort[a])
     .filter((k) => showDetails || ["r", "s", "v"].indexOf(k) === -1);

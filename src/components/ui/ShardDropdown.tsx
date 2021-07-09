@@ -4,6 +4,7 @@ import { useThemeMode } from "src/hooks/themeSwitcherHook";
 import { Dropdown } from "../dropdown/Dropdown";
 
 export function ShardDropdown(props: {
+  allShardsAvailable?: boolean;
   selected: string;
   onClick: (selected: string) => void;
 }) {
@@ -12,19 +13,40 @@ export function ShardDropdown(props: {
   return (
     <Dropdown
       themeMode={themeMode}
-      itemHeight={"30px"}
+      itemHeight={"0px"}
+      padDataList={"none"}
       items={
-        process.env.REACT_APP_AVAILABLE_SHARDS?.split(",").map((item) => ({
-          value: item,
-        })) || []
+        [
+          props.allShardsAvailable ? { value: "All shards" } : undefined,
+          ...(process.env.REACT_APP_AVAILABLE_SHARDS?.split(",").map(
+            (item) => ({
+              value: item,
+            })
+          ) || []),
+        ].filter((_) => _) as { value: string }[]
       }
       renderValue={(dataItem) => (
-        <Box
-          justify={"center"}
-          style={{ paddingTop: "2px" }}
-        >{`Shard ${dataItem.value}`}</Box>
+        <Box justify={"center"} style={{ paddingTop: "2px" }}>
+          {dataItem.value === "All shards"
+            ? dataItem.value
+            : `Shard ${dataItem.value}`}
+        </Box>
       )}
-      renderItem={(dataItem) => <>{`Shard ${dataItem.value}`}</>}
+      renderItem={(dataItem) => (
+        <Box
+          direction={"row"}
+          align={"baseline"}
+          style={{
+            paddingLeft: "5px",
+            marginBottom: "5px",
+            marginTop: dataItem.value === "All shards" ? "5px" : "0px",
+          }}
+        >
+          {dataItem.value === "All shards"
+            ? dataItem.value
+            : `Shard ${dataItem.value}`}
+        </Box>
+      )}
       onClickItem={(item) => props.onClick(item.value)}
       value={{ value: props.selected }}
       itemStyles={{}}

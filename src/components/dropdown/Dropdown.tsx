@@ -1,4 +1,4 @@
-import { Box, TextInput } from "grommet";
+import { Box, BoxProps, TextInput } from "grommet";
 import { CaretDownFill, CaretUpFill, Search } from "grommet-icons";
 import React, { Fragment } from "react";
 import styled, { css } from "styled-components";
@@ -7,6 +7,7 @@ export interface IDropdownProps<T = {}> {
   defaultValue?: T;
   value?: T;
   className?: string;
+  padDataList?: BoxProps["pad"];
   keyField: keyof T;
   renderValue: (dataItem: T) => JSX.Element;
   renderItem: (dataItem: T) => JSX.Element;
@@ -148,6 +149,7 @@ export class Dropdown<T = {}> extends React.Component<
       themeMode,
       itemHeight = "47px",
       itemStyles = {},
+      padDataList = "small",
     } = this.props;
 
     return (
@@ -167,15 +169,15 @@ export class Dropdown<T = {}> extends React.Component<
           {this.state.isOpen ? (
             <CaretUpFill
               onClick={(e) => {
-                console.log('CLICK') 
-                e.stopPropagation()
+                console.log("CLICK");
+                e.stopPropagation();
                 this.setState({ ...this.state, isOpen: false });
               }}
             />
           ) : (
             <CaretDownFill
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 this.setState({ ...this.state, isOpen: true });
               }}
             />
@@ -183,10 +185,10 @@ export class Dropdown<T = {}> extends React.Component<
         </Value>
         {this.state.isOpen ? (
           <DataList
-            pad="xsmall"
             background="background"
             border={{ size: "xsmall", color: "border" }}
             style={{ borderRadius: "0px" }}
+            pad={padDataList}
           >
             {searchable ? (
               <TextInput
