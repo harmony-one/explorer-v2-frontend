@@ -54,7 +54,7 @@ export const TokenValueBalanced = (props: ONEValueProps) => {
   //TODO remove hardcode
   const tokenInfo: any = erc20Map[tokenAddress] ||
     erc721Map[tokenAddress] ||
-    erc1155Map[tokenAddress] || { decimals: 14, symbol: "" };
+    erc1155Map[tokenAddress] || { decimals: 0, symbol: "" };
 
   if (!("decimals" in tokenInfo)) {
     tokenInfo.decimals = 0;
