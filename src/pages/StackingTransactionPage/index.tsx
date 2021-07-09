@@ -56,9 +56,12 @@ export const StakingTransactionPage = () => {
                 ...tx.msg,
                 amount: amount,
               }
-            : restTxMsg
+            : tx.type === "EditValidator"
+            ? restTxMsg
+            : tx.msg
         }
         type={subTypeMap[tx.type] || ""}
+        stakingData
         errorMsg={""}
         shorMoreHide={true}
       />
