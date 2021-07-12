@@ -1,6 +1,6 @@
 import React, { CSSProperties } from "react";
 import { Box, Text } from "grommet";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
@@ -76,6 +76,8 @@ export const Address = (props: IAddress) => {
     outPutAddress = address;
   }
 
+  console.log(type)
+
   return (
     <div style={{ display: "inline-block" }}>
       <Box direction={"row"} align={"center"} justify={"start"}>
@@ -96,33 +98,38 @@ export const Address = (props: IAddress) => {
             }}
           />
         )}
-        <Text
-          size="small"
-          color={color}
-          style={{
-            marginLeft: hideCopyBtn ? "0px" : "7px",
-            cursor: "pointer",
-            textDecoration:
+        <Link to={address === EMPTY_ADDRESS ? '' : `/${type}/${address}`}>
+          <Text
+            size="small"
+            color={color}
+            style={{
+              marginLeft: hideCopyBtn ? "0px" : "7px",
+              cursor: "pointer",
+              textDecoration:
+                address === EMPTY_ADDRESS
+                  ? "none"
+                  : !!parsedName
+                  ? "underline"
+                  : "none",
+              ...style,
+            }}
+            onClick={
               address === EMPTY_ADDRESS
-                ? "none"
-                : !!parsedName
-                ? "underline"
-                : "none",
-            ...style,
-          }}
-          onClick={
-            address === EMPTY_ADDRESS
-              ? undefined
-              : props.noHistoryPush
-              ? undefined
-              : () => history.push(`/${type}/${address}`)
-          }
-        >
-          {parsedName ||
-            (isShort
-              ? `${outPutAddress.substr(0, 4)}...${outPutAddress.substr(-4)}`
-              : outPutAddress)}
-        </Text>
+                ? undefined
+                : props.noHistoryPush
+                ? undefined
+                : (e) => {
+                    e.preventDefault();
+                    history.push(`/${type}/${address}`);
+                  }
+            }
+          >
+            {parsedName ||
+              (isShort
+                ? `${outPutAddress.substr(0, 4)}...${outPutAddress.substr(-4)}`
+                : outPutAddress)}
+          </Text>
+        </Link>
       </Box>
     </div>
   );

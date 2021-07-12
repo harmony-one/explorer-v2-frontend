@@ -37,15 +37,14 @@ function getColumns(props: any) {
         </Text>
       ),
       render: (data: RPCTransactionHarmony) => (
-        <Text
-          size="small"
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            history.push(`/tx/${data.hash}`);
-          }}
-          color="brand"
-        >
-          <Address address={data.hash} isShort noHistoryPush hideCopyBtn />
+        <Text size="small" style={{ cursor: "pointer" }} color="brand">
+          <Address
+            type={"tx"}
+            address={data.hash}
+            isShort
+            noHistoryPush
+            hideCopyBtn
+          />
         </Text>
       ),
     },
