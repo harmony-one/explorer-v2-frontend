@@ -9,6 +9,7 @@ export function InfoButton() {
 
   return (
     <DropButton
+    
       label={
         <Box direction={"row"} align="center">
           <Text size="small" color="white" weight="bold">
@@ -17,8 +18,11 @@ export function InfoButton() {
           <CaretDownFill color="white" />
         </Box>
       }
-      onClick={() => {
+      onOpen={() => {
         setIsOpen(true);
+      }}
+      onClose={() => {
+        setIsOpen(false);
       }}
       open={isOpen}
       dropAlign={{ top: "bottom", right: "right" }}
