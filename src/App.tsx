@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./index.css";
 import { Box, Grommet } from "grommet";
-import { BrowserRouter, useHistory } from "react-router-dom"; 
+import { BrowserRouter, useHistory } from "react-router-dom";
 
 import { Routes } from "src/Routes";
 import { AppHeader } from "src/components/appHeader";
@@ -15,8 +15,10 @@ import { ERC1155_Pool } from "src/components/ERC1155_Pool";
 import { useThemeMode } from "src/hooks/themeSwitcherHook";
 import { theme, darkTheme } from "./theme";
 import { Toaster, ToasterComponent } from "./components/ui/toaster";
+import { SettingsService } from "./utils/settingsService/SettingsService";
 
 export const toaster = new Toaster();
+export const settingsService = new SettingsService();
 
 function App() {
   if (document.location.hash) {

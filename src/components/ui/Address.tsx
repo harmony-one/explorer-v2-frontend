@@ -76,8 +76,6 @@ export const Address = (props: IAddress) => {
     outPutAddress = address;
   }
 
-  console.log(type)
-
   return (
     <div style={{ display: "inline-block" }}>
       <Box direction={"row"} align={"center"} justify={"start"}>
@@ -98,7 +96,7 @@ export const Address = (props: IAddress) => {
             }}
           />
         )}
-        <Link to={address === EMPTY_ADDRESS ? '' : `/${type}/${address}`}>
+        <Link to={address === EMPTY_ADDRESS ? "" : `/${type}/${address}`}>
           <Text
             size="small"
             color={color}

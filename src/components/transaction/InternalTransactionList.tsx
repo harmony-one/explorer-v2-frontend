@@ -17,15 +17,17 @@ interface InternalTransactionListProps {
   timestamp: string;
 }
 
-const initFilter: Filter = {
-  offset: 0,
-  limit: 10,
-  orderBy: "block_number",
-  orderDirection: "desc",
-  filters: [{ type: "gte", property: "block_number", value: 0 }],
-};
-
 export function InternalTransactionList(props: InternalTransactionListProps) {
+  const limitValue = localStorage.getItem("tableLimitValue");
+
+  const initFilter: Filter = {
+    offset: 0,
+    limit: limitValue ? +limitValue : 10,
+    orderBy: "block_number",
+    orderDirection: "desc",
+    filters: [{ type: "gte", property: "block_number", value: 0 }],
+  };
+
   const { list, hash, timestamp } = props;
   const [filter, setFilter] = useState<Filter>(initFilter);
 
@@ -49,7 +51,13 @@ export function InternalTransactionList(props: InternalTransactionListProps) {
         emptyText={"No Internal Transactions for this hash " + hash}
         limit={+limit}
         filter={filter}
-        setFilter={setFilter}
+        setFilter={(newFilter) => {
+          if (newFilter.limit !== initFilter.limit) {
+            localStorage.setItem("tableLimitValue", "10");
+          }
+
+          setFilter(newFilter);
+        }}
         minWidth="960px"
         primaryKey={"index"}
         rowDetails={(row) => (
