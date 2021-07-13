@@ -101,15 +101,17 @@ function getColumns(props: any) {
   ];
 }
 
-const initFilter: Filter = {
-  offset: 0,
-  limit: 10,
-  orderBy: "number",
-  orderDirection: "desc",
-  filters: [{ type: "gte", property: "number", value: 0 }],
-};
-
 export function AllBlocksTable() {
+  const limitValue = localStorage.getItem("tableLimitValue");
+
+  const initFilter: Filter = {
+    offset: 0,
+    limit: limitValue ? +limitValue : 10,
+    orderBy: "number",
+    orderDirection: "desc",
+    filters: [{ type: "gte", property: "number", value: 0 }],
+  };
+
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [filter, setFilter] = useState<Filter>(initFilter);
 
@@ -194,7 +196,16 @@ export function AllBlocksTable() {
         align="center"
         margin={{ top: "medium" }}
       >
-        <PaginationRecordsPerPage filter={filter} onChange={setFilter} />
+        <PaginationRecordsPerPage
+          filter={filter}
+          onChange={(newFilter) => {
+            if (newFilter.limit !== initFilter.limit) {
+              localStorage.setItem("tableLimitValue", `${newFilter.limit}`);
+            }
+
+            setFilter(newFilter);
+          }}
+        />
         <PaginationBlockNavigator
           blocks={blocks}
           onChange={setFilter}

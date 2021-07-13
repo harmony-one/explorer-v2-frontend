@@ -8,15 +8,17 @@ import { getTransactions, getCount } from "src/api/client";
 import { ShardDropdown } from "src/components/ui/ShardDropdown";
 import { useParams } from "react-router-dom";
 
-const initFilter: Filter = {
-  offset: 0,
-  limit: 10,
-  orderBy: "block_number",
-  orderDirection: "desc",
-  filters: [{ type: "gte", property: "block_number", value: 0 }],
-};
-
 export function AllTransactionsPage() {
+  const initFilter: Filter = {
+    offset: 0,
+    limit: localStorage.getItem("tableLimitValue")
+      ? +(localStorage.getItem("tableLimitValue") as string)
+      : 10,
+    orderBy: "block_number",
+    orderDirection: "desc",
+    filters: [{ type: "gte", property: "block_number", value: 0 }],
+  };
+
   const [trxs, setTrxs] = useState<RPCTransactionHarmony[]>([]);
   const [count, setCount] = useState<string>("");
   const [filter, setFilter] = useState<Filter>(initFilter);
@@ -86,8 +88,14 @@ export function AllTransactionsPage() {
           totalElements={+count}
           limit={+limit}
           filter={filter}
-          setFilter={setFilter}
-          primaryKey={'hash'}
+          setFilter={(newFilter) => {
+            if (newFilter.limit !== initFilter.limit) {
+              localStorage.setItem("tableLimitValue", `${newFilter.limit}`);
+            }
+
+            setFilter(newFilter);
+          }}
+          primaryKey={"hash"}
         />
       </BasePage>
     </BaseContainer>

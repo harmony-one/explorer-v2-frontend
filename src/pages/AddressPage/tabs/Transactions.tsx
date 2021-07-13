@@ -25,14 +25,6 @@ import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
 import { getAddress } from "src/utils";
 
-const initFilter: Filter = {
-  offset: 0,
-  limit: 10,
-  orderBy: "block_number",
-  orderDirection: "desc",
-  filters: [{ type: "gte", property: "block_number", value: 0 }],
-};
-
 const Marker = styled.div<{ out: boolean }>`
   border-radius: 2px;
   padding: 5px;
@@ -391,6 +383,16 @@ export function Transactions(props: {
   type: TRelatedTransaction;
   rowDetails?: (row: any) => JSX.Element;
 }) {
+  const limitValue = localStorage.getItem("tableLimitValue");
+
+  const initFilter: Filter = {
+    offset: 0,
+    limit: limitValue ? +limitValue : 10,
+    orderBy: "block_number",
+    orderDirection: "desc",
+    filters: [{ type: "gte", property: "block_number", value: 0 }],
+  };
+
   const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
   const [filter, setFilter] = useState<{ [name: string]: Filter }>({
     transaction: { ...initFilter },
@@ -477,7 +479,12 @@ export function Transactions(props: {
         limit={+limit}
         filter={filter[props.type]}
         isLoading={isLoading}
-        setFilter={(value) => setFilter({ ...filter, [props.type]: value })}
+        setFilter={(value) => {
+          if (value.limit !== filter[props.type].limit) {
+            localStorage.setItem("tableLimitValue", `${value.limit}`);
+          }
+          setFilter({ ...filter, [props.type]: value });
+        }}
         noScrollTop
         minWidth="1266px"
         hideCounter
