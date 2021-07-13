@@ -41,7 +41,7 @@ export class VerifyContract extends React.Component<
     chainType: "mainnet",
     contractAddress: "",
     compiler: "",
-    optimizer: "no",
+    optimizer: "No",
     optimizerTimes: "",
     sourceCode: "",
     libraries: [],
@@ -145,7 +145,7 @@ export class VerifyContract extends React.Component<
                 <Text>Optimizer</Text>
                 <Box direction={"row"}>
                   <Select
-                    options={["yes", "no"]}
+                    options={["Yes", "No"]}
                     value={this.state.optimizer}
                     onChange={({ option }) =>
                       this.setState({ ...this.state, optimizer: option })
