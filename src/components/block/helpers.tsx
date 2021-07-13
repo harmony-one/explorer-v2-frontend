@@ -21,6 +21,12 @@ import { toaster } from "src/App";
 import { Box, Text } from "grommet";
 import styled from "styled-components";
 
+export const StyledBox = styled(Box)`
+  transition: all 0.2s linear;
+  border-radius: 2px;
+  padding-left: 5px;
+`;
+
 const Icon = styled(StatusGood)`
   margin-right: 5px;
 `;
@@ -115,18 +121,39 @@ const emptyMixHash =
 
 export const blockPropertyDisplayValues: any = {
   // @ts-ignore
-  number: (value: any) => (
+  number: (value: any, data, isNewAddress) => (
     <>
-      <BlockNumber number={value} />
-      &nbsp;
-      {value > 0 && (
-        <Link to={`/block/${+value - 1}`}>
-          <FormPreviousLink size="small" color="brand" />
+      <StyledBox
+        direction={"row"}
+        background={isNewAddress ? "backgroundSuccess" : ""}
+        style={{ maxWidth: "125px" }}
+        align={"center"}
+      >
+        <CopyBtn
+          value={value}
+          onClick={() =>
+            toaster.show({
+              message: () => (
+                <Box direction={"row"} align={"center"} pad={"small"}>
+                  <Icon size={"small"} color={"headerText"} />
+                  <Text size={"small"}>Copied to clipboard</Text>
+                </Box>
+              ),
+            })
+          }
+        />
+         &nbsp;
+        <BlockNumber number={value} />
+        &nbsp;
+        {value > 0 && (
+          <Link to={`/block/${+value - 1}`}>
+            <FormPreviousLink size="small" color="brand" />
+          </Link>
+        )}
+        <Link to={`/block/${+value + 1}`}>
+          <FormNextLink size="small" color="brand" />
         </Link>
-      )}
-      <Link to={`/block/${+value + 1}`}>
-        <FormNextLink size="small" color="brand" />
-      </Link>
+      </StyledBox>
     </>
   ),
   transactions: (value: any[]) =>
@@ -188,13 +215,18 @@ export const blockPropertyDisplayValues: any = {
   size: (value: any) => <>{formatNumber(+value)}</>,
 };
 
-export const blockDisplayValues = (block: Block, key: string, value: any) => {
+export const blockDisplayValues = (
+  block: Block,
+  key: string,
+  value: any,
+  isNewAddress: boolean
+) => {
   const f = blockPropertyDisplayValues[key];
 
   let displayValue = value;
 
   if (f) {
-    displayValue = f(value, block);
+    displayValue = f(value, block, isNewAddress);
   } else {
     if (Array.isArray(value)) {
       displayValue = value.join(", ");
@@ -217,7 +249,7 @@ export const blockDisplayValues = (block: Block, key: string, value: any) => {
         key
       ) &&
         !["0x", "0", 0, null].includes(displayValue) &&
-        !["miner"].find((item) => item === key) && (
+        !["miner", "number"].find((item) => item === key) && (
           <>
             <CopyBtn
               value={value}
