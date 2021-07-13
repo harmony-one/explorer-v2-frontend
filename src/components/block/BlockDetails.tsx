@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Block } from "../../types";
 import {
   blockPropertyDisplayNames,
@@ -51,6 +51,18 @@ export const BlockDetails: FunctionComponent<BlockDetailsProps> = ({
   blockNumber,
 }) => {
   const [showDetails, setShowDetails] = useState(true);
+  const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
+
+  useEffect(() => {
+    let tId = 0;
+    const getActiveIndex = () => {
+      setIsNewAddress(true);
+      tId = window.setTimeout(() => setIsNewAddress(false), 1000);
+    };
+    getActiveIndex();
+
+    return () => clearTimeout(tId);
+  }, [block]);
 
   const keys = Object.keys({ ...block, shard: blockNumber });
   const sortedKeys = keys.sort(
@@ -64,7 +76,7 @@ export const BlockDetails: FunctionComponent<BlockDetailsProps> = ({
       key === "shard" ? (
         <Text size={"small"}>{blockNumber}</Text>
       ) : (
-        blockDisplayValues(block, key, (block as any)[key])
+        blockDisplayValues(block, key, (block as any)[key], isNewAddress)
       );
 
     arr.push({ key, value } as tableEntry);
