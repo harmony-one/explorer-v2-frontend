@@ -60,6 +60,17 @@ export function AddressPage() {
         break;
       }
 
+      case "hrc721": {
+        activeTab = 4;
+
+        break;
+      }
+
+      case "hrc721Assets": {
+        activeTab = 5;
+        break;
+      }
+
       default: {
       }
     }
