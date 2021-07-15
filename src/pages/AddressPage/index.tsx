@@ -31,11 +31,49 @@ import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 export function AddressPage() {
   const history = useHistory();
   const tabParamName = "activeTab=";
+  const oldTabParamName = "txType=";
   let activeTab = 0;
   try {
-    activeTab = +history.location.search.slice(
+    const newValue = +history.location.search.slice(
       history.location.search.indexOf("activeTab=") + tabParamName.length
     );
+
+    const oldTxType = history.location.search.slice(
+      history.location.search.indexOf(oldTabParamName) + oldTabParamName.length
+    );
+
+    activeTab = isNaN(newValue) ? 0 : newValue;
+
+    switch (oldTxType) {
+      case "regular": {
+        activeTab = 0;
+        break;
+      }
+
+      case "staking": {
+        activeTab = 1;
+        break;
+      }
+
+      case "hrc20": {
+        activeTab = 3;
+        break;
+      }
+
+      case "hrc721": {
+        activeTab = 4;
+
+        break;
+      }
+
+      case "hrc721Assets": {
+        activeTab = 5;
+        break;
+      }
+
+      default: {
+      }
+    }
   } catch {
     activeTab = 0;
   }
@@ -54,7 +92,7 @@ export function AddressPage() {
   //TODO remove hardcode
   // @ts-ignore
   let { id } = useParams();
-  id = `${id}`.toLowerCase()
+  id = `${id}`.toLowerCase();
   id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
 
   const erc20Token = erc20Map[id] || null;

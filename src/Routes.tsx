@@ -55,7 +55,7 @@ export function Routes() {
           <StakingTransactionPage />
         </Route>
 
-        <Route path="/address/:id">
+        <Route exact path="/address/:id">
           <AddressPage />
         </Route>
 
