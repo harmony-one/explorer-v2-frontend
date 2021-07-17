@@ -14,7 +14,7 @@ export const Timestamp = (props: TimestampProps) => {
   return (
     <span>
       <Clock size="small" />
-      &nbsp;{dayjs(timestamp).format("YYYY-MM-DD, HH:mm:ss")}
+      &nbsp;{dayjs(timestamp).format("YYYY-MM-DD, HH:mm:ss").toString()}
       {withRelative && <span>, <RelativeTimer date={timestamp} /></span>}
     </span>
   );
