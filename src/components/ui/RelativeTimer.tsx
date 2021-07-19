@@ -52,9 +52,14 @@ interface IRelativeTimer {
 
 export function RelativeTimer(props: IRelativeTimer) {
   const { date, render, updateInterval = 1000, style } = props;
+
+  const now = dayjs(new Date());
+  const formatedDate = dayjs(date).format("MM/DD/YYYY, HH:mm:ss");
+  const needFormated = now.diff(dayjs(date)) > 86400000;
+
   useEffect(() => {
     const getTimeOffset = () => {
-      setFormattedValue(dayjs(date).format("MM/DD/YYYY, HH:mm:ss"));
+      setFormattedValue(needFormated ? formatedDate : dayjs().to(dayjs(date))); 
     };
     getTimeOffset();
     const tId = window.setInterval(getTimeOffset, updateInterval);
@@ -66,7 +71,7 @@ export function RelativeTimer(props: IRelativeTimer) {
 
   const [formattedValue, setFormattedValue] = useState("");
 
-  if(!date) {
+  if (!date) {
     return null;
   }
 
@@ -79,6 +84,7 @@ export function RelativeTimer(props: IRelativeTimer) {
       size="small"
       style={{ minWidth: "125px", ...style }}
       color="minorText"
+      title={formatedDate}
     >
       {formattedValue}
     </Text>
