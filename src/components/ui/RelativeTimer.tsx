@@ -59,7 +59,7 @@ export function RelativeTimer(props: IRelativeTimer) {
 
   useEffect(() => {
     const getTimeOffset = () => {
-      setFormattedValue(needFormated ? formatedDate : dayjs().to(dayjs(date)));
+      setFormattedValue(needFormated ? formatedDate : dayjs().to(dayjs(date))); 
     };
     getTimeOffset();
     const tId = window.setInterval(getTimeOffset, updateInterval);
