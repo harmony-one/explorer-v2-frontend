@@ -122,11 +122,10 @@ function getColumns(props: any) {
       ),
     },
     {
-      property: "timestamp",
-      size: "280px",
+      property: "timestamp", 
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small" style={{ fontWeight: 300, width: '180px' }}>
           Timestamp
         </Text>
       ),
