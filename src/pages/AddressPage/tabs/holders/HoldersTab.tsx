@@ -3,10 +3,13 @@ import React, { useEffect, useState } from "react";
 import { getERC20TokenHolders } from "src/api/client";
 import { IHoldersInfo, IUserERC721Assets } from "src/api/client.interface";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
-import { Address } from "src/components/ui";
+import { Address, TokenValue } from "src/components/ui";
+import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
+import { useERC20Pool } from "src/hooks/ERC20_Pool";
+import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { Filter } from "src/types";
 
-const getColumns = (): ColumnConfig<IHoldersInfo>[] => {
+const getColumns = (id: string): ColumnConfig<IHoldersInfo>[] => {
   return [
     {
       property: "ownerAddres",
@@ -34,20 +37,7 @@ const getColumns = (): ColumnConfig<IHoldersInfo>[] => {
       ),
       render: (data) => (
         <Text size="small" style={{ width: "140px" }}>
-          {data.balance}
-        </Text>
-      ),
-    },
-    {
-      property: "Updated",
-      header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
-          Updated
-        </Text>
-      ),
-      render: (data) => (
-        <Text size="12px">
-          {data.lastUpdateBlockNumber ? data.lastUpdateBlockNumber : "—"}
+          <TokenValue value={data.balance} tokenAddress={id} />
         </Text>
       ),
     },
@@ -59,6 +49,15 @@ export function HoldersTab(props: {
   type: "erc20" | "erc721" | "erc1155";
   inventory?: IUserERC721Assets[];
 }) {
+  const erc20Map = useERC20Pool();
+  const erc721Map = useERC721Pool();
+  const erc1155Map = useERC1155Pool();
+
+  const holdersTotal =
+    erc20Map[props.id]?.holders ||
+    erc721Map[props.id]?.holders ||
+    erc1155Map[props.id]?.holders;
+
   const limitValue = localStorage.getItem("tableLimitValue");
 
   const initFilter: Partial<Filter> = {
@@ -128,14 +127,17 @@ export function HoldersTab(props: {
   return (
     <Box style={{ padding: "10px" }}>
       <TransactionsTable
-        columns={getColumns()}
+        columns={getColumns(props.id)}
         filter={filter}
+        hideCounter={false}
         setFilter={setFilter}
         limit={filter.limit || 10}
         data={holders}
-        totalElements={filter.limit || 10}
+        totalElements={+holdersTotal}
         noScrollTop
         minWidth="1266px"
+        showPages={true}
+        textType={'holder'}
       />
     </Box>
   );
