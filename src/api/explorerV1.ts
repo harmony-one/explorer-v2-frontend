@@ -12,6 +12,7 @@ export interface IVerifyContractData {
   contractName: string;
   statusText: string;
   isLoading: boolean;
+  argsLoading: boolean;
   error: string;
 }
 
