@@ -9,7 +9,10 @@ import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { Filter } from "src/types";
 
-const getColumns = (id: string): ColumnConfig<IHoldersInfo>[] => {
+const getColumns = (
+  id: string,
+  type: "erc20" | "erc721" | "erc1155"
+): ColumnConfig<IHoldersInfo>[] => {
   return [
     {
       property: "ownerAddres",
@@ -31,7 +34,13 @@ const getColumns = (id: string): ColumnConfig<IHoldersInfo>[] => {
           Balance
         </Text>
       ),
-      render: (data) => <TokenValue value={data.balance} tokenAddress={id} />,
+      render: (data) => {
+        return type === "erc1155" ? (
+          <>{data.balance}</>
+        ) : (
+          <TokenValue value={data.balance} tokenAddress={id} />
+        );
+      },
     },
   ];
 };
@@ -119,7 +128,7 @@ export function HoldersTab(props: {
   return (
     <Box style={{ padding: "10px" }}>
       <TransactionsTable
-        columns={getColumns(props.id)}
+        columns={getColumns(props.id, props.type)}
         filter={filter}
         hideCounter={false}
         setFilter={setFilter}
