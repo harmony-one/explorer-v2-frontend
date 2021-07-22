@@ -18,10 +18,10 @@ import { CircleQuestion } from "grommet-icons";
 import styled from "styled-components";
 
 export const StyledBox = styled(Box)`
-  transition: all .2s linear;
+  transition: all 0.2s linear;
   border-radius: 2px;
   padding-left: 5px;
-`
+`;
 interface AddressDetailsProps {
   address: string;
   contracts: AddressDetails | null;

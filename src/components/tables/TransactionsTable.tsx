@@ -162,6 +162,8 @@ interface TransactionTableProps {
   noScrollTop?: boolean;
   step?: number;
   primaryKey?: string;
+  showPages?: boolean
+  textType?: string
 }
 
 export function TransactionsTable(props: TransactionTableProps) {
@@ -181,6 +183,8 @@ export function TransactionsTable(props: TransactionTableProps) {
     hideCounter,
     noScrollTop,
     minWidth = "1310px",
+    showPages = false,
+    textType = 'transcation'
   } = props;
 
   const _IsLoading = isLoading;
@@ -201,7 +205,7 @@ export function TransactionsTable(props: TransactionTableProps) {
       >
         {!hideCounter ? (
           <Text style={{ flex: "1 1 100%" }}>
-            <b>{Math.min(limit, data.length)}</b> transaction
+            <b>{Math.min(limit, data.length)}</b> {textType}
             {data.length !== 1 ? "s" : ""} shown
           </Text>
         ) : (
@@ -216,6 +220,7 @@ export function TransactionsTable(props: TransactionTableProps) {
             elements={data}
             noScrollTop={noScrollTop}
             property="block_number"
+            showPages={showPages}
           />
         )}
       </Box>
