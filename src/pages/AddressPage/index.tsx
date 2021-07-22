@@ -9,6 +9,8 @@ import {
   getTokenERC721Assets,
   getTokenERC1155Assets,
   getUserERC1155Balances,
+  getERC20TokenHolders,
+  getTokenERC1155Balances,
 } from "src/api/client";
 import { useHistory, useParams } from "react-router-dom";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
@@ -27,6 +29,7 @@ import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
+import { HoldersTab } from "./tabs/holders/HoldersTab";
 
 export function AddressPage() {
   const history = useHistory();
@@ -81,8 +84,12 @@ export function AddressPage() {
   const [contracts, setContracts] = useState<AddressDetails | null>(null);
   const [sourceCode, setSourceCode] = useState<ISourceCode | null>(null);
   const [balance, setBalance] = useState<any>([]);
+
   const [tokens, setTokens] = useState<any>(null);
   const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
+  const [inventoryHolders, setInventoryForHolders] = useState<
+    IUserERC721Assets[]
+  >([]);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
@@ -172,6 +179,14 @@ export function AddressPage() {
                   }
                   return item;
                 });
+
+          let inventoryHolders1155 = [] as any[];
+
+          if (type === "erc1155") {
+            inventoryHolders1155 = await getTokenERC1155Balances([id]);
+          }
+
+          setInventoryForHolders(inventoryHolders1155);
 
           setInventory(
             inventory
@@ -320,6 +335,18 @@ export function AddressPage() {
           <Tab title={<Text size="small">NFT Transfers</Text>}>
             <Transactions type={"erc721"} />
           </Tab>
+
+          {type === "erc721" || type === "erc1155" || type === "erc20" ? (
+            <Tab title={<Text size="small">Holders</Text>}>
+              <HoldersTab
+                id={id}
+                type={type}
+                inventory={
+                  inventoryHolders.length ? inventoryHolders : inventory
+                }
+              />
+            </Tab>
+          ) : null}
 
           {(type === "erc721" || type === "erc1155") && inventory.length ? (
             <Tab
