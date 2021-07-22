@@ -10,7 +10,7 @@ import { AbiItem } from "web3-utils";
 import { Wallet } from "./ConnectWallets";
 
 const StyledTextArea = styled(TextArea)`
-  padding: 0.75rem; 
+  padding: 0.75rem;
   border-radius: 0.35rem;
   font-weight: normal;
 `;
@@ -33,7 +33,12 @@ export const ContractDetails = (props: {
   }
 
   if (!!props.contracts) {
-    return <NoVerifiedContractDetails contracts={props.contracts} />;
+    return (
+      <NoVerifiedContractDetails
+        contracts={props.contracts}
+        address={props.address}
+      />
+    );
   }
 
   return null;
@@ -62,6 +67,7 @@ export const AbiMethods = (props: {
 
 export const NoVerifiedContractDetails = (props: {
   contracts: AddressDetails;
+  address: string;
 }) => {
   const history = useHistory();
 
@@ -73,7 +79,9 @@ export const NoVerifiedContractDetails = (props: {
           <Text
             size="small"
             style={{ cursor: "pointer" }}
-            onClick={() => history.push(`/verifycontract`)}
+            onClick={() =>
+              history.push(`/verifycontract?address=${props.address}`)
+            }
             color="brand"
           >
             Verify and Publish
@@ -124,11 +132,8 @@ const TabButton = (props: {
   selected: boolean;
 }) => {
   return (
-    <TabBox
-      onClick={props.onClick}
-      selected={props.selected} 
-    >
-      <Text size="small" color={'minorText'}>
+    <TabBox onClick={props.onClick} selected={props.selected}>
+      <Text size="small" color={"minorText"}>
         {props.text}
       </Text>
     </TabBox>
@@ -196,6 +201,16 @@ export const VerifiedContractDetails = (props: {
                   </StyledTextArea>
                 }
               />
+              {props.sourceCode.constructorArguments ? (
+                <Item
+                  label="Constructor Arguments (ABI-encoded)"
+                  value={
+                    <StyledTextArea readOnly={true} rows={4} cols={100}>
+                      {props.sourceCode.constructorArguments || ""}
+                    </StyledTextArea>
+                  }
+                />
+              ) : null}
               {props.contracts ? (
                 <Item
                   label="Bytecode"

@@ -142,7 +142,7 @@ export function AddressPage() {
   useEffect(() => {
     // if (!!contracts) {
     loadSourceCode(oneAddress)
-      .then(setSourceCode)
+      .then((res) => setSourceCode(res))
       .catch(() => setSourceCode(null));
     // }
   }, [oneAddress]);

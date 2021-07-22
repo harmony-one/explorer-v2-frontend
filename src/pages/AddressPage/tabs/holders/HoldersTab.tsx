@@ -36,8 +36,8 @@ const getColumns = (id: string): ColumnConfig<IHoldersInfo>[] => {
         </Text>
       ),
       render: (data) => (
-        <Text size="small" style={{ width: "140px" }}>
-          <TokenValue value={data.balance} tokenAddress={id} />
+        <Text size="small" style={{ width: "140px" }}> 
+          <TokenValue value={data.balance} tokenAddress={id} /> 
         </Text>
       ),
     },
@@ -49,6 +49,7 @@ export function HoldersTab(props: {
   type: "erc20" | "erc721" | "erc1155";
   inventory?: IUserERC721Assets[];
 }) {
+
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
@@ -57,7 +58,7 @@ export function HoldersTab(props: {
     erc20Map[props.id]?.holders ||
     erc721Map[props.id]?.holders ||
     erc1155Map[props.id]?.holders;
-
+ 
   const limitValue = localStorage.getItem("tableLimitValue");
 
   const initFilter: Partial<Filter> = {
@@ -137,7 +138,7 @@ export function HoldersTab(props: {
         noScrollTop
         minWidth="1266px"
         showPages={true}
-        textType={'holder'}
+        textType={'holder'} 
       />
     </Box>
   );
