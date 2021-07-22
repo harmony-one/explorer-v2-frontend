@@ -11,7 +11,7 @@ export interface IUserERC721Assets {
     image: string;
     license: string;
     name: string;
-    type?: string
+    type?: string;
     youtube_url?: string;
     symbol?: string;
     external_link?: string;
@@ -21,7 +21,7 @@ export interface IUserERC721Assets {
   tokenAddress: string;
   tokenID: string;
   tokenURI: string;
-  type?: string
+  type?: string;
 }
 
 export type TRelatedTransaction =
@@ -54,4 +54,12 @@ export interface IPairPrice {
   symbol: string;
   volume: string;
   weightedAvgPrice: string;
+}
+
+export interface IHoldersInfo {
+  balance: string | number;
+  lastUpdateBlockNumber: string | number | null;
+  needUpdate: boolean;
+  ownerAddress: string;
+  tokenAddress: string;
 }

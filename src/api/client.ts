@@ -7,6 +7,7 @@ import {
   RelatedTransaction,
 } from "src/types";
 import {
+  IHoldersInfo,
   IPairPrice,
   IUserERC721Assets,
   TRelatedTransaction,
@@ -143,6 +144,19 @@ export function getUserERC1155Balances(params: [string]) {
   >;
 }
 
+export function getTokenERC1155Balances(params: [string]) {
+  return transport("getTokenERC1155Balances", params) as Promise<
+  {
+    tokenID: string;
+    ownerAddress: string;
+    tokenAddress: string;
+    amount: string;
+    needUpdate: boolean;
+    lastUpdateBlockNumber: number | null;
+  }[]
+>;
+}
+
 export function getRelatedTransactionsByType(
   params: [0, string, TRelatedTransaction, any]
 ) {
@@ -163,4 +177,8 @@ export function getBinancePairPrice(params: [string]) {
 
 export function getBinancePairHistoricalPrice(params: [string]) {
   return transport("getBinancePairHistoricalPrice", params) as Promise<any[]>;
+}
+
+export function getERC20TokenHolders(params: [string, number, number]) {
+  return transport("getERC20TokenHolders", params) as Promise<IHoldersInfo[]>;
 }

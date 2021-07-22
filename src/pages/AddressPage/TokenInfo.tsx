@@ -108,7 +108,6 @@ export function TokensInfo(props: { value: Token[] }) {
             history.push(`/address/${item.tokenAddress}`);
           }}
           renderItem={(item) => {
-            console.log(item);
             const symbol =
               erc20Map[item.tokenAddress]?.symbol ||
               erc721Map[item.tokenAddress]?.symbol ||
@@ -126,7 +125,7 @@ export function TokensInfo(props: { value: Token[] }) {
                 }}
               >
                 <Box direction={"row"}>
-                  <Box style={{ flex: "1 1 50%" }} direction={'row'}>
+                  <Box style={{ flex: "1 1 50%" }} direction={"row"}>
                     <Address
                       address={item.tokenAddress}
                       style={{ flex: "1 1 50%" }}
@@ -172,7 +171,7 @@ export function TokensInfo(props: { value: Token[] }) {
                   <Box
                     background={"backgroundBack"}
                     style={{
-                      width: "20px",
+                      minWidth: "20px",
                       height: "20px",
                       marginLeft: "5px",
                       textAlign: "center",
@@ -189,7 +188,7 @@ export function TokensInfo(props: { value: Token[] }) {
                   <Box
                     background={"backgroundBack"}
                     style={{
-                      width: "20px",
+                      minWidth: "20px",
                       height: "20px",
                       marginLeft: "5px",
                       textAlign: "center",
@@ -206,7 +205,7 @@ export function TokensInfo(props: { value: Token[] }) {
                   <Box
                     background={"backgroundBack"}
                     style={{
-                      width: "20px",
+                      minWidth: "20px",
                       height: "20px",
                       marginLeft: "5px",
                       textAlign: "center",
