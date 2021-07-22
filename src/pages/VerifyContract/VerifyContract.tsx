@@ -200,6 +200,21 @@ class VerifyContractBase extends React.Component<
             </Field>
 
             <Field margin={"small"}>
+              <Text>Constructor Arguments (ABI-encoded)</Text>
+              <TextArea
+                style={{ minHeight: "80px", height: "80px" }}
+                onChange={(evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  this.setState({
+                    ...this.state,
+                    constructorArguments: evt.currentTarget.value,
+                  });
+                }}
+                disabled={isLoading}
+                value={this.state.constructorArguments}
+              />
+            </Field>
+
+            <Field margin={"small"}>
               <Text>Contract Library Address</Text>
               <Button
                 onClick={() => {

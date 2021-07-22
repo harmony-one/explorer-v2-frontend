@@ -201,6 +201,16 @@ export const VerifiedContractDetails = (props: {
                   </StyledTextArea>
                 }
               />
+              {props.sourceCode.constructorArguments ? (
+                <Item
+                  label="Constructor Arguments (ABI-encoded)"
+                  value={
+                    <StyledTextArea readOnly={true} rows={4} cols={100}>
+                      {props.sourceCode.constructorArguments || ""}
+                    </StyledTextArea>
+                  }
+                />
+              ) : null}
               {props.contracts ? (
                 <Item
                   label="Bytecode"
