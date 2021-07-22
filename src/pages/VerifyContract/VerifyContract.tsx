@@ -13,6 +13,10 @@ import styled from "styled-components";
 import { IVerifyContractData, verifyContractCode } from "src/api/explorerV1";
 import { CircleAlert, StatusGood, SubtractCircle } from "grommet-icons";
 import { toaster } from "src/App";
+import { breakpoints } from "../../Responive/breakpoints";
+import { useMediaQuery } from "react-responsive";
+import { useHistory } from "react-router";
+import { getQueryVariable } from "../../utils";
 
 const Field = styled(Box)``;
 
@@ -31,15 +35,16 @@ export function uniqid(prefix = "", random = false) {
   }`;
 }
 
-export class VerifyContract extends React.Component<
+class VerifyContractBase extends React.Component<
   {
     isLessTablet: boolean;
+    address?: string;
   },
   IVerifyContractData
 > {
   public state: IVerifyContractData = {
     chainType: "mainnet",
-    contractAddress: "",
+    contractAddress: this.props.address || "",
     compiler: "",
     optimizer: "No",
     optimizerTimes: "",
@@ -49,10 +54,17 @@ export class VerifyContract extends React.Component<
     contractName: "",
     isLoading: false,
     statusText: "",
+    error: "",
   };
 
   onClickSubmitBtn = async () => {
-    this.setState({ ...this.state, isLoading: true, statusText: "Pending..." });
+    this.setState({
+      ...this.state,
+      isLoading: true,
+      statusText: "Pending...",
+      error: "",
+    });
+
     const { isLoading, statusText, ...state } = this.state;
 
     try {
@@ -61,13 +73,17 @@ export class VerifyContract extends React.Component<
         libraries: this.state.libraries.map((i) => i.value),
       });
 
-      if (res === true) {
+      if (res.success === true) {
         this.setState({ ...this.state, statusText: "Success" });
       } else {
-        this.setState({ ...this.state, statusText: "Error" });
+        this.setState({ ...this.state, statusText: "", error: "Error" });
       }
-    } catch {
-      this.setState({ ...this.state, statusText: "Error" });
+    } catch (e) {
+      this.setState({
+        ...this.state,
+        statusText: "",
+        error: e?.message || "Error",
+      });
     } finally {
       this.setState({ ...this.state, isLoading: false });
     }
@@ -95,6 +111,7 @@ export class VerifyContract extends React.Component<
                       contractAddress: evt.currentTarget.value,
                     });
                   }}
+                  value={this.state.contractAddress}
                   disabled={isLoading}
                 />
               </Field>
@@ -179,6 +196,21 @@ export class VerifyContract extends React.Component<
                   });
                 }}
                 disabled={isLoading}
+              />
+            </Field>
+
+            <Field margin={"small"}>
+              <Text>Constructor Arguments (ABI-encoded)</Text>
+              <TextArea
+                style={{ minHeight: "80px", height: "80px" }}
+                onChange={(evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  this.setState({
+                    ...this.state,
+                    constructorArguments: evt.currentTarget.value,
+                  });
+                }}
+                disabled={isLoading}
+                value={this.state.constructorArguments}
               />
             </Field>
 
@@ -270,6 +302,18 @@ export class VerifyContract extends React.Component<
               >
                 <Text>{this.state.statusText}</Text>
               </Box>
+              {this.state.error && (
+                <Box
+                  align={"center"}
+                  justify={"center"}
+                  width={"100%"}
+                  style={{ marginTop: "10px" }}
+                >
+                  <Text style={{ overflowWrap: "anywhere" }} color="red">
+                    {this.state.error}
+                  </Text>
+                </Box>
+              )}
             </Field>
           </Wrapper>
         </BasePage>
@@ -277,3 +321,14 @@ export class VerifyContract extends React.Component<
     );
   }
 }
+
+export const VerifyContract = () => {
+  const isLessTablet = useMediaQuery({ maxDeviceWidth: breakpoints.tablet });
+  const history = useHistory();
+  const address = getQueryVariable(
+    "address",
+    history.location.search.substring(1)
+  );
+
+  return <VerifyContractBase isLessTablet={isLessTablet} address={address} />;
+};
