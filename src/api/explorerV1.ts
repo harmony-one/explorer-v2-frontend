@@ -29,7 +29,7 @@ export interface IVerifyContractDataSendData {
 
 export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
   const response = await fetch(
-    `${process.env.VERIFICATION_API_URL}codeVerification`,
+    `${process.env.REACT_APP_EXPLORER_V1_API_URL}codeVerification`,
     {
       method: "POST",
       mode: "cors",
@@ -55,7 +55,7 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
 
 export const loadSourceCode = async (address: string): Promise<ISourceCode> => {
   const response = await fetch(
-    `${process.env.VERIFICATION_API_URL}fetchContractCode?contractAddress=${address}`,
+    `${process.env.REACT_APP_EXPLORER_V1_API_URL}fetchContractCode?contractAddress=${address}`,
     {
       mode: "cors",
       cache: "no-cache",
