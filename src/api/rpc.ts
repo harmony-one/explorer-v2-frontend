@@ -23,6 +23,7 @@ export const getBalance = (params: [string, "latest"]) => {
   });
 };
 
+
 export const hmyv2_getTransactionReceipt = (
   params: [string],
   shardNumber: number
@@ -39,7 +40,7 @@ export const hmyv2_getTransactionReceipt = (
         params,
       }),
     }
-  );
+  ); 
 };
 
 export const getAllBalance = (params: [string, "latest"]) => {
