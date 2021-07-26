@@ -5,9 +5,9 @@ export const rpcAdapter = <T = any>(...args: Parameters<typeof fetch>) => {
    * wrapper for fetch. for some middleware in future requests
    */
 
-  return (fetch
+  return fetch
     .apply(window, args)
-    .then((res) => res.json()) as unknown) as Promise<T>;
+    .then((res) => res.json()) as unknown as Promise<T>;
 };
 
 export const getBalance = (params: [string, "latest"]) => {
@@ -23,17 +23,23 @@ export const getBalance = (params: [string, "latest"]) => {
   });
 };
 
-export const hmyv2_getTransactionReceipt = (params: [string]) => {
-  return rpcAdapter<TRPCResponse<{logs: [{data: string}]}>>("https://api.s0.t.hmny.io/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      method: "hmyv2_getTransactionReceipt",
-      id: 1,
-      params,
-    }),
-  });
+export const hmyv2_getTransactionReceipt = (
+  params: [string],
+  shardNumber: number
+) => {
+  return rpcAdapter<TRPCResponse<{ logs: [{ data: string }] }>>(
+    process.env[`REACT_APP_RPC_URL_SHARD${shardNumber}`] as string,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "hmyv2_getTransactionReceipt",
+        id: 1,
+        params,
+      }),
+    }
+  );
 };
 
 export const getAllBalance = (params: [string, "latest"]) => {
