@@ -146,15 +146,15 @@ export function getUserERC1155Balances(params: [string]) {
 
 export function getTokenERC1155Balances(params: [string]) {
   return transport("getTokenERC1155Balances", params) as Promise<
-  {
-    tokenID: string;
-    ownerAddress: string;
-    tokenAddress: string;
-    amount: string;
-    needUpdate: boolean;
-    lastUpdateBlockNumber: number | null;
-  }[]
->;
+    {
+      tokenID: string;
+      ownerAddress: string;
+      tokenAddress: string;
+      amount: string;
+      needUpdate: boolean;
+      lastUpdateBlockNumber: number | null;
+    }[]
+  >;
 }
 
 export function getRelatedTransactionsByType(

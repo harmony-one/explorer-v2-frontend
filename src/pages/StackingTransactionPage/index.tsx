@@ -8,6 +8,7 @@ import { getStakingTransactionByField } from "src/api/client";
 import { TransactionDetails } from "src/components/transaction/TransactionDetails";
 import { StakingTransactionType } from "src/types";
 import { TransactionSubType } from "src/components/transaction/helpers";
+import { hmyv2_getTransactionReceipt } from "src/api/rpc";
 
 export const StakingTransactionPage = () => {
   // @ts-ignore
@@ -19,6 +20,14 @@ export const StakingTransactionPage = () => {
       let tx;
       if (id.length === 66) {
         tx = await getStakingTransactionByField([0, "hash", id]);
+
+        if (tx.type === "CollectRewards" && tx.amount === null) {
+          try {
+            tx.amount = await (
+              await hmyv2_getTransactionReceipt([id])
+            ).result.logs[0].data;
+          } catch {}
+        }
       }
       setTx(tx as RPCStakingTransactionHarmony);
     };
