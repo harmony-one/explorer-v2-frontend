@@ -15,16 +15,36 @@ export const StakingTransactionPage = () => {
   const { id } = useParams();
   const [tx, setTx] = useState<RPCStakingTransactionHarmony | null>(null);
 
+  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
+    .split(",")
+    .map((t) => +t);
+
   useEffect(() => {
     const exec = async () => {
       let tx;
+      let shardNumber = 0;
       if (id.length === 66) {
         tx = await getStakingTransactionByField([0, "hash", id]);
+
+        if (!tx && availableShards.find((i) => i === 1)) {
+          shardNumber = 1;
+          tx = await getStakingTransactionByField([1, "hash", id]);
+        }
+
+        if (!tx && availableShards.find((i) => i === 2)) {
+          shardNumber = 2;
+          tx = await getStakingTransactionByField([2, "hash", id]);
+        }
+
+        if (!tx && availableShards.find((i) => i === 3)) {
+          shardNumber = 3;
+          tx = await getStakingTransactionByField([3, "hash", id]);
+        }
 
         if (tx.type === "CollectRewards" && tx.amount === null) {
           try {
             tx.amount = await (
-              await hmyv2_getTransactionReceipt([id])
+              await hmyv2_getTransactionReceipt([id], shardNumber)
             ).result.logs[0].data;
           } catch {}
         }
