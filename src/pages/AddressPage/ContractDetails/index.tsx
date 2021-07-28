@@ -148,6 +148,12 @@ export const VerifiedContractDetails = (props: {
   const [tab, setTab] = useState<V_TABS>(V_TABS.CODE);
   const [metamaskAddress, setMetamask] = useState("");
 
+  let abiString = "";
+
+  try {
+    abiString = JSON.stringify(props.sourceCode.abi, null, 4);
+  } catch {}
+
   return (
     <Box direction="column">
       <Box direction="row" align="center" margin={{ top: "medium" }}>
@@ -198,6 +204,14 @@ export const VerifiedContractDetails = (props: {
                 value={
                   <StyledTextArea readOnly={true} rows={15} cols={100}>
                     {props.sourceCode.sourceCode || ""}
+                  </StyledTextArea>
+                }
+              />
+              <Item
+                label="ABI"
+                value={
+                  <StyledTextArea readOnly={true} rows={15} cols={100}>
+                    {abiString || ""}
                   </StyledTextArea>
                 }
               />
