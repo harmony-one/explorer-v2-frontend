@@ -82,8 +82,8 @@ export const Wallet = (params: {
         ) : (
           <Box direction={"column"}>
             <Text size="small" color="errorText">
-              Current networkID not valid. Make sure that you account setup on
-              Harmony {isMainNet ? "Mainnet" : "Testnet"} networkID
+              Selected Metamask wallet network is unsupported. Please switch
+              network to Harmony {isMainNet ? "Mainnet" : "Testnet"}
             </Text>
             <ActionButton
               style={{ width: "250px" }}
