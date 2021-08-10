@@ -53,6 +53,8 @@ export const AbiMethodsView = (props: {
   address: string;
   metamaskAddress?: string;
   index: number;
+  isRead?: boolean;
+  validChainId?: boolean;
 }) => {
   const { abiMethod, address, index } = props;
   const [inputsValue, setInputsValue] = useState<string[]>(
@@ -72,7 +74,9 @@ export const AbiMethodsView = (props: {
       // @ts-ignore
       const web3 = window.web3;
 
-      const web3URL = web3
+      const web3URL = props.isRead
+        ? process.env.REACT_APP_RPC_URL_SHARD0
+        : web3
         ? web3.currentProvider
         : process.env.REACT_APP_RPC_URL_SHARD0;
 
@@ -115,7 +119,8 @@ export const AbiMethodsView = (props: {
   useEffect(() => {
     if (
       abiMethod.stateMutability !== "payable" &&
-      (!abiMethod.inputs || !abiMethod.inputs.length)
+      (!abiMethod.inputs || !abiMethod.inputs.length) &&
+      props.isRead
     ) {
       query();
     }
@@ -179,7 +184,10 @@ export const AbiMethodsView = (props: {
             ) : abiMethod.stateMutability === "view" ? (
               <ActionButton onClick={query}>Query</ActionButton>
             ) : (
-              <ActionButton disabled={!props.metamaskAddress} onClick={query}>
+              <ActionButton
+                disabled={!props.metamaskAddress || !props.validChainId}
+                onClick={query}
+              >
                 Write
               </ActionButton>
             )}
