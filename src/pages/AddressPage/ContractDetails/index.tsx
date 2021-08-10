@@ -48,6 +48,8 @@ export const AbiMethods = (props: {
   address: string;
   abi: AbiItem[];
   metamaskAddress?: string;
+  isRead?: boolean;
+  validChainId?: boolean;
 }) => {
   return (
     <Box>
@@ -58,6 +60,8 @@ export const AbiMethods = (props: {
             address={props.address}
             index={idx}
             metamaskAddress={props.metamaskAddress}
+            isRead={props.isRead}
+            validChainId={props.validChainId}
           />
         ) : null
       )}
@@ -147,8 +151,11 @@ export const VerifiedContractDetails = (props: {
 }) => {
   const [tab, setTab] = useState<V_TABS>(V_TABS.CODE);
   const [metamaskAddress, setMetamask] = useState("");
+  const [chainId, setChainId] = useState(0);
 
   let abiString = "";
+
+  const validChainId = chainId === 1666600000 || chainId === 1666700000;
 
   try {
     abiString = JSON.stringify(props.sourceCode.abi, null, 4);
@@ -241,7 +248,7 @@ export const VerifiedContractDetails = (props: {
       ) : null}
       {tab === V_TABS.WRITE && props.sourceCode.abi ? (
         <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
-          <Wallet onSetMetamask={setMetamask} />
+          <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
           <AbiMethods
             abi={props.sourceCode.abi.filter(
               (a) =>
@@ -251,6 +258,7 @@ export const VerifiedContractDetails = (props: {
             )}
             address={props.address}
             metamaskAddress={metamaskAddress}
+            validChainId={validChainId}
           />
         </Box>
       ) : null}
@@ -262,6 +270,7 @@ export const VerifiedContractDetails = (props: {
               (a) => a.stateMutability === "view" && a.type === "function"
             )}
             address={props.address}
+            isRead={V_TABS.READ === tab}
           />
         </Box>
       ) : null}
