@@ -70,9 +70,12 @@ export const Wallet = (params: {
     });
   }, []);
 
-  const validChainId = chainId === 1666600000 || chainId === 1666700000;
   const isMainNet =
     process.env.REACT_APP_RPC_URL_SHARD0 === "https://api.s0.t.hmny.io/";
+
+  const validChainId = isMainNet
+    ? chainId === 1666600000
+    : chainId === 1666700000;
 
   return (
     <Box margin={{ bottom: "medium" }}>

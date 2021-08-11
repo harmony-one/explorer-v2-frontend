@@ -155,7 +155,12 @@ export const VerifiedContractDetails = (props: {
 
   let abiString = "";
 
-  const validChainId = chainId === 1666600000 || chainId === 1666700000;
+  const isMainNet =
+    process.env.REACT_APP_RPC_URL_SHARD0 === "https://api.s0.t.hmny.io/";
+
+  const validChainId = isMainNet
+    ? chainId === 1666600000
+    : chainId === 1666700000;
 
   try {
     abiString = JSON.stringify(props.sourceCode.abi, null, 4);
