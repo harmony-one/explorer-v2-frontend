@@ -5,6 +5,7 @@ import { Button } from "src/components/ui/Button";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { convertInputs } from "./helpers";
+import { uniqid } from "src/pages/VerifyContract/VerifyContract";
 
 const Field = styled(Box)``;
 
@@ -60,6 +61,10 @@ export const AbiMethodsView = (props: {
   const [inputsValue, setInputsValue] = useState<string[]>(
     [...new Array(abiMethod.inputs?.length)].map(() => "")
   );
+  const [multipleValue, setMultipleValue] = useState({
+    write: {},
+    read: {},
+  } as any);
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState("");
@@ -158,19 +163,109 @@ export const AbiMethodsView = (props: {
           <Box gap="12px">
             {abiMethod.inputs.map((input, idx) => {
               const name = input.name || "<input>";
+              const isArrayValue = input.type.indexOf("[]") >= 0;
+              const tabMethod = props.isRead ? "read" : "write";
+
+              const itemValue = isArrayValue
+                ? multipleValue[tabMethod][idx] || [{ value: "", id: "1" }]
+                : inputsValue[idx];
+
+              const itemType = input.type.slice(0, input.type.indexOf("[]"));
 
               return (
                 <Field gap="5px">
                   <Text size="small">
                     {name} <span>({input.type})</span>
                   </Text>
-                  <SmallTextInput
-                    value={inputsValue[idx]}
-                    placeholder={`${name} (${input.type})`}
-                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-                      setInputValue(evt.currentTarget.value, idx)
-                    }
-                  />
+                  {isArrayValue ? (
+                    <Box direction={"column"}>
+                      {itemValue.map(
+                        (
+                          item: { id: string; value: string },
+                          itemId: number
+                        ) => {
+                          return (
+                            <Box
+                              direction={"row"}
+                              align={"center"}
+                              margin={"small"}
+                            >
+                              <Text style={{ marginRight: "10px" }}>
+                                {itemId}.
+                              </Text>
+                              <SmallTextInput
+                                key={item.id}
+                                value={item.value}
+                                placeholder={`${itemType}`}
+                                onChange={(
+                                  evt: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  itemValue[itemId].value =
+                                    evt.currentTarget.value;
+
+                                  setMultipleValue({
+                                    ...multipleValue,
+                                    [tabMethod]: {
+                                      ...multipleValue[tabMethod],
+                                      [idx]: itemValue,
+                                    },
+                                  });
+
+                                  setInputValue(
+                                    itemValue.map((t: any) => t.value),
+                                    idx
+                                  );
+                                }}
+                              />
+                              {itemValue.length === 1 ? null : (
+                                <ActionButton
+                                  style={{ marginLeft: "10px" }}
+                                  onClick={() => {
+                                    setMultipleValue({
+                                      ...multipleValue,
+                                      [tabMethod]: {
+                                        ...multipleValue[tabMethod],
+                                        [idx]: itemValue.filter(
+                                          (removeItem: any) =>
+                                            removeItem.id !== item.id
+                                        ),
+                                      },
+                                    });
+                                  }}
+                                >
+                                  remove
+                                </ActionButton>
+                              )}
+                            </Box>
+                          );
+                        }
+                      )}
+                      <ActionButton
+                        style={{ marginTop: "10px" }}
+                        onClick={() => {
+                          itemValue.push({ value: "", id: uniqid() });
+
+                          setMultipleValue({
+                            ...multipleValue,
+                            [tabMethod]: {
+                              ...multipleValue[tabMethod],
+                              [idx]: itemValue,
+                            },
+                          });
+                        }}
+                      >
+                        + add one more
+                      </ActionButton>
+                    </Box>
+                  ) : (
+                    <SmallTextInput
+                      value={inputsValue[idx]}
+                      placeholder={`${name} (${input.type})`}
+                      onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
+                        setInputValue(evt.currentTarget.value, idx);
+                      }}
+                    />
+                  )}
                 </Field>
               );
             })}
