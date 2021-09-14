@@ -182,3 +182,9 @@ export function getBinancePairHistoricalPrice(params: [string]) {
 export function getERC20TokenHolders(params: [string, number, number]) {
   return transport("getERC20TokenHolders", params) as Promise<IHoldersInfo[]>;
 }
+
+export async function getTokenERC1155AssetDetails(address: string, tokenID: string) {
+    const res = await transport("getTokenERC1155AssetDetails", [address, tokenID])
+    // todo fix on backend
+    return res && res[0]
+}

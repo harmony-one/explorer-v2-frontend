@@ -122,6 +122,7 @@ class VerifyContractBase extends React.Component<
       this.setState({
         ...this.state,
         statusText: "",
+        // @ts-ignore
         error: e?.message || "Error",
       });
     } finally {

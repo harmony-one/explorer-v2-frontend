@@ -1,5 +1,8 @@
 import React, { FunctionComponent, useState } from "react";
 import { Log, RPCStakingTransactionHarmony } from "src/types";
+import {tokenTransfersERC20} from './tokenTransfer/tokenTransfersERC20'
+// import {tokenTransfersERC721} from './tokenTransfer/tokenTransfersERC721'
+import {TokenTransfersERC1155} from './tokenTransfer/tokenTransfersERC1155'
 
 import {
   transactionPropertyDisplayNames,
@@ -73,61 +76,16 @@ type tableEntry = {
 };
 
 // todo move out to a service to support any custom ABI
-const erc20TransferTopic =
-  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
 const tokenTransfers = (logs: Log[]) => {
-  const erc20Logs = logs.filter((l) => l.topics.includes(erc20TransferTopic));
-  const events = erc20Logs
-    .map((l) =>
-      parseSuggestedEvent("Transfer(address,address,uint256)", l.data, l.topics)
-    )
-    .filter((e) => e && e.parsed);
-
-  if (!events.length) {
-    return <>—</>;
-  }
-
   return (
-    <>
-      {events.map((e: any, index) => {
-        const val = e.parsed["$2"];
-        const address = erc20Logs[index].address;
+  <>
+    {tokenTransfersERC20(logs)}
+    {TokenTransfersERC1155(logs)}
+  </>
+  )
+}
 
-        return (
-          <Box
-            direction={"column"}
-            align={"start"}
-            pad={"xxsmall"}
-            style={{ borderRadius: "6px", marginBottom: "3px" }}
-          >
-            <Box direction={"row"}>
-              <Text size="small" color="minorText">
-                From :&nbsp;
-              </Text>
-              <Address address={e.parsed["$0"].toLowerCase()} />
-              &nbsp;
-              <Text size="small" color="minorText">
-                To :&nbsp;
-              </Text>
-              <Address address={e.parsed["$1"].toLowerCase()} />
-            </Box>
-            <Box align={"center"} direction={"row"}>
-              <Text size="small" color="minorText">
-                Value : &nbsp;
-              </Text>
-              <TokenValueBalanced
-                value={val}
-                tokenAddress={address}
-                direction={"row"}
-              />
-            </Box>
-          </Box>
-        );
-      })}
-    </>
-  );
-};
 
 export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   transaction,

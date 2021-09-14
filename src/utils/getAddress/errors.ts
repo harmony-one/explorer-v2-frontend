@@ -241,6 +241,7 @@ export function checkNormalize(): void {
   } catch (error) {
     throwError('platform missing String.prototype.normalize', UNSUPPORTED_OPERATION, {
       operation: 'String.prototype.normalize',
+      // @ts-ignore
       form: error.message,
     });
   }
