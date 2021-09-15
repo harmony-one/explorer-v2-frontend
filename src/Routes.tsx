@@ -82,6 +82,10 @@ export function Routes() {
         <Route path="/verifycontract">
           <VerifyContract />
         </Route>
+
+        <Route path="*">
+          <Redirect to="/" />
+        </Route>
       </Switch>
     </>
   );
