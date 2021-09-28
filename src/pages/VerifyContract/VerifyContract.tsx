@@ -13,7 +13,7 @@ import styled from "styled-components";
 import { IVerifyContractData, verifyContractCode } from "src/api/explorerV1";
 import { CircleAlert, StatusGood, SubtractCircle } from "grommet-icons";
 import { toaster } from "src/App";
-import { breakpoints } from "../../Responive/breakpoints";
+import { breakpoints } from "../../responsive/breakpoints";
 import { useMediaQuery } from "react-responsive";
 import { useHistory } from "react-router";
 import { getQueryVariable } from "../../utils";
