@@ -22,7 +22,7 @@ export function InternalTransactionList(props: InternalTransactionListProps) {
 
   const initFilter: Filter = {
     offset: 0,
-    limit: limitValue ? +limitValue : 10,
+    limit: limitValue ? +limitValue : 25,
     orderBy: "block_number",
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
