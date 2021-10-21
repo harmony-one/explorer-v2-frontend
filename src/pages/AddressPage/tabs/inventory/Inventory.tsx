@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box } from "grommet";
+import { Box, Spinner } from "grommet";
 
 import { IUserERC721Assets } from "src/api/client.interface";
 import { InventoryItem } from "./InventoryItem";
@@ -19,6 +19,14 @@ export function Inventory(props: IInventoryProps) {
     page * pageSize,
     (page + 1) * pageSize
   );
+
+  if (!!!inventory.length) {
+    return (
+      <Box style={{ height: "700px" }} justify="center" align="center">
+        <Spinner size="large" />
+      </Box>
+    );
+  }
 
   return (
     <Box style={{ padding: "10px" }}>

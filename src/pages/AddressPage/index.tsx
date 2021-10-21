@@ -30,6 +30,7 @@ import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
+import { TextLoader } from "src/components/ui/TextLoader";
 
 export function AddressPage() {
   const history = useHistory();
@@ -348,13 +349,18 @@ export function AddressPage() {
             </Tab>
           ) : null}
 
-          {(type === "erc721" || type === "erc1155") && inventory.length ? (
+          {(type === "erc721" || type === "erc1155") && (
             <Tab
-              title={<Text size="small">Inventory ({inventory.length})</Text>}
+              disabled={!!!inventory.length}
+              title={
+                <TextLoader isLoading={!!!inventory.length} size="small">
+                  Inventory{!!inventory.length ? ` (${inventory.length})`: ''}
+                </TextLoader>
+              }
             >
-              <Inventory inventory={inventory} />
+                <Inventory inventory={inventory} />
             </Tab>
-          ) : null}
+          )}
 
           {!!contracts || !!sourceCode ? (
             <Tab title={<Text size="small">Contract</Text>}>
