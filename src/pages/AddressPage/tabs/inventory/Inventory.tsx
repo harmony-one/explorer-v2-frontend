@@ -20,7 +20,7 @@ export function Inventory(props: IInventoryProps) {
     (page + 1) * pageSize
   );
 
-  if (!!!inventory.length) {
+  if (!inventory.length) {
     return (
       <Box style={{ height: "700px" }} justify="center" align="center">
         <Spinner size="large" />

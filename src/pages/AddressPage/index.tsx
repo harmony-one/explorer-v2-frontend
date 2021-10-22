@@ -351,9 +351,9 @@ export function AddressPage() {
 
           {(type === "erc721" || type === "erc1155") && (
             <Tab
-              disabled={!!!inventory.length}
+              disabled={!inventory.length}
               title={
-                <TextLoader isLoading={!!!inventory.length} size="small">
+                <TextLoader isLoading={!inventory.length} size="small">
                   Inventory{!!inventory.length ? ` (${inventory.length})`: ''}
                 </TextLoader>
               }
