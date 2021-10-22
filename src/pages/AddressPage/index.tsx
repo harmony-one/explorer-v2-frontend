@@ -337,8 +337,11 @@ export function AddressPage() {
             <Transactions type={"erc721"} />
           </Tab>
 
-          {type === "erc721" || type === "erc1155" || type === "erc20" ? (
-            <Tab title={<Text size="small">Holders</Text>}>
+          {(type === "erc721" || type === "erc1155" || type === "erc20") && (
+            <Tab 
+              disabled={type !== "erc20" && !(inventoryHolders.length || inventory.length)}
+              title={<Text size="small">Holders</Text>}
+            >
               <HoldersTab
                 id={id}
                 type={type}
@@ -347,7 +350,7 @@ export function AddressPage() {
                 }
               />
             </Tab>
-          ) : null}
+          )}
 
           {(type === "erc721" || type === "erc1155") && (
             <Tab

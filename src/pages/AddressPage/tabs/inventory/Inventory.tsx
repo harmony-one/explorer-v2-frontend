@@ -1,32 +1,47 @@
 import React, { useState } from "react";
-import { Box, Spinner } from "grommet";
+import { Box, Spinner, Text } from "grommet";
 
 import { IUserERC721Assets } from "src/api/client.interface";
 import { InventoryItem } from "./InventoryItem";
 import { Pagination } from "src/components/pagination/Pagination";
-
+import styled from 'styled-components';
 export interface IInventoryProps {
-  inventory: IUserERC721Assets[];
+  inventory: IUserERC721Assets[] | null;
+  emptyText?: string
 }
+
+const LoaderBox = styled(Box)`
+  height: 700px;
+`;
+
+const EmptyBox = styled(Box)`
+  height: 700px;
+`;
 
 export function Inventory(props: IInventoryProps) {
   const [page, setPage] = useState<number>(0);
+  const { inventory, emptyText = 'No data to display' } = props;
 
-  const { inventory } = props;
+  if (!inventory) {
+    return (
+      <LoaderBox justify="center" align="center">
+        <Spinner size="large" />
+      </LoaderBox>
+    );
+  }
+
+  if (!inventory.length) {
+    <EmptyBox justify="center" align="center">
+      <Text size="small">{emptyText}</Text>
+    </EmptyBox>
+  }
+
   const pageSize = 10;
   const maxPage = Math.ceil(inventory.length / pageSize);
   const renderedInventory = inventory.slice(
     page * pageSize,
     (page + 1) * pageSize
   );
-
-  if (!inventory.length) {
-    return (
-      <Box style={{ height: "700px" }} justify="center" align="center">
-        <Spinner size="large" />
-      </Box>
-    );
-  }
 
   return (
     <Box style={{ padding: "10px" }}>

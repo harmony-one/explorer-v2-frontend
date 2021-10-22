@@ -1,5 +1,7 @@
 import { Box, ColumnConfig, Text } from "grommet";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useWorker } from "@koale/useworker";
+import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getERC20TokenHolders } from "src/api/client";
 import { IHoldersInfo, IUserERC721Assets } from "src/api/client.interface";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
@@ -7,6 +9,7 @@ import { Address, TokenValue } from "src/components/ui";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
+import { getHoldersFromInventory } from "src/utils";
 import { Filter } from "src/types";
 
 const getColumns = (
@@ -61,6 +64,8 @@ export function HoldersTab(props: {
 
   const limitValue = localStorage.getItem("tableLimitValue");
 
+  const [loadHoldersFromInventory] = useWorker(getHoldersFromInventory);
+
   const initFilter: Partial<Filter> = {
     offset: 0,
     limit: limitValue ? +limitValue : 10,
@@ -71,59 +76,49 @@ export function HoldersTab(props: {
   });
 
   const [holders, setHolders] = useState<any>([]);
+  const [holdersInventory, setHoldersInventory] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(props.type !== "erc20");
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
+    const getHoldersInventory = async () => {
+      if (props.inventory) {
+        const holdersData = await loadHoldersFromInventory({
+          inventory: props.inventory
+        })
+        setHoldersInventory(holdersData);
+      }
+    }
+    getHoldersInventory();
+  },[props.inventory]);
+
+  useDeepCompareEffect(() => {
     const getHolders = async () => {
       try {
         let holdersData: IHoldersInfo[] = [];
-
         if (props.type === "erc20") {
+          setIsLoading(true);
           holdersData = await getERC20TokenHolders([
             props.id,
             filter.limit || 10,
             filter.offset,
           ]);
+          setIsLoading(false);
         } else {
-          if (props.inventory) {
-            const existed = {} as any;
-            holdersData = props.inventory
-              .map((item) => {
-                return {
-                  tokenAddress: item.tokenAddress,
-                  ownerAddress: item.ownerAddress || item.tokenID,
-                  tokenID: item.tokenID,
-                  needUpdate: item.needUpdate,
-                  lastUpdateBlockNumber: item.lastUpdateBlockNumber,
-                  balance:
-                    props.inventory?.filter(
-                      (inventory) =>
-                        (inventory.ownerAddress || inventory.tokenID) ===
-                        item.ownerAddress
-                    ).length || 0,
-                };
-              })
-              .filter((item) => {
-                if (existed[item.ownerAddress || item.tokenID]) {
-                  return false;
-                } else {
-                  existed[item.ownerAddress || item.tokenID] = true;
-                  return true;
-                }
-              })
-              .sort((a, b) => b.balance - a.balance)
-              .slice(filter.offset, (filter.limit || 10) + filter.offset);
+          if (holdersInventory.length > 0) {
+            holdersData = holdersInventory.slice(filter.offset, (filter.limit || 10) + filter.offset);
+            setIsLoading(false);
           } else {
             holdersData = [];
           }
         }
-
         setHolders(holdersData);
       } catch (err) {
         setHolders([]);
+        setIsLoading(false);
       }
     };
     getHolders();
-  }, [props.id, filter.limit, filter.offset, props.inventory]);
+  }, [props.id, props.type, filter.limit, filter.offset, holdersInventory]);
 
   return (
     <Box style={{ padding: "10px" }}>
@@ -137,6 +132,7 @@ export function HoldersTab(props: {
         totalElements={+holdersTotal}
         noScrollTop
         minWidth="1266px"
+        isLoading={isLoading}
         showPages={true}
         textType={"holder"}
       />
