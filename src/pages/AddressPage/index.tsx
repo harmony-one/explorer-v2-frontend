@@ -87,7 +87,7 @@ export function AddressPage() {
   const [balance, setBalance] = useState<any>([]);
 
   const [tokens, setTokens] = useState<any>(null);
-  const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
+  const [inventory, setInventory] = useState<IUserERC721Assets[] | null>(null);
   const [inventoryHolders, setInventoryForHolders] = useState<
     IUserERC721Assets[]
   >([]);
@@ -198,7 +198,7 @@ export function AddressPage() {
               })
           );
         } else {
-          setInventory([]);
+          setInventory(null);
         }
       } catch (err) {
         setInventory([]);
@@ -339,7 +339,7 @@ export function AddressPage() {
 
           {(type === "erc721" || type === "erc1155" || type === "erc20") && (
             <Tab 
-              disabled={type !== "erc20" && !(inventoryHolders.length || inventory.length)}
+              disabled={type !== "erc20" && !(inventoryHolders.length || inventory)}
               title={<Text size="small">Holders</Text>}
             >
               <HoldersTab
@@ -354,10 +354,10 @@ export function AddressPage() {
 
           {(type === "erc721" || type === "erc1155") && (
             <Tab
-              disabled={!inventory.length}
+              disabled={!inventory || !inventory.length}
               title={
-                <TextLoader isLoading={!inventory.length} size="small">
-                  Inventory{!!inventory.length ? ` (${inventory.length})`: ''}
+                <TextLoader isLoading={!inventory} size="small">
+                  Inventory{inventory ? ` (${inventory.length})`: ''}
                 </TextLoader>
               }
             >

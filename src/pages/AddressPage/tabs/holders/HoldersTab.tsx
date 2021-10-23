@@ -51,7 +51,7 @@ const getColumns = (
 export function HoldersTab(props: {
   id: string;
   type: "erc20" | "erc721" | "erc1155";
-  inventory?: IUserERC721Assets[];
+  inventory?: IUserERC721Assets[] | null;
 }) {
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
