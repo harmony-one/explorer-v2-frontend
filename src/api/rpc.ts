@@ -23,6 +23,19 @@ export const getBalance = (params: [string, "latest"]) => {
   });
 };
 
+export const getTransactionReceipt = (shard: number, params: [string]) => {
+  return rpcAdapter<TRPCResponse<any>>(`https://api.s${shard}.t.hmny.io/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "hmy_getTransactionReceipt",
+      id: 1,
+      params,
+    }),
+  })
+}
+
 export const getAllBalance = (params: [string, "latest"]) => {
   return Promise.all([
     rpcAdapter<TRPCResponse<string>>(
