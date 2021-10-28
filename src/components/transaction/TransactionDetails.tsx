@@ -155,6 +155,9 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
     transactionFee: (
       <Box justify="center">{CalculateTransactionFee(transaction)}</Box>
     ),
+    gasUsed: (
+      <Box justify="center">{transaction.gas}</Box>
+    ),
     gasPrice: <Box justify="center">{CalculateFee(transaction)}</Box>,
   }; 
 
