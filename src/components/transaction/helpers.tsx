@@ -44,6 +44,7 @@ export const transactionPropertyDisplayNames: Record<string, string> = {
   blockNumber: "Block Number",
   from: "From",
   txnFee: "Txn fee",
+  gasUsed: "Gas Used",
   gasPrice: "Gas Price",
   transactionFee: "Transaction Fee",
   input: "Input",
@@ -90,6 +91,7 @@ export const transactionPropertySort: Record<string, number> = {
   to: 650,
   txnFee: 560,
   transactionFee: 550,
+  gasUsed: 540,
   gasPrice: 500,
   input: 300,
   nonce: 350,
@@ -111,6 +113,7 @@ export const transactionPropertyDescriptions: Record<string, string> = {
   to: "The receiving party of the transaction (could be a contract address).",
   value: "The value being transacted in ONE and fiat value.",
   txnFee: "Transaction fee",
+  transactionFee: "Transaction fee",
   // gas: "The exact units of gas that was used for the transaction.",
   transactionIndex: "Transaction's number in the block",
   gasUsed: "The exact units of gas that was used for the transaction.",
@@ -171,7 +174,8 @@ export const transactionPropertyDisplayValues: any = {
   timestamp: (value: any) => <Timestamp timestamp={value} withRelative />,
   gasUsed: (value: any, tx: RPCTransactionHarmony) => (
     <span>
-      {value} ({+value / +tx.gas}%){" "}
+      {value}
+      {/* {value} ({+value / +tx.gas}%){" "} */}
     </span>
   ),
   shardID: (value: any, tx: RPCTransactionHarmony) => (

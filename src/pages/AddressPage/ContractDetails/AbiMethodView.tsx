@@ -106,7 +106,8 @@ export const AbiMethodsView = (props: {
         setResult(typeof res === "object" ? res.status.toString() : res);
       }
     } catch (e) {
-      setError(e.message);
+      if (e instanceof Error)
+        setError(e.message);
     }
 
     setLoading(false);
