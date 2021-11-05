@@ -12,7 +12,9 @@ export interface IVerifyContractData {
   contractName: string;
   statusText: string;
   isLoading: boolean;
+  argsLoading: boolean;
   error: string;
+  language: number;
 }
 
 export interface IVerifyContractDataSendData {

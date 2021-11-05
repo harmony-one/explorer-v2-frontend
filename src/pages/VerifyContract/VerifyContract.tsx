@@ -16,7 +16,8 @@ import { toaster } from "src/App";
 import { breakpoints } from "../../Responive/breakpoints";
 import { useMediaQuery } from "react-responsive";
 import { useHistory } from "react-router";
-import { getQueryVariable } from "../../utils";
+import { getAddress, getQueryVariable } from "../../utils";
+import { getContractsByField, getTransactionByField } from "../../api/client";
 
 const Field = styled(Box)``;
 
@@ -53,8 +54,48 @@ class VerifyContractBase extends React.Component<
     constructorArguments: "",
     contractName: "",
     isLoading: false,
+    argsLoading: false,
     statusText: "",
     error: "",
+    language: 0
+  };
+
+  getBytecode = async () => {
+    this.setState({ ...this.state, argsLoading: true });
+
+    try {
+      if (this.state.contractAddress) {
+        const address = getAddress(this.state.contractAddress).basicHex;
+
+        const contracts: any = await getContractsByField([
+          0,
+          "address",
+          address,
+        ]);
+
+        if (contracts?.transactionHash) {
+          const trx = await getTransactionByField([
+            0,
+            "hash",
+            contracts.transactionHash,
+          ]);
+
+          if (trx?.input) {
+            const argStart = trx.input.lastIndexOf("0033");
+            if (argStart) {
+              this.setState({
+                ...this.state,
+                constructorArguments: trx.input.slice(argStart + 4),
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    this.setState({ ...this.state, argsLoading: false });
   };
 
   onClickSubmitBtn = async () => {
@@ -110,7 +151,7 @@ class VerifyContractBase extends React.Component<
         <BasePage>
           <Wrapper direction={"column"}>
             <Box direction="row" fill={true} justify="between" wrap>
-              <Field margin={"small"} width={isLessTablet ? "100%" : "47%"}>
+              <Field margin={"small"} width={isLessTablet ? "100%" : "42%"}>
                 <Text>Contract Address</Text>
                 <TextInput
                   placeholder={"ONE contract address"}
@@ -125,7 +166,7 @@ class VerifyContractBase extends React.Component<
                 />
               </Field>
 
-              <Field margin={"small"} width={isLessTablet ? "100%" : "47%"}>
+              <Field margin={"small"} width={isLessTablet ? "100%" : "42%"}>
                 <Text>Contract Name</Text>
                 <TextInput
                   placeholder={"ONE name"}
@@ -137,6 +178,18 @@ class VerifyContractBase extends React.Component<
                   }}
                   disabled={isLoading}
                 />
+              </Field>
+
+              <Field margin={"small"} width={isLessTablet ? "100%" : "10%"}>
+                <Text>Language</Text>
+                <Select
+                    options={["Solidity", "Vyper"]}
+                    value={this.state.language === 0 ? "Solidity" : "Vyper"}
+                    onChange={({ option }) =>
+                      this.setState({ ...this.state, language: option === "Solidity" ? 0 : 1})
+                    }
+                    disabled={isLoading}
+                  />
               </Field>
             </Box>
 
@@ -209,7 +262,24 @@ class VerifyContractBase extends React.Component<
             </Field>
 
             <Field margin={"small"}>
-              <Text>Constructor Arguments (ABI-encoded)</Text>
+              <Box direction="row" justify="between">
+                <Box>
+                  <Text>Constructor Arguments (ABI-encoded)</Text>
+                </Box>
+                {this.state.argsLoading ? (
+                  <Box
+                    style={{ width: "120px" }}
+                    direction="row"
+                    justify="center"
+                  >
+                    <Spinner size={"xsmall"} />
+                  </Box>
+                ) : (
+                  <Box onClick={() => this.getBytecode()}>
+                    <Text color="#00AEE9">paste arguments from tx input</Text>
+                  </Box>
+                )}
+              </Box>
               <TextArea
                 style={{ minHeight: "80px", height: "80px" }}
                 onChange={(evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -218,7 +288,7 @@ class VerifyContractBase extends React.Component<
                     constructorArguments: evt.currentTarget.value,
                   });
                 }}
-                disabled={isLoading}
+                disabled={isLoading || this.state.argsLoading}
                 value={this.state.constructorArguments}
               />
             </Field>
