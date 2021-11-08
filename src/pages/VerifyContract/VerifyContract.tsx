@@ -57,6 +57,45 @@ class VerifyContractBase extends React.Component<
     argsLoading: false,
     statusText: "",
     error: "",
+    language: 0
+  };
+
+  getBytecode = async () => {
+    this.setState({ ...this.state, argsLoading: true });
+
+    try {
+      if (this.state.contractAddress) {
+        const address = getAddress(this.state.contractAddress).basicHex;
+
+        const contracts: any = await getContractsByField([
+          0,
+          "address",
+          address,
+        ]);
+
+        if (contracts?.transactionHash) {
+          const trx = await getTransactionByField([
+            0,
+            "hash",
+            contracts.transactionHash,
+          ]);
+
+          if (trx?.input) {
+            const argStart = trx.input.lastIndexOf("0033");
+            if (argStart) {
+              this.setState({
+                ...this.state,
+                constructorArguments: trx.input.slice(argStart + 4),
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    this.setState({ ...this.state, argsLoading: false });
   };
 
   getBytecode = async () => {
@@ -142,7 +181,7 @@ class VerifyContractBase extends React.Component<
         <BasePage>
           <Wrapper direction={"column"}>
             <Box direction="row" fill={true} justify="between" wrap>
-              <Field margin={"small"} width={isLessTablet ? "100%" : "47%"}>
+              <Field margin={"small"} width={isLessTablet ? "100%" : "42%"}>
                 <Text>Contract Address</Text>
                 <TextInput
                   placeholder={"ONE contract address"}
@@ -157,7 +196,7 @@ class VerifyContractBase extends React.Component<
                 />
               </Field>
 
-              <Field margin={"small"} width={isLessTablet ? "100%" : "47%"}>
+              <Field margin={"small"} width={isLessTablet ? "100%" : "42%"}>
                 <Text>Contract Name</Text>
                 <TextInput
                   placeholder={"ONE name"}
@@ -169,6 +208,18 @@ class VerifyContractBase extends React.Component<
                   }}
                   disabled={isLoading}
                 />
+              </Field>
+
+              <Field margin={"small"} width={isLessTablet ? "100%" : "10%"}>
+                <Text>Language</Text>
+                <Select
+                    options={["Solidity", "Vyper"]}
+                    value={this.state.language === 0 ? "Solidity" : "Vyper"}
+                    onChange={({ option }) =>
+                      this.setState({ ...this.state, language: option === "Solidity" ? 0 : 1})
+                    }
+                    disabled={isLoading}
+                  />
               </Field>
             </Box>
 

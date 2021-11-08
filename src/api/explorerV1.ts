@@ -14,6 +14,7 @@ export interface IVerifyContractData {
   isLoading: boolean;
   argsLoading: boolean;
   error: string;
+  language: number;
 }
 
 export interface IVerifyContractDataSendData {
