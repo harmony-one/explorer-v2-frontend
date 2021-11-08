@@ -196,12 +196,12 @@ export const TransactionPage = () => {
                 txrsLoading
                   ? undefined
                   : trxs.length
-                    ? trxs
+                  ? trxs
                       .map((t) => t.error)
                       .filter((_) => _)
                       .map(extractError)
                       .join(",")
-                    : ""
+                  : ""
               }
             />
           </Tab>
