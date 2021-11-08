@@ -93,6 +93,11 @@ export function getTransactionCountLast14Days() {
   return transport("getTransactionCountLast14Days", []) as Promise<any[]>;
 }
 
+
+export function getWalletsCountLast14Days() {
+    return transport("getWalletsCountLast14Days", []) as Promise<any[]>;
+}
+
 export function getContractsByField(params: any[]) {
   return transport("getContractsByField", params) as Promise<any[]>;
 }
