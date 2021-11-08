@@ -98,44 +98,6 @@ class VerifyContractBase extends React.Component<
     this.setState({ ...this.state, argsLoading: false });
   };
 
-  getBytecode = async () => {
-    this.setState({ ...this.state, argsLoading: true });
-
-    try {
-      if (this.state.contractAddress) {
-        const address = getAddress(this.state.contractAddress).basicHex;
-
-        const contracts: any = await getContractsByField([
-          0,
-          "address",
-          address,
-        ]);
-
-        if (contracts?.transactionHash) {
-          const trx = await getTransactionByField([
-            0,
-            "hash",
-            contracts.transactionHash,
-          ]);
-
-          if (trx?.input) {
-            const argStart = trx.input.lastIndexOf("0033");
-            if (argStart) {
-              this.setState({
-                ...this.state,
-                constructorArguments: trx.input.slice(argStart + 4),
-              });
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    this.setState({ ...this.state, argsLoading: false });
-  };
-
   onClickSubmitBtn = async () => {
     this.setState({
       ...this.state,
