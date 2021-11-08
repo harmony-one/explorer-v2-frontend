@@ -28,7 +28,7 @@ export const hmyv2_getTransactionReceipt = (
   params: [string],
   shardNumber: number
 ) => {
-  return rpcAdapter<TRPCResponse<{ logs: [{ data: string }] }>>(
+  return rpcAdapter<TRPCResponse<{ logs: [{ data: string }], gasUsed: string }>>(
     process.env[`REACT_APP_RPC_URL_SHARD${shardNumber}`] as string,
     {
       method: "POST",

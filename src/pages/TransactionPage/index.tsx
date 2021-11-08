@@ -15,6 +15,7 @@ import {
 } from "src/api/client";
 import { AllBlocksTable } from "../AllBlocksPage/AllBlocksTable";
 import { revertErrorMessage } from "src/web3/parseByteCode";
+import { hmyv2_getTransactionReceipt } from "src/api/rpc";
 
 const extractError = (err: any) => {
   const errorMessages = err!.split(":");
@@ -58,22 +59,33 @@ export const TransactionPage = () => {
   useEffect(() => {
     const getTx = async () => {
       let trx;
+      let shard = 0;
       if (id.length === 66) {
         trx = await getTransactionByField([0, "hash", id]);
       }
 
       if (!trx && availableShards.find((i) => i === 1)) {
         trx = await getTransactionByField([1, "hash", id]);
+        shard = 1;
       }
 
       if (!trx && availableShards.find((i) => i === 2)) {
         trx = await getTransactionByField([2, "hash", id]);
+        shard = 2;
       }
 
       if (!trx && availableShards.find((i) => i === 3)) {
         trx = await getTransactionByField([3, "hash", id]);
+        shard = 3;
       }
 
+      if (trx) {
+        const txnReceipt = await hmyv2_getTransactionReceipt([id], shard);
+        if (txnReceipt && txnReceipt.result && txnReceipt.result.gasUsed) {
+          trx.gas = parseInt(txnReceipt.result.gasUsed, 16).toString();
+        }
+      }
+      
       setTx((trx || {}) as RPCStakingTransactionHarmony);
     };
 
@@ -184,12 +196,12 @@ export const TransactionPage = () => {
                 txrsLoading
                   ? undefined
                   : trxs.length
-                  ? trxs
+                    ? trxs
                       .map((t) => t.error)
                       .filter((_) => _)
                       .map(extractError)
                       .join(",")
-                  : ""
+                    : ""
               }
             />
           </Tab>
