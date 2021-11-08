@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { useMediaQuery } from "react-responsive";
 import { breakpoints } from "src/Responive/breakpoints";
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
-import { getTransactionCountLast14Days } from "src/api/client";
+import { getTransactionCountLast14Days, getWalletsCountLast14Days } from "src/api/client";
 
 import { getCount } from "src/api/client";
 
@@ -38,7 +38,7 @@ export const Metrics = (params: {
         }}
         style={{
           height: isLessMobileM ? "auto" : "140px",
-          flex: isLessLaptop ? "1 1 50%" : "1 1 100%",
+          flex: isLessLaptop ? "1 1 40%" : "1 1 100%",
         }}
         gap={isLessMobileM ? "small" : "0"}
       >
@@ -82,6 +82,25 @@ export const Metrics = (params: {
       >
         <BlockTransactionsHistory />
       </Box>
+
+        {isLessLaptop && (
+            <Line
+                horizontal
+                style={{ marginTop: isLessTablet ? "16px" : "24px" }}
+            />
+        )}
+
+        <Box
+            justify="between"
+            pad={{
+                left: isLessLaptop ? "0" : "medium",
+            }}
+            margin={{ top: isLessLaptop ? "medium" : "0" }}
+            style={{ height: "140px", flex: "1 1 100%" }}
+        >
+            <WalletsHistory />
+        </Box>
+
     </BasePage>
   );
 };
@@ -335,6 +354,94 @@ function BlockTransactionsHistory() {
       </Box>
     </Box>
   );
+}
+
+
+interface WalletHitoryItem {
+    date: string;
+    count: string;
+}
+
+function WalletsHistory() {
+    const [result, setResult] = useState<WalletHitoryItem[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        const getElements = async () => {
+            setIsLoading(true);
+            const res = await getWalletsCountLast14Days();
+            setResult(res);
+            setIsLoading(false);
+        };
+
+        getElements();
+    }, []);
+
+    const data = result.map((i) => ({
+        date: i.date,
+        count: +i.count,
+    }));
+
+    return (
+        <Box>
+            <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
+                {"WALLETS"}
+            </Text>
+            <Box style={{ flex: "1 1 100%", marginTop: "30px" }}>
+                {isLoading && (
+                    <Box justify="center" align="center" height="110px">
+                        <Spinner />
+                    </Box>
+                )}
+                {!isLoading && (
+                    <DataChart
+                        data={data}
+                        detail
+                        axis={{
+                            x: {
+                                granularity: "medium",
+                                property: "date",
+                            },
+                            y: {
+                                granularity: "medium",
+                                property: "count",
+                            },
+                        }}
+                        series={[
+                            {
+                                property: "date",
+                                label: "Date",
+                                render: (value) => (
+                                    <Text size="xsmall" color="minorText">
+                                        {value}
+                                    </Text>
+                                ),
+                            },
+                            {
+                                property: "count",
+                                label: "Wallets",
+                                render: (value) => (
+                                    <Text size="xsmall" color="minorText">
+                                        {formatNumber(value)}
+                                    </Text>
+                                ),
+                            },
+                        ]}
+                        size="fill"
+                        chart={[
+                            {
+                                property: "count",
+                                type: "bar",
+                                color: "brand",
+                                opacity: "medium",
+                                thickness: "small",
+                            },
+                        ]}
+                    />
+                )}
+            </Box>
+        </Box>
+    );
 }
 
 const Line = styled.div<{ horizontal?: boolean; vertical?: boolean }>`
