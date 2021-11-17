@@ -167,9 +167,10 @@ export const transactionPropertyDisplayValues: any = {
             return (t.value !== value || internalTxs.length > 1)
         })
 
-        const values = [value, ...filteredInternalTxs.map(t => t.value)]
-            .filter(v => +v)
-            .map((v) => {
+        const values = [{value}, ...filteredInternalTxs]
+            .filter((internalTx, i) => +internalTx.value || i === 0)
+            .map((internalTx, i) => {
+                const v = internalTx.value
                 // todo DRY copy part
                 const bi = BigInt(v) / BigInt(10 ** 14);
                 const copyValue = parseInt(bi.toString()) / 10000;
@@ -192,6 +193,19 @@ export const transactionPropertyDisplayValues: any = {
                             />
                         )}
                         &nbsp;&nbsp;<ONEValue value={v} timestamp={tx.timestamp}/>
+                        {i > 0 && <>
+                          &nbsp;
+                          <Address
+                              isShort={true}
+                              address={internalTx.from}/>
+                          <div>
+                            <FormNextLink size="small" color="brand"/>
+                          </div>
+                          <Address
+                              isShort={true}
+                              address={internalTx.to}/>
+                          &nbsp;Internal
+                        </>}
                     </div>
                 )
             })
