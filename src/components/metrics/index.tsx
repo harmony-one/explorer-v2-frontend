@@ -378,7 +378,7 @@ function WalletsHistory() {
     }, []);
 
     const data = result.map((i) => ({
-        date: i.date,
+        date: dayjs(i.date).format("DD-MM"),
         count: +i.count,
     }));
 

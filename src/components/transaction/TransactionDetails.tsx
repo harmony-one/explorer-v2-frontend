@@ -62,6 +62,7 @@ const getColumns = ({ type = "" }) => [
 ];
 
 type TransactionDetailsProps = {
+  internalTxs?: any[];
   transaction: RPCStakingTransactionHarmony;
   type?: TransactionSubType;
   stakingData?: boolean;
@@ -92,8 +93,9 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   type,
   logs = [],
   errorMsg,
-  shorMoreHide, 
-  stakingData, 
+  shorMoreHide,
+  stakingData,
+  internalTxs = []
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -117,7 +119,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
       <Box justify="center">{transaction.gas}</Box>
     ),
     gasPrice: <Box justify="center">{CalculateFee(transaction)}</Box>,
-  }; 
+  };
 
   const keys = Object.keys(newTransaction).filter((key) => {
     if (stakingData) {
@@ -129,7 +131,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
     } else {
       return key !== "gas";
     }
-  }); 
+  });
   const sortedKeys = keys
     .sort((a, b) => transactionPropertySort[b] - transactionPropertySort[a])
     .filter((k) => showDetails || ["r", "s", "v"].indexOf(k) === -1);
@@ -142,7 +144,8 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
       key,
       // @ts-ignore
       newTransaction[key],
-      type
+      type,
+      internalTxs
     );
 
     if (value === undefined) {
@@ -152,6 +155,9 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
     arr.push({ key, value } as tableEntry);
     return arr;
   }, [] as tableEntry[]);
+
+
+  const value = internalTxs
 
   return (
     <>
