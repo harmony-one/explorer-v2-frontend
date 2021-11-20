@@ -192,6 +192,7 @@ export const TransactionPage = () => {
             <TransactionDetails
               transaction={tx}
               logs={logs}
+              internalTxs={trxs}
               errorMsg={
                 txrsLoading
                   ? undefined

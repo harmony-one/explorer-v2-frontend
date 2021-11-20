@@ -22,7 +22,7 @@ export function InternalTransactionList(props: InternalTransactionListProps) {
 
   const initFilter: Filter = {
     offset: 0,
-    limit: limitValue ? +limitValue : 25,
+    limit: limitValue ? +limitValue : 100,
     orderBy: "block_number",
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
@@ -31,13 +31,14 @@ export function InternalTransactionList(props: InternalTransactionListProps) {
   const { list, hash, timestamp } = props;
   const [filter, setFilter] = useState<Filter>(initFilter);
 
-  const { limit = 10, offset = 0 } = filter;
+  const { limit = 100, offset = 0 } = filter;
   const pageSize = 10;
   const curPage = +(+offset / limit).toFixed(0) + 1;
 
   const data = list
     .sort((a, b) => (a.index > b.index ? 1 : -1))
-    .slice(pageSize * (curPage - 1), pageSize * curPage)
+    // no need in pagination
+    // .slice(pageSize * (curPage - 1), pageSize * curPage)
     .map((item) => ({ ...item }));
 
   return (
@@ -53,7 +54,7 @@ export function InternalTransactionList(props: InternalTransactionListProps) {
         filter={filter}
         setFilter={(newFilter) => {
           if (newFilter.limit !== initFilter.limit) {
-            localStorage.setItem("tableLimitValue", "10");
+            localStorage.setItem("tableLimitValue", "100");
           }
 
           setFilter(newFilter);
