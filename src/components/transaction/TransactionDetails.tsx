@@ -21,8 +21,6 @@ import { TransactionSubType } from "src/components/transaction/helpers";
 import { parseSuggestedEvent, DisplaySignature } from "src/web3/parseByteCode";
 
 import { CaretDownFill, CaretUpFill, CircleQuestion } from "grommet-icons";
-import { ERC20Value } from "../ERC20Value";
-import { TokenValueBalanced } from "../ui/TokenValueBalanced";
 import { TxStatusComponent } from "../ui/TxStatusComponent";
 
 const getColumns = ({ type = "" }) => [

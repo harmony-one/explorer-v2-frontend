@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Box, ColumnConfig, Text } from "grommet";
-import { FormNextLink } from "grommet-icons";
 import { useParams } from "react-router-dom";
 import {
   getByteCodeSignatureByHash,
-  getRelatedTransactions,
   getRelatedTransactionsByType,
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
   Address,
-  CalculateFee,
   ONEValue,
-  RelativeTimer,
+  DateTime,
 } from "src/components/ui";
 import {
   Filter,
   RelatedTransaction,
   RelatedTransactionType,
-  RPCTransaction,
 } from "src/types";
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
@@ -224,10 +220,8 @@ function getColumns(id: string): ColumnConfig<any>[] {
       ),
       render: (data: RelatedTransaction) => (
         <Box direction="row" gap="xsmall" justify="end">
-          <RelativeTimer
+          <DateTime
             date={data.timestamp}
-            updateInterval={1000}
-            style={{ minWidth: "auto" }}
           />
         </Box>
       ),
@@ -362,11 +356,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
       ),
       render: (data: RelatedTransaction) => (
         <Box direction="row" gap="xsmall" justify="end">
-          <RelativeTimer
-            date={data.timestamp}
-            updateInterval={1000}
-            style={{ minWidth: "auto" }}
-          />
+          <DateTime date={data.timestamp} />
         </Box>
       ),
     },

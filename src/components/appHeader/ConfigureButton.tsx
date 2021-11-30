@@ -8,6 +8,8 @@ import {
   themeType,
 } from "src/hooks/themeSwitcherHook";
 
+import { DateFormat, setDateFormatMode, useDateFormatMode } from "src/hooks/dateFormatSwitcherHook";
+
 import {
   useCurrency,
   setCurrency,
@@ -17,6 +19,7 @@ import {
 export function ConfigureButton() {
   const theme = useThemeMode();
   const currency = useCurrency();
+  const dateFormat = useDateFormatMode();
 
   return (
     <DropButton
@@ -61,6 +64,21 @@ export function ConfigureButton() {
             ]}
             onChange={setCurrency}
           />
+          <Text
+            size="small"
+            weight="bold"
+            margin={{ bottom: "xsmall", top: "small" }}
+          >
+            Date Format
+          </Text>
+          <ToggleButton
+            value={dateFormat}
+            options={[
+              { text: "Exact", value: DateFormat.EXACT },
+              { text: "Relative", value: DateFormat.RELATIVE },
+            ]}
+            onChange={setDateFormatMode}
+          />
         </Box>
       }
     />
@@ -71,7 +89,7 @@ interface ToggleProps {
   value: string;
   options: Array<{
     text: string;
-    value: themeType | currencyType;
+    value: themeType | currencyType | DateFormat;
   }>;
   onChange: (value: any) => void;
 }

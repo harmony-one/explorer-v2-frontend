@@ -7,7 +7,7 @@ import { useHistory, useParams } from "react-router-dom";
 import {
   Address,
   formatNumber,
-  RelativeTimer,
+  DateTime,
   PaginationBlockNavigator,
   PaginationRecordsPerPage,
 } from "src/components/ui";
@@ -55,10 +55,7 @@ function getColumns(props: any) {
       ),
       render: (data: Block) => (
         <Box direction="row" gap="xsmall">
-          {/*<Text size="small">*/}
-          {/*  {dayjs(data.timestamp).format("YYYY-MM-DD, HH:mm:ss")},*/}
-          {/*</Text>*/}
-          <RelativeTimer date={data.timestamp} updateInterval={1000} />
+          <DateTime date={data.timestamp} />
         </Box>
       ),
     },

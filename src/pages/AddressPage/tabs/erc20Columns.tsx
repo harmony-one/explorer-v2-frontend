@@ -1,5 +1,5 @@
 import { Box, ColumnConfig, Text } from 'grommet'
-import { Address, TokenValue, RelativeTimer } from 'src/components/ui'
+import { Address, TokenValue, DateTime } from 'src/components/ui'
 import { RelatedTransaction } from 'src/types'
 import React from 'react'
 import { parseSuggestedEvent } from 'src/web3/parseByteCode'
@@ -245,10 +245,8 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
       ),
       render: (data: RelatedTransaction) => (
         <Box direction="row" gap="xsmall" justify="end">
-          <RelativeTimer
+          <DateTime
             date={data.timestamp}
-            updateInterval={1000}
-            style={{ minWidth: 'auto' }}
           />
         </Box>
       )
