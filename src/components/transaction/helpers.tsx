@@ -17,7 +17,8 @@ import {
     StakingTransactionTypeValue,
     CalculateFee,
     formatNumber,
-    RelativeTimer
+    RelativeTimer,
+    DateTime
 } from "../ui";
 import {Box, Text} from "grommet";
 import {CopyBtn} from "../ui/CopyBtn";
@@ -221,7 +222,7 @@ export const transactionPropertyDisplayValues: any = {
     ),
     hash_harmony: (value: any) => <TransactionHash hash={value}/>,
     blockHash: (value: any) => <BlockHash hash={value}/>,
-    timestamp: (value: any) => <RelativeTimer date={value}/>,
+    timestamp: (value: any) => <DateTime date={value}/>,
     gasUsed: (value: any, tx: RPCTransactionHarmony) => (
         <span>
       {value}

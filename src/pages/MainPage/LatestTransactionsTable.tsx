@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { RelativeTimer, Address } from "src/components/ui";
 import { getTransactions } from "src/api/client";
 import { FormNextLink } from "grommet-icons";
+import { DateTime } from "../../components/ui/DateTime";
 
 function getColumns(props: any) {
   const { history } = props;
@@ -78,10 +79,8 @@ function getColumns(props: any) {
         </Text>
       ),
       render: (data: RPCTransactionHarmony) => (
-        <RelativeTimer
+        <DateTime
           date={new Date(data.timestamp)}
-          updateInterval={1000}
-          style={{ textAlign: "right" }}
         />
       ),
     },
