@@ -7,7 +7,7 @@ import { FormNextLink } from "grommet-icons";
 import {
   Address,
   formatNumber,
-  RelativeTimer,
+  DateTime,
   PaginationNavigator,
   PaginationRecordsPerPage,
   ONEValue,
@@ -131,14 +131,7 @@ function getColumns(props: any) {
       ),
       render: (data: RPCTransactionHarmony) => (
         <Box direction="row" gap="xsmall" justify="end">
-          {/*<Text size="small">*/}
-          {/*  {dayjs(data.timestamp).format("YYYY-MM-DD, HH:mm:ss")},*/}
-          {/*</Text>*/}
-          <RelativeTimer
-            date={data.timestamp}
-            updateInterval={1000}
-            style={{ minWidth: "auto" }}
-          />
+          <DateTime date={data.timestamp} />
         </Box>
       ),
     },

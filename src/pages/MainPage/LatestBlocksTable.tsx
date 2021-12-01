@@ -2,7 +2,8 @@ import React from "react";
 import { Box, DataTable, Spinner, Text } from "grommet";
 import { Block } from "src/types";
 import { useHistory } from "react-router-dom";
-import { formatNumber, RelativeTimer } from "src/components/ui";
+import { formatNumber } from "src/components/ui";
+import { DateTime } from "../../components/ui/DateTime";
 
 function getColumns(props: any) {
   const { history } = props;
@@ -67,13 +68,8 @@ function getColumns(props: any) {
       ),
       render: (data: Block) => (
         <Box direction="row" justify="end" gap="xsmall">
-          {/*<Text size="small">*/}
-          {/*  {dayjs(data.timestamp).format("YYYY-MM-DD, HH:mm:ss")},*/}
-          {/*</Text>*/}
-          <RelativeTimer
+          <DateTime
             date={data.timestamp}
-            updateInterval={1000}
-            style={{ textAlign: "right" }}
           />
         </Box>
       ),
