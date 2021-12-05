@@ -82,8 +82,7 @@ export const TransactionPage = () => {
       if (trx) {
         const txnReceipt = await hmyv2_getTransactionReceipt([id], shard);
         if (txnReceipt && txnReceipt.result && txnReceipt.result.gasUsed) {
-          trx.gas = txnReceipt.result.gasUsed; 
-          //#97 - hmy_v2 returns number, not hexparseInt(txnReceipt.result.gasUsed, 16).toString();
+          trx.gas = parseInt(txnReceipt.result.gasUsed).toString();
         }
       }
       
