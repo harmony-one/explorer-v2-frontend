@@ -30,6 +30,7 @@ import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
+import { TextLoader } from "src/components/ui/TextLoader";
 
 export function AddressPage() {
   const history = useHistory();
@@ -86,7 +87,7 @@ export function AddressPage() {
   const [balance, setBalance] = useState<any>([]);
 
   const [tokens, setTokens] = useState<any>(null);
-  const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
+  const [inventory, setInventory] = useState<IUserERC721Assets[] | null>(null);
   const [inventoryHolders, setInventoryForHolders] = useState<
     IUserERC721Assets[]
   >([]);
@@ -197,7 +198,7 @@ export function AddressPage() {
               })
           );
         } else {
-          setInventory([]);
+          setInventory(null);
         }
       } catch (err) {
         setInventory([]);
@@ -336,8 +337,11 @@ export function AddressPage() {
             <Transactions type={"erc721"} />
           </Tab>
 
-          {type === "erc721" || type === "erc1155" || type === "erc20" ? (
-            <Tab title={<Text size="small">Holders</Text>}>
+          {(type === "erc721" || type === "erc1155" || type === "erc20") && (
+            <Tab 
+              disabled={type !== "erc20" && !(inventoryHolders.length || inventory)}
+              title={<Text size="small">Holders</Text>}
+            >
               <HoldersTab
                 id={id}
                 type={type}
@@ -346,15 +350,20 @@ export function AddressPage() {
                 }
               />
             </Tab>
-          ) : null}
+          )}
 
-          {(type === "erc721" || type === "erc1155") && inventory.length ? (
+          {(type === "erc721" || type === "erc1155") && (
             <Tab
-              title={<Text size="small">Inventory ({inventory.length})</Text>}
+              disabled={!inventory || !inventory.length}
+              title={
+                <TextLoader isLoading={!inventory} size="small">
+                  Inventory{inventory ? ` (${inventory.length})`: ''}
+                </TextLoader>
+              }
             >
-              <Inventory inventory={inventory} />
+                <Inventory inventory={inventory} />
             </Tab>
-          ) : null}
+          )}
 
           {!!contracts || !!sourceCode ? (
             <Tab title={<Text size="small">Contract</Text>}>
