@@ -152,7 +152,7 @@ function getColumns(props: any) {
       render: (data: Erc20) => <Address address={data.address} displayHash />,
     },
     {
-      property: "totalSupply",
+      property: "circulatingSupply",
       size: "small",
       resizeable: false,
       header: (
