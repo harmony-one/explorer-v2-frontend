@@ -1,6 +1,7 @@
-FROM node:14.4-alpine
+FROM node:16.13-alpine
 
 RUN apk add --no-cache openssl
+RUN apk add g++ make py3-pip
 
 WORKDIR /usr/src/app
 COPY . .
