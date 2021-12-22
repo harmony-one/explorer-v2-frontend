@@ -19,7 +19,8 @@ import {
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
-import { getAddress } from "src/utils";
+import { getAddress, mapBlockchainTxToRelated } from "src/utils";
+import { hmyv2_getStakingTransactionsHistory, hmyv2_getTransactionsHistory } from "../../../api/rpc";
 
 const Marker = styled.div<{ out: boolean }>`
   border-radius: 2px;
@@ -394,7 +395,7 @@ export function Transactions(props: {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { limit = 10 } = filter[props.type];
+  const { limit = 10, offset = 0 } = filter[props.type];
 
   // @ts-ignore
   let { id } = useParams();
@@ -405,12 +406,23 @@ export function Transactions(props: {
     const getElements = async () => {
       setIsLoading(true);
       try {
-        let relatedTransactions = await getRelatedTransactionsByType([
-          0,
-          id,
-          props.type,
-          filter[props.type],
-        ]);
+        let relatedTransactions = []
+        if (props.type ==='transaction' || props.type === 'staking_transaction') {
+          const pageSize = limit
+          const pageIndex = Math.floor(offset / limit)
+          const params = [{ address: id, pageIndex, pageSize }]
+          const txsList = props.type === 'transaction'
+            ? await hmyv2_getTransactionsHistory(params)
+            : await hmyv2_getStakingTransactionsHistory(params)
+          relatedTransactions = txsList.map(tx => mapBlockchainTxToRelated(tx))
+        } else {
+          relatedTransactions = await getRelatedTransactionsByType([
+            0,
+            id,
+            props.type,
+            filter[props.type],
+          ]);
+        }
 
         // for transactions we display call method if any
         if (props.type === "transaction") {

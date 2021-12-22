@@ -177,7 +177,7 @@ export function TransactionsTable(props: TransactionTableProps) {
     noScrollTop,
     minWidth = "1310px",
     showPages = false,
-    textType = 'transcation'
+    textType = 'transaction'
   } = props;
 
   const _IsLoading = isLoading;
