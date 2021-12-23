@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, ColumnConfig, Text } from "grommet";
 import { useParams } from "react-router-dom";
 import {
@@ -375,6 +375,15 @@ const relatedTxMap: Record<RelatedTransactionType, string> = {
   stacking_transaction: "Staking Transaction",
 };
 
+const usePrevious = (value: TRelatedTransaction) => {
+  const ref = useRef();
+  useEffect(() => {
+    // @ts-ignore
+    ref.current = value;
+  });
+  return ref.current;
+};
+
 export function Transactions(props: {
   type: TRelatedTransaction;
   rowDetails?: (row: any) => JSX.Element;
@@ -388,86 +397,126 @@ export function Transactions(props: {
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
   };
-  const initTotalElements = 100
-
-  const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
-  const [filter, setFilter] = useState<{ [name: string]: Filter }>({
+  const initFilterState = {
     transaction: { ...initFilter },
     staking_transaction: { ...initFilter },
     internal_transaction: { ...initFilter },
     erc20: { ...initFilter },
     erc721: { ...initFilter },
     erc1155: { ...initFilter },
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  }
+  const initTotalElements = 100
+  const [cachedTxs, setCachedTxs] = useState<{ [name: string]: RelatedTransaction[]}>({})
+  const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
   const [totalElements, setTotalElements] = useState<number>(initTotalElements)
-
-  const { limit = 10, offset = 0 } = filter[props.type];
+  const [cachedTotalElements, setCachedTotalElements] = useState<{ [name: string]: number}>({})
+  const [filter, setFilter] = useState<{ [name: string]: Filter }>(initFilterState);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const prevType = usePrevious(props.type);
 
   // @ts-ignore
   let { id } = useParams();
   id = `${id}`.toLowerCase();
   id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
+  const prevId = usePrevious(id);
+
+  const { limit = 10, offset = 0 } = filter[props.type];
+
+  const loadTransactions = async () => {
+    setIsLoading(true)
+    try {
+      let txs = []
+      if (props.type ==='transaction' || props.type === 'staking_transaction') {
+        const pageSize = limit
+        const pageIndex = Math.floor(offset / limit)
+        const params = [{ address: id, pageIndex, pageSize }]
+        txs = props.type ==='transaction'
+          ? await hmyv2_getTransactionsHistory(params)
+          : await hmyv2_getStakingTransactionsHistory(params)
+        txs = txs.map(tx => mapBlockchainTxToRelated(tx))
+      } else {
+        txs = await getRelatedTransactionsByType([
+          0,
+          id,
+          props.type,
+          filter[props.type],
+        ]);
+      }
+      // for transactions we display call method if any
+      if (props.type === "transaction") {
+        const methodSignatures = await Promise.all(
+          txs.map((tx: any) => {
+            return tx.input && tx.input.length > 10
+              ? getByteCodeSignatureByHash([tx.input.slice(0, 10)])
+              : Promise.resolve([]);
+          })
+        );
+
+        txs = txs.map((l, i) => ({
+          ...l,
+          signatures: methodSignatures[i],
+        }));
+      }
+
+      txs = txs.map((tx: any) => {
+        tx.relatedAddress = id;
+        return tx;
+      });
+
+      setRelatedTrxs(txs);
+      if (props.type === 'transaction' || props.type === 'staking_transaction') {
+        setCachedTxs({ ...cachedTxs, [props.type]: txs });
+      }
+    } catch (e) {
+      console.error('Cannot get or parse txs:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const getElements = async () => {
-      setIsLoading(true);
+    setCachedTxs({})
+    setCachedTotalElements({})
+    setFilter(initFilterState)
+  }, [id])
+
+  useEffect(() => {
+    const getTxsCount = async () => {
       try {
-        let relatedTransactions = []
         if (props.type ==='transaction' || props.type === 'staking_transaction') {
-          let count = 0
-          let txs = []
-          const pageSize = limit
-          const pageIndex = Math.floor(offset / limit)
-          const params = [{ address: id, pageIndex, pageSize }]
-          if (props.type ==='transaction') {
-            count = await hmyv2_getTransactionsCount(id)
-            txs = await hmyv2_getTransactionsHistory(params)
+          if (typeof cachedTotalElements[props.type] !== 'undefined' && id === prevId) {
+            setTotalElements(cachedTotalElements[props.type])
           } else {
-            count = await hmyv2_getStakingTransactionsCount(id)
-            txs = await hmyv2_getStakingTransactionsHistory(params)
+            const count = props.type ==='transaction'
+              ? await hmyv2_getTransactionsCount(id)
+              : await hmyv2_getStakingTransactionsCount(id)
+            setTotalElements(count)
+            setCachedTotalElements({ ...cachedTotalElements, [props.type]: count })
           }
-          setTotalElements(count)
-          relatedTransactions = txs.map(tx => mapBlockchainTxToRelated(tx))
         } else {
-          relatedTransactions = await getRelatedTransactionsByType([
-            0,
-            id,
-            props.type,
-            filter[props.type],
-          ]);
           setTotalElements(initTotalElements)
         }
-
-        // for transactions we display call method if any
-        if (props.type === "transaction") {
-          const methodSignatures = await Promise.all(
-            relatedTransactions.map((tx: any) => {
-              return tx.input && tx.input.length > 10
-                ? getByteCodeSignatureByHash([tx.input.slice(0, 10)])
-                : Promise.resolve([]);
-            })
-          );
-
-          relatedTransactions = relatedTransactions.map((l, i) => ({
-            ...l,
-            signatures: methodSignatures[i],
-          }));
-        }
-
-        relatedTransactions = relatedTransactions.map((tx: any) => {
-          tx.relatedAddress = id;
-          return tx;
-        });
-
-        setIsLoading(false);
-        setRelatedTrxs(relatedTransactions);
-      } catch (err) {
-        console.error('Cannot get or parse txs:', err);
+      } catch (e) {
+        console.error('Cannot get txs count', (e as Error).message)
+        setTotalElements(initTotalElements)
       }
-    };
-    getElements();
-  }, [filter[props.type], id, props.type]);
+    }
+    getTxsCount()
+  }, [props.type, id])
+
+  useEffect(() => {
+    if (prevType === props.type) {
+      loadTransactions()
+    }
+  }, [filter[props.type], id]);
+
+  useEffect(() => {
+    if (cachedTxs[props.type]) {
+      setRelatedTrxs(cachedTxs[props.type]);
+    } else {
+      loadTransactions()
+    }
+  }, [props.type])
 
   let columns = [];
 
