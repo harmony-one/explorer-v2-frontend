@@ -280,6 +280,7 @@ export function TransactionsTable(props: TransactionTableProps) {
             elements={data}
             noScrollTop={noScrollTop}
             property="block_number"
+            showPages={showPages}
           />
         </Box>
       )}

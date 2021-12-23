@@ -1,4 +1,4 @@
-import { Address, RPCTransactionHarmony } from "../types";
+import { IGetTxsHistoryParams, RequestOrder, RequestTxType, RPCTransactionHarmony } from "../types";
 
 export type TRPCResponse<T> = { id: number; jsonrpc: "2.0"; result: T, error?: { code: number, message: string } };
 
@@ -106,30 +106,10 @@ export const getAllBalance = (params: [string, "latest"]) => {
   });
 };
 
-enum IRequestTxType {
-  ALL = 'ALL',
-  RECEIVED = 'RECEIVED',
-  SENT = 'SENT'
-}
-
-enum IRequestOrder {
-  ASC = 'ASC',
-  DESC = 'DESC'
-}
-
-export interface IGetTxsHistoryParams {
-  address: string;
-  pageIndex: number;
-  pageSize: number;
-  fullTx?: boolean;
-  txType?: IRequestTxType;
-  order?: IRequestOrder
-}
-
 const defaultGetHistoryParams = {
   fullTx: true,
-  txType: IRequestTxType.ALL,
-  order: IRequestOrder.DESC
+  txType: RequestTxType.ALL,
+  order: RequestOrder.DESC
 }
 
 export const hmyv2_getTransactionsHistory = (params: IGetTxsHistoryParams[]) => {
@@ -150,6 +130,24 @@ export const hmyv2_getTransactionsHistory = (params: IGetTxsHistoryParams[]) => 
   });
 };
 
+export const hmyv2_getTransactionsCount = (address: string, txType: RequestTxType = RequestTxType.ALL) => {
+  return rpcAdapter<TRPCResponse<number>>(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "hmyv2_getTransactionsCount",
+      id: 1,
+      params: [address, txType],
+    }),
+  }).then(data => {
+    if (data.error) {
+      throw new Error(data.error.message)
+    }
+    return data.result
+  });
+};
+
 export const hmyv2_getStakingTransactionsHistory = (params: IGetTxsHistoryParams[]) => {
   return rpcAdapter<TRPCResponse<{ staking_transactions: RPCTransactionHarmony[] }>>(API_URL, {
     method: "POST",
@@ -165,5 +163,23 @@ export const hmyv2_getStakingTransactionsHistory = (params: IGetTxsHistoryParams
       throw new Error(data.error.message)
     }
     return data.result.staking_transactions
+  });
+};
+
+export const hmyv2_getStakingTransactionsCount = (address: string, txType: RequestTxType = RequestTxType.ALL) => {
+  return rpcAdapter<TRPCResponse<number>>(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "hmyv2_getStakingTransactionsCount",
+      id: 1,
+      params: [address, txType],
+    }),
+  }).then(data => {
+    if (data.error) {
+      throw new Error(data.error.message)
+    }
+    return data.result
   });
 };

@@ -25,3 +25,23 @@ export type Filter = {
   orderBy: FilterOrderBy
   filters: FilterEntry[]
 }
+
+export enum RequestTxType {
+  ALL = 'ALL',
+  RECEIVED = 'RECEIVED',
+  SENT = 'SENT'
+}
+
+export enum RequestOrder {
+  ASC = 'ASC',
+  DESC = 'DESC'
+}
+
+export interface IGetTxsHistoryParams {
+  address: string;
+  pageIndex: number;
+  pageSize: number;
+  fullTx?: boolean;
+  txType?: RequestTxType;
+  order?: RequestOrder
+}
