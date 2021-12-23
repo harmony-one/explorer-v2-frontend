@@ -19,7 +19,13 @@ import {
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
-import { getAddress } from "src/utils";
+import { getAddress, mapBlockchainTxToRelated } from "src/utils";
+import {
+  hmyv2_getStakingTransactionsCount,
+  hmyv2_getStakingTransactionsHistory,
+  hmyv2_getTransactionsCount,
+  hmyv2_getTransactionsHistory
+} from "../../../api/rpc";
 
 const Marker = styled.div<{ out: boolean }>`
   border-radius: 2px;
@@ -382,6 +388,7 @@ export function Transactions(props: {
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
   };
+  const initTotalElements = 100
 
   const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
   const [filter, setFilter] = useState<{ [name: string]: Filter }>({
@@ -393,8 +400,9 @@ export function Transactions(props: {
     erc1155: { ...initFilter },
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [totalElements, setTotalElements] = useState<number>(initTotalElements)
 
-  const { limit = 10 } = filter[props.type];
+  const { limit = 10, offset = 0 } = filter[props.type];
 
   // @ts-ignore
   let { id } = useParams();
@@ -405,12 +413,31 @@ export function Transactions(props: {
     const getElements = async () => {
       setIsLoading(true);
       try {
-        let relatedTransactions = await getRelatedTransactionsByType([
-          0,
-          id,
-          props.type,
-          filter[props.type],
-        ]);
+        let relatedTransactions = []
+        if (props.type ==='transaction' || props.type === 'staking_transaction') {
+          let count = 0
+          let txs = []
+          const pageSize = limit
+          const pageIndex = Math.floor(offset / limit)
+          const params = [{ address: id, pageIndex, pageSize }]
+          if (props.type ==='transaction') {
+            count = await hmyv2_getTransactionsCount(id)
+            txs = await hmyv2_getTransactionsHistory(params)
+          } else {
+            count = await hmyv2_getStakingTransactionsCount(id)
+            txs = await hmyv2_getStakingTransactionsHistory(params)
+          }
+          setTotalElements(count)
+          relatedTransactions = txs.map(tx => mapBlockchainTxToRelated(tx))
+        } else {
+          relatedTransactions = await getRelatedTransactionsByType([
+            0,
+            id,
+            props.type,
+            filter[props.type],
+          ]);
+          setTotalElements(initTotalElements)
+        }
 
         // for transactions we display call method if any
         if (props.type === "transaction") {
@@ -436,7 +463,7 @@ export function Transactions(props: {
         setIsLoading(false);
         setRelatedTrxs(relatedTransactions);
       } catch (err) {
-        console.log(err);
+        console.error('Cannot get or parse txs:', err);
       }
     };
     getElements();
@@ -465,7 +492,7 @@ export function Transactions(props: {
       <TransactionsTable
         columns={columns}
         data={relatedTrxs}
-        totalElements={100}
+        totalElements={totalElements}
         limit={+limit}
         filter={filter[props.type]}
         isLoading={isLoading}
@@ -479,6 +506,7 @@ export function Transactions(props: {
         minWidth="1266px"
         hideCounter
         rowDetails={props.rowDetails}
+        showPages={totalElements > 0 && (props.type ==='transaction' || props.type === 'staking_transaction')}
       />
     </Box>
   );
