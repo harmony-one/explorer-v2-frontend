@@ -397,28 +397,30 @@ export function Transactions(props: {
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
   };
-  const initTotalElements = 100
-  const [cachedTxs, setCachedTxs] = useState<{ [name: string]: RelatedTransaction[]}>({})
-  const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
-  const [totalElements, setTotalElements] = useState<number>(initTotalElements)
-  const [cachedTotalElements, setCachedTotalElements] = useState<{ [name: string]: number}>({})
-  const [filter, setFilter] = useState<{ [name: string]: Filter }>({
+  const initFilterState = {
     transaction: { ...initFilter },
     staking_transaction: { ...initFilter },
     internal_transaction: { ...initFilter },
     erc20: { ...initFilter },
     erc721: { ...initFilter },
     erc1155: { ...initFilter },
-  });
+  }
+  const initTotalElements = 100
+  const [cachedTxs, setCachedTxs] = useState<{ [name: string]: RelatedTransaction[]}>({})
+  const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
+  const [totalElements, setTotalElements] = useState<number>(initTotalElements)
+  const [cachedTotalElements, setCachedTotalElements] = useState<{ [name: string]: number}>({})
+  const [filter, setFilter] = useState<{ [name: string]: Filter }>(initFilterState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const prevType = usePrevious(props.type);
-
-  const { limit = 10, offset = 0 } = filter[props.type];
 
   // @ts-ignore
   let { id } = useParams();
   id = `${id}`.toLowerCase();
   id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
+  const prevId = usePrevious(id);
+
+  const { limit = 10, offset = 0 } = filter[props.type];
 
   const loadTransactions = async () => {
     setIsLoading(true)
@@ -464,8 +466,6 @@ export function Transactions(props: {
       setRelatedTrxs(txs);
       if (props.type === 'transaction' || props.type === 'staking_transaction') {
         setCachedTxs({ ...cachedTxs, [props.type]: txs });
-      } else {
-        setTotalElements(initTotalElements)
       }
     } catch (e) {
       console.error('Cannot get or parse txs:', e);
@@ -475,10 +475,16 @@ export function Transactions(props: {
   }
 
   useEffect(() => {
+    setCachedTxs({})
+    setCachedTotalElements({})
+    setFilter(initFilterState)
+  }, [id])
+
+  useEffect(() => {
     const getTxsCount = async () => {
       try {
         if (props.type ==='transaction' || props.type === 'staking_transaction') {
-          if (typeof cachedTotalElements[props.type] !== 'undefined') {
+          if (typeof cachedTotalElements[props.type] !== 'undefined' && id === prevId) {
             setTotalElements(cachedTotalElements[props.type])
           } else {
             const count = props.type ==='transaction'
@@ -499,10 +505,10 @@ export function Transactions(props: {
   }, [props.type, id])
 
   useEffect(() => {
-    if (props.type === prevType) {
+    if (prevType === props.type) {
       loadTransactions()
     }
-  }, [filter[props.type].offset, id]);
+  }, [filter[props.type], id]);
 
   useEffect(() => {
     if (cachedTxs[props.type]) {
