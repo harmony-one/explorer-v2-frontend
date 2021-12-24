@@ -1,4 +1,4 @@
-import {Block, RPCTransactionHarmony} from "../../types";
+import { Block, IHexSignature, RPCTransactionHarmony } from "../../types";
 import {
     Clone,
     FormNextLink,
@@ -24,6 +24,7 @@ import {Box, Text} from "grommet";
 import {CopyBtn} from "../ui/CopyBtn";
 import {toaster} from "src/App";
 import styled from "styled-components";
+import { TxInput } from "./TransactionInput";
 
 export const todo = {};
 
@@ -269,7 +270,8 @@ export const transactionDisplayValues = (
     key: string,
     value: any,
     type: string,
-    internalTxs: any[] = []
+    internalTxs: any[] = [],
+    inputSignature: IHexSignature
 ) => {
     if (["blockHash", "toShardID", "msg"].includes(key)) {
         return;
@@ -295,6 +297,15 @@ export const transactionDisplayValues = (
         if (displayValue === "0x") {
             displayValue = null;
         }
+
+        if (key === 'input') {
+            if (transaction.input && inputSignature) {
+                displayValue = <TxInput
+                  input={transaction.input}
+                  inputSignature={inputSignature}
+                />
+            }
+        }
     }
 
     if (displayValue === null || displayValue === undefined) {
@@ -314,6 +325,17 @@ export const transactionDisplayValues = (
             ? text
             : "";
 
+    const onCopyClicked = () => {
+        toaster.show({
+            message: () => (
+              <Box direction={"row"} align={"center"} pad={"small"}>
+                  <Icon size={"small"} color={"headerText"}/>
+                  <Text size={"small"}>Copied to clipboard</Text>
+              </Box>
+            )
+        })
+    }
+
     return (
         <Box direction="row" align="baseline">
             {!["shardID"].includes(key) && ![0, "0", "—"].includes(displayValue) && (
@@ -321,16 +343,7 @@ export const transactionDisplayValues = (
                     {copyText ? (
                         <CopyBtn
                             value={copyText}
-                            onClick={() =>
-                                toaster.show({
-                                    message: () => (
-                                        <Box direction={"row"} align={"center"} pad={"small"}>
-                                            <Icon size={"small"} color={"headerText"}/>
-                                            <Text size={"small"}>Copied to clipboard</Text>
-                                        </Box>
-                                    )
-                                })
-                            }
+                            onClick={onCopyClicked}
                         />
                     ) : null}
                     &nbsp;

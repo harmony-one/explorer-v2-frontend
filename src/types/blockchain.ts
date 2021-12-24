@@ -264,3 +264,8 @@ export interface AddressDetails {
   bytecode: string;
   IPFSHash?: string
 }
+
+export interface IHexSignature {
+  hash: string;
+  signature: string;
+}
