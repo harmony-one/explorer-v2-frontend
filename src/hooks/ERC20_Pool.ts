@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { singletonHook } from "react-singleton-hook";
+import { IndexedDbStore, loadFromIndexedDB } from "../utils/indexedDB";
 
 const initValue: ERC20_Pool = {};
 
@@ -8,12 +9,24 @@ let globalSetMode = () => {
 };
 
 export const useERC20Pool = singletonHook(initValue, () => {
-  const pool =
-    (JSON.parse(
-      window.localStorage.getItem("ERC20_Pool") || "{}"
-    ) as ERC20_Pool) || initValue;
+  const getPool = async () => {
+    try {
+      const erc20 = await loadFromIndexedDB(IndexedDbStore.ERC20Pool)
+      const erc20Map = {} as Record<string, Erc20>;
+      erc20.forEach(item => {
+        erc20Map[item.address] = item;
+      })
+      setMode(erc20Map)
+    } catch (e) {
+      console.error('Cannot get ERC20 records: ', (e as Error).message)
+    }
+  }
 
-  const [mode, setMode] = useState<ERC20_Pool>(pool);
+  useEffect(() => {
+    getPool()
+  }, [])
+
+  const [mode, setMode] = useState<ERC20_Pool>(initValue);
   //@ts-ignore
   globalSetMode = setMode;
   return mode;

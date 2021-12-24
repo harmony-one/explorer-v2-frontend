@@ -45,7 +45,7 @@ export function TokensInfo(props: { value: Token[] }) {
 
   const erc20Tokens = value
     .filter((i) => filterWithBalance(i.balance))
-    .filter((i) => i.isERC20)
+    .filter((i) => i.isERC20 && erc20Map[i.tokenAddress])
     .map((item) => ({
       ...item,
       symbol: erc20Map[item.tokenAddress].symbol,
@@ -55,7 +55,7 @@ export function TokensInfo(props: { value: Token[] }) {
 
   const erc721Tokens = value
     .filter((i) => filterWithBalance(i.balance))
-    .filter((i) => i.isERC721)
+    .filter((i) => i.isERC721 && erc721Map[i.tokenAddress])
     .map((item) => ({
       ...item,
       symbol: erc721Map[item.tokenAddress].symbol,
@@ -64,7 +64,7 @@ export function TokensInfo(props: { value: Token[] }) {
 
   const erc1155Tokens = value
     .filter((i) => filterWithBalance(i.balance))
-    .filter((i) => i.isERC1155)
+    .filter((i) => i.isERC1155 && erc1155Map[i.tokenAddress])
     .map((item) => ({
       ...item,
       symbol: erc1155Map[item.tokenAddress].symbol,
