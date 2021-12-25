@@ -312,16 +312,14 @@ export const transactionDisplayValues = (
         if (["success", "error"].find((nameKey) => nameKey === key)) {
             return;
         }
-
         displayValue = "—";
     }
 
     const text = typeof value === "string" ? value : <>{value}</>;
     const copyText =
         typeof text === "string" &&
-        !["from", "to", "type", "delegatorAddress", "validatorAddress", "value"].find(
-            (item) => item === key
-        )
+        !["from", "to", "type", "delegatorAddress", "validatorAddress", "value"]
+          .find((item) => item === key)
             ? text
             : "";
 
