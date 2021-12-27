@@ -169,10 +169,6 @@ export const TransactionPage = () => {
         if (signature) {
           setInputSignature(signature)
         }
-        // const { parsed, event, abi } = parseSuggestedMethod(input.signature, tx.input) || {};
-        // console.log('parsed', parsed)
-        // console.log('event', event)
-        // console.log('abi', abi)
       } catch (e) {
         console.error('Cannot get tx input byte code signature:', (e as Error).message)
       }
