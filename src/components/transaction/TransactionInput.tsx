@@ -4,6 +4,7 @@ import { Down } from 'grommet-icons';
 import { Box, DropButton, Text, Button } from 'grommet';
 import { IHexSignature } from "../../types";
 import { DisplaySignatureMethod } from "../../web3/parseByteCode";
+import { CopyBtn } from "../ui/CopyBtn";
 
 enum ViewType {
   decoded = 'decoded',
@@ -21,6 +22,10 @@ const OptionItem = styled(Text)<{ isSelected: boolean }>`
           ? props.theme.global.colors.brand
           : props.theme.global.colors.text};
   font-size: 14px;
+  
+  &:hover {
+    color: ${(props) => props.theme.global.colors.brand};
+  }
 `
 
 const DropContentContainer = styled(Box)`
@@ -43,7 +48,19 @@ const DropContent = (props: IDropContentProps) => {
   </DropContentContainer>
 }
 
-export const TxInput = (props: { input: string, inputSignature: IHexSignature}) => {
+const RawInput = (props: { value: string }) => {
+  let displayValue = props.value
+  if (displayValue && displayValue.length && displayValue.length > 66) {
+    displayValue = displayValue.slice(0, 63) + "...";
+  }
+  return <Box direction="row" align="baseline">
+    <CopyBtn value={props.value} showNotification={true} /> &nbsp;
+    <span title={props.value}>{displayValue}</span>
+  </Box>
+}
+
+export const TxInput = (props: { input: string, inputSignature?: IHexSignature}) => {
+  const { inputSignature } = props
   const [viewType, setViewType] = useState(ViewType.decoded)
   const [isOpened, setOpened] = useState(false)
 
@@ -52,46 +69,48 @@ export const TxInput = (props: { input: string, inputSignature: IHexSignature}) 
     setViewType(option)
   }
 
-  const dropdownButton = isOpened ? <Down size={'small'} /> : <Down size={'small'} />
-
-  return <div>
-    <div>
-      {viewType === ViewType.decoded &&
-        <DisplaySignatureMethod
-          input={props.input}
-          signatures={[props.inputSignature]}
-        />
-      }
-      {viewType === ViewType.hex &&
-        <span>{props.input}</span>
-      }
-    </div>
-    <div>
-      <DropButton
-        style={{ borderRadius: '4px' }}
-        open={isOpened}
-        onClose={() => setOpened(false)}
-        onOpen={() => setOpened(true)}
-        dropContent={<DropContent
-          currentOption={viewType}
-          onSelectOption={onSelectOption}
-        />}
-        dropProps={{ align: { top: 'bottom' }, margin: { left: 'xsmall' }, round: '6px' }}
-      >
-        <Box
-          direction="row"
-          gap="medium"
-          align="start"
-          pad="xsmall">
-          <Button
-            size="small"
-            label="View input as"
-            icon={<Down size={'small'} />}
-            reverse
-            style={{ borderRadius: '6px', padding: '3px 8px' }}
+  if (inputSignature) {
+    return <div>
+      <div>
+        {viewType === ViewType.decoded &&
+          <DisplaySignatureMethod
+            input={props.input}
+            signatures={[inputSignature]}
           />
-        </Box>
-      </DropButton>
+        }
+        {viewType === ViewType.hex &&
+          <RawInput value={'' + props.input} />
+        }
+      </div>
+      <div>
+        <DropButton
+          style={{ borderRadius: '4px' }}
+          open={isOpened}
+          onClose={() => setOpened(false)}
+          onOpen={() => setOpened(true)}
+          dropContent={<DropContent
+            currentOption={viewType}
+            onSelectOption={onSelectOption}
+          />}
+          dropProps={{ align: { top: 'bottom' }, margin: { left: 'xsmall' }, round: '6px' }}
+        >
+          <Box
+            direction="row"
+            gap="medium"
+            align="start"
+            pad="xsmall">
+            <Button
+              size="small"
+              label="View input as"
+              icon={<Down size={'small'} />}
+              reverse
+              style={{ borderRadius: '6px', padding: '3px 8px' }}
+            />
+          </Box>
+        </DropButton>
+      </div>
     </div>
-  </div>
+  }
+
+  return <RawInput value={'' + props.input} />
 }
