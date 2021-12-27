@@ -63,8 +63,9 @@ export function InternalTransactionList(props: InternalTransactionListProps) {
         primaryKey={"index"}
         rowDetails={(row) => (
           <DisplaySignatureMethod
-            internalTransaction={row}
             key={`${row.from}_${row.to}`}
+            input={row && row.input ? row.input : null}
+            signatures={row && row.signatures ? row.signatures : null}
           />
         )}
       />
