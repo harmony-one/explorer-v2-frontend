@@ -1,7 +1,7 @@
 import { TransactionDetails } from "src/components/transaction/TransactionDetails";
 import { InternalTransactionList } from "src/components/transaction/InternalTransactionList";
 import { TransactionLogs } from "src/components/transaction/TransactionLogs";
-import { InternalTransaction, RPCStakingTransactionHarmony } from "src/types";
+import { IHexSignature, InternalTransaction, RPCStakingTransactionHarmony } from "src/types";
 import { BaseContainer, BasePage } from "src/components/ui";
 
 import { useHistory, useParams } from "react-router-dom";
@@ -14,7 +14,7 @@ import {
   getByteCodeSignatureByHash,
 } from "src/api/client";
 import { AllBlocksTable } from "../AllBlocksPage/AllBlocksTable";
-import { revertErrorMessage } from "src/web3/parseByteCode";
+import { parseSuggestedMethod, revertErrorMessage } from "src/web3/parseByteCode";
 import { hmyv2_getTransactionReceipt } from "src/api/rpc";
 
 const extractError = (err: any) => {
@@ -51,6 +51,7 @@ export const TransactionPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [txrsLoading, setTxrsLoading] = useState<boolean>(true);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
+  const [inputSignature, setInputSignature] = useState<IHexSignature>()
 
   const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
     .split(",")
@@ -161,6 +162,22 @@ export const TransactionPage = () => {
     getLogs();
   }, [tx]);
 
+  useEffect(() => {
+    const decodeTxInput = async () => {
+      try {
+        const [signature] = await getByteCodeSignatureByHash([tx.input.slice(0, 10)])
+        if (signature) {
+          setInputSignature(signature)
+        }
+      } catch (e) {
+        console.error('Cannot get tx input byte code signature:', (e as Error).message)
+      }
+    }
+    if (tx.input && tx.input.length > 10) {
+      decodeTxInput()
+    }
+  }, [tx.input])
+
   if (isLoading) {
     return (
       <Box style={{ height: "700px" }} justify="center" align="center">
@@ -193,6 +210,7 @@ export const TransactionPage = () => {
               transaction={tx}
               logs={logs}
               internalTxs={trxs}
+              inputSignature={inputSignature}
               errorMsg={
                 txrsLoading
                   ? undefined

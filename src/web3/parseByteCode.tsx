@@ -2,7 +2,7 @@ import Web3 from "web3";
 import { Box, Text } from "grommet";
 import React from "react";
 import { Address } from "../components/ui";
-import { ByteCode, InternalTransaction } from "../types";
+import { ByteCode, IHexSignature, InternalTransaction } from "../types";
 
 const web3 = new Web3();
 
@@ -99,26 +99,24 @@ const parseTextSignature = (sig: string) => {
     return null;
   }
 };
-export const DisplaySignatureMethod = (props: any = {}) => {
-  const { internalTransaction } = props;
-  if (
-    !internalTransaction ||
-    !internalTransaction.input ||
-    internalTransaction.input.length < 3
-  ) {
+
+export interface IDisplaySignatureProps {
+  input?: string;
+  signatures?: IHexSignature[];
+}
+
+export const DisplaySignatureMethod = (props: IDisplaySignatureProps) => {
+  const { input, signatures } = props;
+  if (!input || input.length < 3) {
     return <>No input</>;
   }
-
-  const signature =
-    internalTransaction.signatures &&
-    internalTransaction.signatures[0] &&
-    internalTransaction.signatures[0].signature;
+  const signature = signatures && signatures[0] && signatures[0].signature;
   if (!signature) {
     return <>—</>;
   }
 
   const { parsed, event, abi } =
-    parseSuggestedMethod(signature, internalTransaction.input) || {};
+    parseSuggestedMethod(signature, input) || {};
 
   return <DisplaySignature parsed={parsed} event={event} abi={abi} />;
 };

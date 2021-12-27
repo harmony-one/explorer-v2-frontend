@@ -1,4 +1,4 @@
-import {Block, RPCTransactionHarmony} from "../../types";
+import { Block, IHexSignature, RPCTransactionHarmony } from "../../types";
 import {
     Clone,
     FormNextLink,
@@ -20,16 +20,12 @@ import {
     RelativeTimer,
     DateTime
 } from "../ui";
-import {Box, Text} from "grommet";
+import {Box} from "grommet";
 import {CopyBtn} from "../ui/CopyBtn";
-import {toaster} from "src/App";
 import styled from "styled-components";
+import { TxInput } from "./TransactionInput";
 
 export const todo = {};
-
-const Icon = styled(StatusGood)`
-  margin-right: 5px;
-`;
 
 export type TransactionSubType =
     | "__staking"
@@ -172,27 +168,11 @@ export const transactionPropertyDisplayValues: any = {
             .filter((internalTx, i) => +internalTx.value || i === 0)
             .map((internalTx, i) => {
                 const v = internalTx.value
-                // todo DRY copy part
                 const bi = BigInt(v) / BigInt(10 ** 14);
                 const copyValue = parseInt(bi.toString()) / 10000;
-
                 return (
                     <div style={{display: 'flex', flexDirection: 'row'}}>
-                        {(
-                            <CopyBtn
-                                value={'' + copyValue}
-                                onClick={() =>
-                                    toaster.show({
-                                        message: () => (
-                                            <Box direction={"row"} align={"center"} pad={"small"}>
-                                                <Icon size={"small"} color={"headerText"}/>
-                                                <Text size={"small"}>Copied to clipboard</Text>
-                                            </Box>
-                                        )
-                                    })
-                                }
-                            />
-                        )}
+                        <CopyBtn value={'' + copyValue} showNotification={true} />
                         &nbsp;&nbsp;<ONEValue value={v} timestamp={tx.timestamp}/>
                         {i > 0 && <>
                           &nbsp;
@@ -261,7 +241,11 @@ export const transactionPropertyDisplayValues: any = {
     tokenTransfers: (value: any) => <span>{value}</span>,
     transactionFee: (value: any, tx: any) => {
         return <>{value}</>;
-    }
+    },
+    input: (value: any, tx: RPCTransactionHarmony, _: any, inputSignature: IHexSignature) => <TxInput
+      input={tx.input}
+      inputSignature={inputSignature}
+    />
 };
 
 export const transactionDisplayValues = (
@@ -269,7 +253,8 @@ export const transactionDisplayValues = (
     key: string,
     value: any,
     type: string,
-    internalTxs: any[] = []
+    internalTxs: any[] = [],
+    inputSignature: IHexSignature
 ) => {
     if (["blockHash", "toShardID", "msg"].includes(key)) {
         return;
@@ -282,7 +267,7 @@ export const transactionDisplayValues = (
     let displayValue = value;
 
     if (f) {
-        displayValue = f(value, transaction, internalTxs);
+        displayValue = f(value, transaction, internalTxs, inputSignature);
     } else {
         if (Array.isArray(value)) {
             displayValue = value.join(", ");
@@ -301,16 +286,14 @@ export const transactionDisplayValues = (
         if (["success", "error"].find((nameKey) => nameKey === key)) {
             return;
         }
-
         displayValue = "—";
     }
 
     const text = typeof value === "string" ? value : <>{value}</>;
     const copyText =
         typeof text === "string" &&
-        !["from", "to", "type", "delegatorAddress", "validatorAddress", "value"].find(
-            (item) => item === key
-        )
+        !["from", "to", "type", "delegatorAddress", "validatorAddress", "value", "input"]
+          .find((item) => item === key)
             ? text
             : "";
 
@@ -318,21 +301,10 @@ export const transactionDisplayValues = (
         <Box direction="row" align="baseline">
             {!["shardID"].includes(key) && ![0, "0", "—"].includes(displayValue) && (
                 <>
-                    {copyText ? (
-                        <CopyBtn
-                            value={copyText}
-                            onClick={() =>
-                                toaster.show({
-                                    message: () => (
-                                        <Box direction={"row"} align={"center"} pad={"small"}>
-                                            <Icon size={"small"} color={"headerText"}/>
-                                            <Text size={"small"}>Copied to clipboard</Text>
-                                        </Box>
-                                    )
-                                })
-                            }
-                        />
-                    ) : null}
+                    {copyText
+                      ? <CopyBtn value={copyText} showNotification={true} />
+                      : null
+                    }
                     &nbsp;
                 </>
             )}
