@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Web3 from "web3";
 import styled from "styled-components";
 import { Down } from 'grommet-icons';
-import { Box, DropButton, Text, Button } from 'grommet';
+import { Box, DropButton, Text, Button, TextArea } from "grommet";
 import { IHexSignature } from "../../types";
 import { DisplaySignatureMethod } from "../../web3/parseByteCode";
 import { CopyBtn } from "../ui/CopyBtn";
 
+const web3 = new Web3()
+
 enum ViewType {
+  hex = 'hex',
   decoded = 'decoded',
-  hex = 'hex'
+  utf8 = 'utf8'
+}
+
+const ViewTypeName = {
+  [ViewType.decoded]: 'Default view',
+  [ViewType.hex]: 'Original',
+  [ViewType.utf8]: 'UTF-8',
 }
 
 interface IDropContentProps {
   currentOption: ViewType;
+  options: ViewType[];
   onSelectOption: (option: ViewType) => void;
 }
 
@@ -26,6 +37,9 @@ const OptionItem = styled(Text)<{ isSelected: boolean }>`
   &:hover {
     color: ${(props) => props.theme.global.colors.brand};
   }
+  &:not(:first-child) {
+    margin-top: 8px;
+  }
 `
 
 const DropContentContainer = styled(Box)`
@@ -33,18 +47,14 @@ const DropContentContainer = styled(Box)`
 `
 
 const DropContent = (props: IDropContentProps) => {
-  const { currentOption, onSelectOption } = props
+  const { options, currentOption, onSelectOption } = props
   return <DropContentContainer>
-    <OptionItem
-      isSelected={currentOption === ViewType.decoded}
-      onClick={() => onSelectOption(ViewType.decoded)}>
-      Default view
-    </OptionItem>
-    <OptionItem
-      isSelected={currentOption === ViewType.hex}
-      onClick={() => onSelectOption(ViewType.hex)}>
-      Original
-    </OptionItem>
+    {options.map(option => <OptionItem
+      key={option}
+      isSelected={currentOption === option}
+      onClick={() => onSelectOption(option)}>
+      {ViewTypeName[option]}
+    </OptionItem>)}
   </DropContentContainer>
 }
 
@@ -59,39 +69,70 @@ const RawInput = (props: { value: string }) => {
   </Box>
 }
 
+const ReadableText = (props: { value: string }) => {
+  return <TextArea style={{ minHeight: "40px" }} rows={2} value={props.value}/>
+}
+
 export const TxInput = (props: { input: string, inputSignature?: IHexSignature}) => {
   const { inputSignature } = props
-  const [viewType, setViewType] = useState(ViewType.decoded)
+  const [viewType, setViewType] = useState(ViewType.hex)
+  const [dropdownOptions, setDropdownOptions] = useState([ViewType.hex])
+  const [inputUTF8Text, setInputUTF8Text] = useState('')
   const [isOpened, setOpened] = useState(false)
+
+  useEffect(() => {
+    if (props.inputSignature) {
+      setViewType(ViewType.decoded)
+      setDropdownOptions([...dropdownOptions, ViewType.decoded])
+    } else {
+      try {
+        const text = web3.utils.hexToUtf8(props.input)
+        const isUtf8ContainsText = text && /[\p{Letter}\p{Mark}]+/gu.test(text)
+        if (isUtf8ContainsText) {
+          setInputUTF8Text(text)
+          setViewType(ViewType.utf8)
+          setDropdownOptions([...dropdownOptions, ViewType.utf8])
+        }
+      } catch (e) {
+        console.log('Tx input hex is not an UTF8 string:', (e as Error).message)
+      }
+    }
+  }, [props.input, props.inputSignature])
 
   const onSelectOption = (option: ViewType) => {
     setOpened(false)
     setViewType(option)
   }
 
-  if (inputSignature) {
-    return <div>
-      <div>
-        {viewType === ViewType.decoded &&
-          <DisplaySignatureMethod
-            input={props.input}
-            signatures={[inputSignature]}
-          />
-        }
-        {viewType === ViewType.hex &&
-          <RawInput value={'' + props.input} />
-        }
-      </div>
+  const dropContent = <DropContent
+    options={dropdownOptions}
+    currentOption={viewType}
+    onSelectOption={onSelectOption}
+  />
+
+  return <div style={{ width: '100%' }}>
+    <div>
+      {(viewType === ViewType.decoded && inputSignature) &&
+        <DisplaySignatureMethod
+          input={props.input}
+          signatures={[inputSignature]}
+        />
+      }
+      {viewType === ViewType.hex &&
+        <RawInput value={'' + props.input} />
+      }
+      {(viewType === ViewType.utf8 && inputUTF8Text) &&
+        <ReadableText value={inputUTF8Text} />
+      }
+    </div>
+    {dropdownOptions.length > 1 &&
       <div>
         <DropButton
           style={{ borderRadius: '4px' }}
           open={isOpened}
           onClose={() => setOpened(false)}
           onOpen={() => setOpened(true)}
-          dropContent={<DropContent
-            currentOption={viewType}
-            onSelectOption={onSelectOption}
-          />}
+          dropContent={dropContent}
           dropProps={{ align: { top: 'bottom' }, margin: { left: 'xsmall' }, round: '6px' }}
         >
           <Box
@@ -109,8 +150,6 @@ export const TxInput = (props: { input: string, inputSignature?: IHexSignature})
           </Box>
         </DropButton>
       </div>
-    </div>
-  }
-
-  return <RawInput value={'' + props.input} />
+    }
+  </div>
 }
