@@ -54,6 +54,7 @@ export class ToasterComponent extends React.Component<IToasterComponentProps> {
           ? currentSelected.map((item, index) => {
               return (
                 <ToasterItem
+                  key={index}
                   background={"backgroundToaster"}
                   pad={"xsmall"}
                   index={index}

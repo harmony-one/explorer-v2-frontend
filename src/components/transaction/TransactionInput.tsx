@@ -15,6 +15,8 @@ enum ViewType {
   utf8 = 'utf8'
 }
 
+const defaultViewType = ViewType.hex
+
 const ViewTypeName = {
   [ViewType.decoded]: 'Default view',
   [ViewType.hex]: 'Original',
@@ -76,14 +78,15 @@ const ReadableText = (props: { value: string }) => {
 export const TxInput = (props: { input: string, inputSignature?: IHexSignature}) => {
   const { inputSignature } = props
   const [viewType, setViewType] = useState(ViewType.hex)
-  const [dropdownOptions, setDropdownOptions] = useState([ViewType.hex])
+  const [dropdownOptions, setDropdownOptions] = useState([defaultViewType])
   const [inputUTF8Text, setInputUTF8Text] = useState('')
   const [isOpened, setOpened] = useState(false)
 
   useEffect(() => {
     if (props.inputSignature) {
       setViewType(ViewType.decoded)
-      setDropdownOptions([...dropdownOptions, ViewType.decoded])
+      setDropdownOptions([ViewType.hex, ViewType.decoded])
+      setInputUTF8Text('')
     } else {
       try {
         const text = web3.utils.hexToUtf8(props.input)
@@ -91,10 +94,13 @@ export const TxInput = (props: { input: string, inputSignature?: IHexSignature})
         if (isUtf8ContainsText) {
           setInputUTF8Text(text)
           setViewType(ViewType.utf8)
-          setDropdownOptions([...dropdownOptions, ViewType.utf8])
+          setDropdownOptions([ViewType.hex, ViewType.utf8])
         }
       } catch (e) {
         console.log('Tx input hex is not an UTF8 string:', (e as Error).message)
+        setViewType(defaultViewType)
+        setInputUTF8Text('')
+        setDropdownOptions([defaultViewType])
       }
     }
   }, [props.input, props.inputSignature])
