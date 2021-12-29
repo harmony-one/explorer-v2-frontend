@@ -58,8 +58,22 @@ export const TransactionPage = () => {
     .map((t) => +t);
 
   useEffect(() => {
+    const getTxInputSignature = async (trx: RPCStakingTransactionHarmony) => {
+      let signature
+      try {
+        const signatures = await getByteCodeSignatureByHash([trx.input.slice(0, 10)])
+        if(signatures && signatures.length > 0) {
+          signature = signatures[0]
+        }
+      } catch (e) {
+        console.error('Cannot get tx input signature: ', (e as Error).message)
+      }
+      return signature
+    }
+
     const getTx = async () => {
       let trx;
+      let trxInputSignature;
       let shard = 0;
       if (id.length === 66) {
         trx = await getTransactionByField([0, "hash", id]);
@@ -85,9 +99,13 @@ export const TransactionPage = () => {
         if (txnReceipt && txnReceipt.result && txnReceipt.result.gasUsed) {
           trx.gas = parseInt(txnReceipt.result.gasUsed).toString();
         }
+        if (trx.input && trx.input.length > 10) {
+          trxInputSignature = await getTxInputSignature(trx)
+        }
       }
       
       setTx((trx || {}) as RPCStakingTransactionHarmony);
+      setInputSignature(trxInputSignature)
     };
 
     getTx();
@@ -161,22 +179,6 @@ export const TransactionPage = () => {
 
     getLogs();
   }, [tx]);
-
-  useEffect(() => {
-    const decodeTxInput = async () => {
-      try {
-        const [signature] = await getByteCodeSignatureByHash([tx.input.slice(0, 10)])
-        if (signature) {
-          setInputSignature(signature)
-        }
-      } catch (e) {
-        console.error('Cannot get tx input byte code signature:', (e as Error).message)
-      }
-    }
-    if (tx.input && tx.input.length > 10) {
-      decodeTxInput()
-    }
-  }, [tx.input])
 
   if (isLoading) {
     return (
