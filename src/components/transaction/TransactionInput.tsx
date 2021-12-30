@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Web3 from "web3";
 import styled from "styled-components";
 import { Down } from 'grommet-icons';
 import { Box, DropButton, Text, Button, TextArea } from "grommet";
 import { IHexSignature } from "../../types";
 import { DisplaySignatureMethod } from "../../web3/parseByteCode";
 import { CopyBtn } from "../ui/CopyBtn";
-
-const web3 = new Web3()
+import { parseHexToText } from "../../web3/parseHex";
 
 enum ViewType {
   hex = 'hex',
@@ -89,9 +87,8 @@ export const TxInput = (props: { input: string, inputSignature?: IHexSignature})
       setInputUTF8Text('')
     } else {
       try {
-        const text = web3.utils.hexToUtf8(props.input)
-        const isUtf8ContainsText = text && /[\p{Letter}\p{Mark}]+/gu.test(text)
-        if (isUtf8ContainsText) {
+        const text = parseHexToText(props.input)
+        if (text) {
           setInputUTF8Text(text)
           setViewType(ViewType.utf8)
           setDropdownOptions([ViewType.hex, ViewType.utf8])
