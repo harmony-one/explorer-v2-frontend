@@ -14,7 +14,7 @@ import {
 import {
   Filter,
   RelatedTransaction,
-  RelatedTransactionType,
+  RelatedTransactionType, RPCTransactionHarmony
 } from "src/types";
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
@@ -387,6 +387,7 @@ const usePrevious = (value: TRelatedTransaction) => {
 export function Transactions(props: {
   type: TRelatedTransaction;
   rowDetails?: (row: any) => JSX.Element;
+  onTxsLoaded?: (txs: RPCTransactionHarmony[]) => void;
 }) {
   const limitValue = localStorage.getItem("tableLimitValue");
 
@@ -466,6 +467,9 @@ export function Transactions(props: {
       setRelatedTrxs(txs);
       if (props.type === 'transaction' || props.type === 'staking_transaction') {
         setCachedTxs({ ...cachedTxs, [props.type]: txs });
+      }
+      if (props.onTxsLoaded) {
+        props.onTxsLoaded(txs)
       }
     } catch (e) {
       console.error('Cannot get or parse txs:', e);

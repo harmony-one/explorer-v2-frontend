@@ -22,15 +22,22 @@ export const StyledBox = styled(Box)`
   border-radius: 2px;
   padding-left: 5px;
 `;
+
+const AddressDescription = styled(Box)`
+  font-weight: 700;
+  padding-left: 5px;
+`
+
 interface AddressDetailsProps {
   address: string;
+  addressDescription: string;
   contracts: AddressDetails | null;
   tokens: any[];
   balance?: string;
 }
 
 export function AddressDetailsDisplay(props: AddressDetailsProps) {
-  const { address, contracts, tokens, balance } = props;
+  const { address, addressDescription, contracts, tokens, balance } = props;
   const erc20Map = useERC20Pool();
   const erc1155Map = useERC1155Pool();
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
@@ -59,6 +66,7 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
     ...restErc1151data,
     ...meta,
     address,
+    addressDescription
   };
 
   if (!data) {
@@ -180,6 +188,10 @@ const addressPropertyDisplayValues: Record<
           <Address address={value} displayHash />
           {binanceAddressMap[value] ? ` (${binanceAddressMap[value]})` : null}
         </StyledBox>
+        {data.addressDescription &&
+          <AddressDescription margin={'12px 0 0'}>
+            {data.addressDescription}
+          </AddressDescription>}
       </>
     );
   },
