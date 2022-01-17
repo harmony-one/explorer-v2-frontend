@@ -1,8 +1,8 @@
 import Web3 from "web3";
-import { Box, Text } from "grommet";
+import { Text } from "grommet";
 import React from "react";
 import { Address } from "../components/ui";
-import { ByteCode, IHexSignature, InternalTransaction } from "../types";
+import { ByteCode, IHexSignature } from "../types";
 
 const web3 = new Web3();
 

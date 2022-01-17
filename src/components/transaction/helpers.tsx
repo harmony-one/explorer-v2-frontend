@@ -1,12 +1,8 @@
-import { Block, IHexSignature, RPCTransactionHarmony } from "../../types";
+import { IHexSignature, RPCTransactionHarmony } from "../../types";
 import {
-    Clone,
-    FormNextLink,
-    FormPreviousLink,
-    StatusGood
+    FormNextLink
 } from "grommet-icons";
 import React from "react";
-import {blockPropertyDisplayValues} from "../block/helpers";
 import {
     Address,
     BlockHash,
@@ -15,14 +11,10 @@ import {
     TransactionHash,
     ONEValue,
     StakingTransactionTypeValue,
-    CalculateFee,
-    formatNumber,
-    RelativeTimer,
     DateTime
 } from "../ui";
 import {Box} from "grommet";
 import {CopyBtn} from "../ui/CopyBtn";
-import styled from "styled-components";
 import { TxInput } from "./TransactionInput";
 
 export const todo = {};

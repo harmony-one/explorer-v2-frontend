@@ -13,8 +13,7 @@ import {
   getTransactionLogsByField,
   getByteCodeSignatureByHash,
 } from "src/api/client";
-import { AllBlocksTable } from "../AllBlocksPage/AllBlocksTable";
-import { parseSuggestedMethod, revertErrorMessage } from "src/web3/parseByteCode";
+import { revertErrorMessage } from "src/web3/parseByteCode";
 import { hmyv2_getTransactionReceipt } from "src/api/rpc";
 
 const extractError = (err: any) => {
