@@ -31,6 +31,7 @@ import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
+import { EventsTab } from "./tabs/events/Events";
 
 export function AddressPage() {
   const history = useHistory();
@@ -373,6 +374,12 @@ export function AddressPage() {
               />
             </Tab>
           ) : null}
+
+          {type === "erc20" &&
+            <Tab title={<Text size="small">Events</Text>}>
+              <EventsTab id={id}/>
+            </Tab>
+          }
 
           {/*{type === "erc1155" && inventory.length ? (*/}
           {/*  <Tab*/}

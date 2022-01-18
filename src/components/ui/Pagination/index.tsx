@@ -117,7 +117,7 @@ function Pagination(props: PaginationProps) {
 interface ElementsPerPage {
   filter: Filter;
   onChange: (filter: Filter) => void;
-  options?: number[];
+  options?: string[];
 }
 
 const defaultOptions: string[] = ["10", "25", "50", "100"];

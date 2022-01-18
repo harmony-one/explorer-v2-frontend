@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import dayjs from "dayjs";
-
 import { Box, DataTable, Text, Spinner } from "grommet";
 import { Block, Filter } from "src/types";
 import { useHistory, useParams } from "react-router-dom";
@@ -11,8 +9,7 @@ import {
   PaginationBlockNavigator,
   PaginationRecordsPerPage,
 } from "src/components/ui";
-import { getBlocks, getCount } from "src/api/client";
-import { ShardDropdown } from "src/components/ui/ShardDropdown";
+import { getBlocks } from "src/api/client";
 
 function getColumns(props: any) {
   const { history, shardNumber } = props;

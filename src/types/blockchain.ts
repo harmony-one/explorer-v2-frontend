@@ -173,6 +173,11 @@ export type Log = {
   removed: boolean;
 };
 
+export interface LogDetailed extends Log {
+  input: string
+  timestamp: string
+}
+
 export type TraceCallTypes =
   | "CALL"
   | "STATICCALL"

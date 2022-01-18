@@ -5,6 +5,7 @@ import {
   RPCStakingTransactionHarmony,
   RPCTransactionHarmony,
   RelatedTransaction,
+  Log, LogDetailed
 } from "src/types";
 import {
   IHoldersInfo,
@@ -71,7 +72,11 @@ export function getInternalTransactionsByField(params: any[]) {
 }
 
 export function getTransactionLogsByField(params: any[]) {
-  return transport("getLogsByField", params) as Promise<any>;
+  return transport("getLogsByField", params) as Promise<Log[]>;
+}
+
+export function getDetailedTransactionLogsByField(params: any[]) {
+  return transport("getDetailedLogsByField", params) as Promise<LogDetailed[]>;
 }
 
 export async function getByteCodeSignatureByHash(params: [string]) {
