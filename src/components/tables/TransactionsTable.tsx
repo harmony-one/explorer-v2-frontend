@@ -157,6 +157,7 @@ interface TransactionTableProps {
   primaryKey?: string;
   showPages?: boolean
   textType?: string
+  paginationOptions?: string[]
 }
 
 export function TransactionsTable(props: TransactionTableProps) {
@@ -177,7 +178,8 @@ export function TransactionsTable(props: TransactionTableProps) {
     noScrollTop,
     minWidth = "1310px",
     showPages = false,
-    textType = 'transaction'
+    textType = 'transaction',
+    paginationOptions,
   } = props;
 
   const _IsLoading = isLoading;
@@ -238,7 +240,7 @@ export function TransactionsTable(props: TransactionTableProps) {
             alwaysOpenedRowDetails={props.rowDetails ? true : false}
             tableProps={{
               className: "g-table-header",
-              style: { width: "100%", minWidth },
+              style: { width: "100%", minWidth, tableLayout: 'auto' },
               columns: columns ? columns : getColumns({ history }),
               data: data,
               step,
@@ -271,7 +273,7 @@ export function TransactionsTable(props: TransactionTableProps) {
           align="center"
           margin={{ top: "medium" }}
         >
-          <PaginationRecordsPerPage filter={filter} onChange={setFilter} />
+          <PaginationRecordsPerPage filter={filter} options={paginationOptions} onChange={setFilter} />
           <PaginationNavigator
             onChange={setFilter}
             isLoading={isLoading}

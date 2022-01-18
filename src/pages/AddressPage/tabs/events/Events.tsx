@@ -13,6 +13,8 @@ import { DisplaySignature, parseSuggestedEvent } from "../../../../web3/parseByt
 
 const TopicsContainer = styled.div`
   text-align: left;
+  font-family: monospace;
+  max-width: 85%;
 `
 
 const TextEllipsis = styled.div`
@@ -37,9 +39,21 @@ const EventsBox = styled(Box)`
   padding: 10px;
   font-size: small;
 
-  table tbody td {
-    vertical-align: top;
+  table {
+    tbody {
+      tr {
+        td {
+          vertical-align: top;
+        }
+      }
+    }
   }
+`
+
+const MethodSignature = styled.div`
+  word-break: break-word;
+  font-size: 14px;
+  font-family: monospace;
 `
 
 const CenteredContainer = styled.div`
@@ -58,7 +72,7 @@ function TxsHashColumn (props: { log: LogWithSignature }) {
       </Link>
     </Tip>
     <Tip content={'Block number'}>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', marginTop: '4px' }}>
         #&nbsp;
         <Link to={`/block/${log.blockNumber}`} style={{ display: 'inline-block' }}>
           <LinkText>{log.blockNumber}</LinkText>
@@ -67,21 +81,28 @@ function TxsHashColumn (props: { log: LogWithSignature }) {
     </Tip>
     {log.timestamp &&
       <Tip content={dayjs(log.timestamp).format('MMM-DD-YYYY hh:mm:ss a') }>
-        <span>{dayjs(log.timestamp).fromNow()}</span>
+        <div style={{ marginTop: '4px' }}>{dayjs(log.timestamp).fromNow()}</div>
       </Tip>
     }
   </div>
 }
 
 function TxMethod (props: { log: LogWithSignature }) {
-  return <div style={{ width: '100px' }}>
+  const { inputSignatures } = props.log
+
+  return <div style={{ width: '140px' }}>
     <Text size="12px">
-      <Tip content={'MethodId'}>
-        <NeutralMarker background={"backgroundBack"}>
+      <Tip content={'MethodID'}>
+        <NeutralMarker background={"backgroundBack"} width={'100px'}>
           <TextEllipsis>{props.log.input.slice(0, 10)}</TextEllipsis>
         </NeutralMarker>
       </Tip>
     </Text>
+    {inputSignatures && inputSignatures.length > 0 &&
+      <MethodSignature style={{ marginTop: '8px' }}>
+        {inputSignatures[0].signature}
+      </MethodSignature>
+    }
   </div>
 }
 
@@ -155,6 +176,7 @@ const getColumns = (): ColumnConfig<LogWithSignature>[] => {
 
 interface LogWithSignature extends LogDetailed {
   signatures: IHexSignature[]
+  inputSignatures: IHexSignature[]
 }
 
 export function EventsTab(props: {
@@ -171,12 +193,11 @@ export function EventsTab(props: {
     ...(initFilter as any),
   });
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isInitialLoading, setInitialLoading] = useState(true)
   const [logs, setLogs] = useState<LogWithSignature[]>([])
 
   const loadEvents = async () => {
     try {
-      setIsLoading(true)
       const logs = await getDetailedTransactionLogsByField([
         0,
         "address",
@@ -186,9 +207,20 @@ export function EventsTab(props: {
       ]);
 
       const logsSignatures = await Promise.all(
-        logs.map((l: any) => {
-          const firstTopicMethod = l.topics.length > 0 ? l.topics[0].slice(0, 10) : ''
-          return getByteCodeSignatureByHash([firstTopicMethod])
+        logs.map((l) => {
+          if (l.topics && l.topics.length > 0 && l.topics[0].length > 10) {
+            return getByteCodeSignatureByHash([l.topics[0].slice(0, 10)])
+          }
+          return []
+        })
+      )
+
+      const inputSignatures = await Promise.all(
+        logs.map( (l) => {
+          if (l.input && l.input.length > 10) {
+            return getByteCodeSignatureByHash([l.input.slice(0, 10)])
+          }
+          return []
         })
       )
 
@@ -198,13 +230,14 @@ export function EventsTab(props: {
         timestamp: l.timestamp || '',
         primaryKey: `${l.address}_${i}`, // key for grommet DataTable
         signatures: logsSignatures[i],
+        inputSignatures: inputSignatures[i]
       }));
 
       setLogs(logsWithSignatures);
     } catch (e) {
       console.error('Cannot get logs for address', (e as Error).message)
     } finally {
-      setIsLoading(false)
+      setInitialLoading(false)
     }
   }
 
@@ -215,6 +248,12 @@ export function EventsTab(props: {
   useEffect(() => {
     loadEvents()
   }, [filter.offset])
+
+  if(isInitialLoading) {
+    return <CenteredContainer>
+      <Spinner />
+    </CenteredContainer>
+  }
 
   return (
     <EventsBox>
@@ -232,6 +271,7 @@ export function EventsTab(props: {
         minWidth="1266px"
         showPages={false}
         textType={"event"}
+        paginationOptions={['10']}
       />
     </EventsBox>
   );
