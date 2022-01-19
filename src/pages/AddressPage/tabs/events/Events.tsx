@@ -226,7 +226,7 @@ export function EventsTab(props: {
 
       const logsWithSignatures = logs.map((l, i: number) => ({
         ...l,
-        input: l.input || 'n/a',
+        input: l.input || '—',
         timestamp: l.timestamp || '',
         primaryKey: `${l.address}_${i}`, // key for grommet DataTable
         signatures: logsSignatures[i],
@@ -243,11 +243,7 @@ export function EventsTab(props: {
 
   useEffect(() => {
     loadEvents()
-  }, [props.id])
-
-  useEffect(() => {
-    loadEvents()
-  }, [filter.offset])
+  }, [props.id, filter.offset])
 
   if(isInitialLoading) {
     return <CenteredContainer>
