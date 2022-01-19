@@ -208,7 +208,7 @@ export const blockPropertyDisplayValues: any = {
   timestamp: (value: any) => <Timestamp timestamp={value} withRelative />,
   gasUsed: (value: any, block: Block) => (
     <span>
-      {formatNumber(+value)} ({+value / +block.gasLimit}%){" "}
+      {formatNumber(+value)} ({((+value / +block.gasLimit) * 100).toFixed(2)}%){" "}
     </span>
   ),
   gasLimit: (value: any) => <>{formatNumber(+value)}</>,
