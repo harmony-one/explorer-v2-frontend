@@ -1,10 +1,8 @@
 import {useONEExchangeRate} from "../../hooks/useONEExchangeRate";
 import {getNearestPriceForTimestamp} from "src/components/ONE_USDT_Rate";
-import {Text, Box, Tip} from "grommet";
-import {TipContent} from "./Tooltip";
+import {Text, Box} from "grommet";
 import React from "react";
 import dayjs from "dayjs";
-import {formatNumber} from "./utils";
 import {Dropdown} from "../dropdown/Dropdown";
 import {useThemeMode} from "src/hooks/themeSwitcherHook";
 import {CopyBtn} from "./CopyBtn"
@@ -39,11 +37,12 @@ export const ONEValueDropdown = (props: ONEValueProps) => {
             ? getNearestPriceForTimestamp(timestamp)
             : lastPrice;
 
-    const normilizedValue: {
+    const normalizedValue: {
         value: string | number;
         one: number;
         usd: string | number;
         index: number;
+        key: string;
     }[] = value.map((hashValue, index) => {
         const bi = BigInt(hashValue) / BigInt(10 ** 14);
         const v = parseInt(bi.toString()) / 10000;
@@ -52,7 +51,7 @@ export const ONEValueDropdown = (props: ONEValueProps) => {
             USDValue = v * +price;
         }
 
-        return {value: hashValue, one: v, usd: USDValue || 0, index};
+        return {value: hashValue, one: v, usd: USDValue || 0, index, key: `${hashValue}_${index}`};
     });
 
     const hideCopyBtn = false
@@ -60,20 +59,19 @@ export const ONEValueDropdown = (props: ONEValueProps) => {
     let valueCopy = ''
 
     try {
-        valueCopy = normilizedValue[0].one.toString()
+        valueCopy = normalizedValue[0].one.toString()
     } catch (e) {
     }
 
     return (
         <Dropdown
-            items={normilizedValue}
-            keyField={"value"}
+            items={normalizedValue}
+            keyField={"key"}
             themeMode={themeMode}
             itemHeight={"30px"}
             itemStyles={{justifyContent: "center"}}
             renderValue={() => (
                 <Box direction={"row"} align={"center"} style={{paddingTop: "2px"}}>
-
                     {hideCopyBtn ? null : (
                         <CopyBtn
                             value={valueCopy}
@@ -95,7 +93,7 @@ export const ONEValueDropdown = (props: ONEValueProps) => {
 
                     <Text size={"small"}>
                         <b>
-                            {normilizedValue.reduce((prev, cur) => {
+                            {normalizedValue.reduce((prev, cur) => {
                                 prev += cur.one;
                                 return prev;
                             }, 0)}{" "}
@@ -104,7 +102,7 @@ export const ONEValueDropdown = (props: ONEValueProps) => {
                     </Text>
                     <Text size={"small"} style={{paddingLeft: "4px"}}>
                         ($
-                        {normilizedValue
+                        {normalizedValue
                             .reduce((prev, cur) => {
                                 prev += +cur.usd;
                                 return prev;
