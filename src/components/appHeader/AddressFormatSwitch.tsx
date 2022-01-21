@@ -13,7 +13,7 @@ const SwitchButton = styled.div<{ selected: boolean }>`
   text-align: center;
   cursor: ${(props) => (props.selected ? "auto" : "pointer")};
   z-index: 1;
-  transition: color 100ms cubic-bezier(0.65, 0, 0.35, 1);;
+  transition: color 100ms ease-in-out;
 `;
 
 const SwitchContainer = styled(Box)`
