@@ -9,7 +9,6 @@ import {
   PaginationNavigator,
   PaginationRecordsPerPage,
   TipContent,
-  TokenValue,
   TPaginationAction,
 } from "src/components/ui";
 import { Erc20 } from "../../hooks/ERC20_Pool";

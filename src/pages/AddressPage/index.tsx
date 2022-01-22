@@ -24,12 +24,14 @@ import {
 import { Inventory } from "./tabs/inventory/Inventory";
 import { getAllBalance, getBalance } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
-import { AddressDetails } from "../../types";
+import { AddressDetails, RPCTransactionHarmony } from "../../types";
 import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
+import { parseHexToText } from "../../web3/parseHex";
+import { EventsTab } from "./tabs/events/Events";
 
 export function AddressPage() {
   const history = useHistory();
@@ -84,6 +86,7 @@ export function AddressPage() {
   const [contracts, setContracts] = useState<AddressDetails | null>(null);
   const [sourceCode, setSourceCode] = useState<ISourceCode | null>(null);
   const [balance, setBalance] = useState<any>([]);
+  const [addressDescription, setAddressDescription] = useState('')
 
   const [tokens, setTokens] = useState<any>(null);
   const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
@@ -291,6 +294,11 @@ export function AddressPage() {
     "erc1155",
   ];
 
+  const onTxsLoaded = (txs: RPCTransactionHarmony[]) => {
+    const inputWithText = txs.find(tx => parseHexToText(tx.input))
+    setAddressDescription(inputWithText ? 'One or more inbound transactions contains a message' : '')
+  }
+
   return (
     <BaseContainer pad={{ horizontal: "0" }}>
       <Text size="xlarge" weight="bold" margin={{ bottom: "medium" }}>
@@ -299,6 +307,7 @@ export function AddressPage() {
       <BasePage margin={{ vertical: "0" }} style={{ overflow: "inherit" }}>
         <AddressDetailsDisplay
           address={id}
+          addressDescription={addressDescription}
           contracts={contracts}
           tokens={tokens}
           balance={balance}
@@ -317,7 +326,7 @@ export function AddressPage() {
           }}
         >
           <Tab title={<Text size="small">Transactions</Text>}>
-            <Transactions type={"transaction"} />
+            <Transactions type={"transaction"} onTxsLoaded={onTxsLoaded} />
           </Tab>
 
           <Tab title={<Text size="small">Staking</Text>}>
@@ -365,6 +374,12 @@ export function AddressPage() {
               />
             </Tab>
           ) : null}
+
+          {type === "erc20" &&
+            <Tab title={<Text size="small">Events</Text>}>
+              <EventsTab id={id}/>
+            </Tab>
+          }
 
           {/*{type === "erc1155" && inventory.length ? (*/}
           {/*  <Tab*/}

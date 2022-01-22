@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Box, DataTable, Spinner, Text } from "grommet";
 import { RPCTransactionHarmony } from "src/types";
 import { useHistory } from "react-router-dom";
-import { RelativeTimer, Address } from "src/components/ui";
+import { Address } from "src/components/ui";
 import { getTransactions } from "src/api/client";
 import { FormNextLink } from "grommet-icons";
-import { DateTime } from "../../components/ui/DateTime";
+import { DateTime } from "../../components/ui";
 
 function getColumns(props: any) {
   const { history } = props;
