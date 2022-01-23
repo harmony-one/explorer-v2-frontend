@@ -1,7 +1,7 @@
 import { TransactionDetails } from "src/components/transaction/TransactionDetails";
 import { InternalTransactionList } from "src/components/transaction/InternalTransactionList";
 import { TransactionLogs } from "src/components/transaction/TransactionLogs";
-import { InternalTransaction, RPCStakingTransactionHarmony } from "src/types";
+import { IHexSignature, InternalTransaction, RPCStakingTransactionHarmony } from "src/types";
 import { BaseContainer, BasePage } from "src/components/ui";
 
 import { useHistory, useParams } from "react-router-dom";
@@ -13,7 +13,6 @@ import {
   getTransactionLogsByField,
   getByteCodeSignatureByHash,
 } from "src/api/client";
-import { AllBlocksTable } from "../AllBlocksPage/AllBlocksTable";
 import { revertErrorMessage } from "src/web3/parseByteCode";
 import { hmyv2_getTransactionReceipt } from "src/api/rpc";
 
@@ -51,14 +50,29 @@ export const TransactionPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [txrsLoading, setTxrsLoading] = useState<boolean>(true);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
+  const [inputSignature, setInputSignature] = useState<IHexSignature>()
 
   const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
     .split(",")
     .map((t) => +t);
 
   useEffect(() => {
+    const getTxInputSignature = async (trx: RPCStakingTransactionHarmony) => {
+      let signature
+      try {
+        const signatures = await getByteCodeSignatureByHash([trx.input.slice(0, 10)])
+        if(signatures && signatures.length > 0) {
+          signature = signatures[0]
+        }
+      } catch (e) {
+        console.error('Cannot get tx input signature: ', (e as Error).message)
+      }
+      return signature
+    }
+
     const getTx = async () => {
       let trx;
+      let trxInputSignature;
       let shard = 0;
       if (id.length === 66) {
         trx = await getTransactionByField([0, "hash", id]);
@@ -82,12 +96,15 @@ export const TransactionPage = () => {
       if (trx) {
         const txnReceipt = await hmyv2_getTransactionReceipt([id], shard);
         if (txnReceipt && txnReceipt.result && txnReceipt.result.gasUsed) {
-          trx.gas = txnReceipt.result.gasUsed; 
-          //#97 - hmy_v2 returns number, not hexparseInt(txnReceipt.result.gasUsed, 16).toString();
+          trx.gas = parseInt(txnReceipt.result.gasUsed).toString();
+        }
+        if (trx.input && trx.input.length > 10) {
+          trxInputSignature = await getTxInputSignature(trx)
         }
       }
       
       setTx((trx || {}) as RPCStakingTransactionHarmony);
+      setInputSignature(trxInputSignature)
     };
 
     getTx();
@@ -194,6 +211,7 @@ export const TransactionPage = () => {
               transaction={tx}
               logs={logs}
               internalTxs={trxs}
+              inputSignature={inputSignature}
               errorMsg={
                 txrsLoading
                   ? undefined

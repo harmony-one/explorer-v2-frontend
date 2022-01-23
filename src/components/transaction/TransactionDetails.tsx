@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import { Log, RPCStakingTransactionHarmony } from "src/types";
+import { IHexSignature, Log, RPCStakingTransactionHarmony } from "src/types";
 import {tokenTransfersERC20} from './tokenTransfer/tokenTransfersERC20'
 // import {tokenTransfersERC721} from './tokenTransfer/tokenTransfersERC721'
 import {TokenTransfersERC1155} from './tokenTransfer/tokenTransfersERC1155'
@@ -62,6 +62,7 @@ const getColumns = ({ type = "" }) => [
 type TransactionDetailsProps = {
   internalTxs?: any[];
   transaction: RPCStakingTransactionHarmony;
+  inputSignature?: IHexSignature;
   type?: TransactionSubType;
   stakingData?: boolean;
   logs?: Log[];
@@ -93,7 +94,8 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   errorMsg,
   shorMoreHide,
   stakingData,
-  internalTxs = []
+  internalTxs = [],
+  inputSignature
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -143,7 +145,8 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
       // @ts-ignore
       newTransaction[key],
       type,
-      internalTxs
+      internalTxs,
+      inputSignature
     );
 
     if (value === undefined) {

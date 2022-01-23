@@ -174,6 +174,11 @@ export type Log = {
   removed: boolean;
 };
 
+export interface LogDetailed extends Log {
+  input: string
+  timestamp: string
+}
+
 export type TraceCallTypes =
   | "CALL"
   | "STATICCALL"
@@ -264,4 +269,9 @@ export interface AddressDetails {
   meta?: { name?: string; image?: string };
   bytecode: string;
   IPFSHash?: string
+}
+
+export interface IHexSignature {
+  hash: string;
+  signature: string;
 }

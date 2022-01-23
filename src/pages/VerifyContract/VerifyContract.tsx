@@ -8,11 +8,10 @@ import {
   TextInput,
 } from "grommet";
 import React from "react";
-import { BaseContainer, BasePage, Button } from "src/components/ui";
+import { BasePage, Button } from "src/components/ui";
 import styled from "styled-components";
 import { IVerifyContractData, verifyContractCode } from "src/api/explorerV1";
-import { CircleAlert, StatusGood, SubtractCircle } from "grommet-icons";
-import { toaster } from "src/App";
+import { SubtractCircle } from "grommet-icons";
 import { breakpoints } from "../../Responive/breakpoints";
 import { useMediaQuery } from "react-responsive";
 import { useHistory } from "react-router";

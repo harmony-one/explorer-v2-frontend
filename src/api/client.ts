@@ -5,6 +5,7 @@ import {
   RPCStakingTransactionHarmony,
   RPCTransactionHarmony,
   RelatedTransaction,
+  Log, LogDetailed
 } from "src/types";
 import {
   IHoldersInfo,
@@ -13,6 +14,7 @@ import {
   TRelatedTransaction,
 } from "./client.interface";
 import { ApiCache } from "./ApiCache";
+import { get4byteSignatureByHex } from "./3rdPartyApi";
 // import { ClientCache } from "./clientCache";
 
 // const clientCache = new ClientCache({
@@ -70,17 +72,27 @@ export function getInternalTransactionsByField(params: any[]) {
 }
 
 export function getTransactionLogsByField(params: any[]) {
-  return transport("getLogsByField", params) as Promise<any>;
+  return transport("getLogsByField", params) as Promise<Log[]>;
 }
 
-export function getByteCodeSignatureByHash(params: [string]) {
-  return signatureHash.get(params[0])
-    ? Promise.resolve(signatureHash.get(params[0]))
-    : (transport("getSignaturesByHash", params).then((res) => {
-        signatureHash.set(params[0], res);
+export function getDetailedTransactionLogsByField(params: any[]) {
+  return transport("getDetailedLogsByField", params) as Promise<LogDetailed[]>;
+}
 
-        return Promise.resolve(res);
-      }) as Promise<any>);
+export async function getByteCodeSignatureByHash(params: [string]) {
+  const [hexValue] = params
+  let signature = signatureHash.get(hexValue)
+  if (signature) {
+    return signature
+  }
+  signature = await transport("getSignaturesByHash", params)
+  if (!signature || signature.length === 0) {
+    signature = await get4byteSignatureByHex(hexValue)
+  }
+  if (signature) {
+    signatureHash.set(hexValue, signature);
+  }
+  return signature
 }
 
 export function getRelatedTransactions(params: any[]) {
