@@ -1,5 +1,6 @@
 import {
   Box,
+  FileInput,
   Heading,
   Select,
   Spinner,
@@ -30,10 +31,38 @@ const Wrapper = styled(Box)`
 export function uniqid(prefix = "", random = false) {
   const sec = Date.now() * 1000 + Math.random() * 1000;
   const id = sec.toString(16).replace(/\./g, "").padEnd(14, "0");
-  return `${prefix}${id}${
-    random ? `.${Math.trunc(Math.random() * 100000000)}` : ""
-  }`;
+  return `${prefix}${id}${random ? `.${Math.trunc(Math.random() * 100000000)}` : ""
+    }`;
 }
+
+enum V_TABS {
+  SINGLE = "Single Source File",
+  MULTI = "Multiple Source Files",
+}
+
+const TabBox = styled(Box) <{ selected: boolean }>`
+  border: 1px solid ${(props) => props.theme.global.colors.border};
+  background: ${(props) =>
+    props.selected ? props.theme.global.colors.backgroundBack : "transparent"};
+  padding: 7px 12px 6px 12px;
+  border-radius: 4px;
+  margin: 5px 10px;
+`;
+
+const TabButton = (props: {
+  text: string;
+  onClick: () => void;
+  selected: boolean;
+}) => {
+  return (
+    <TabBox onClick={props.onClick} selected={props.selected}>
+      <Text size="small" color={"minorText"}>
+        {props.text}
+      </Text>
+    </TabBox>
+  );
+};
+
 
 class VerifyContractBase extends React.Component<
   {
@@ -56,6 +85,7 @@ class VerifyContractBase extends React.Component<
     argsLoading: false,
     statusText: "",
     error: "",
+    tab: V_TABS.SINGLE,
   };
 
   getBytecode = async () => {
@@ -224,8 +254,20 @@ class VerifyContractBase extends React.Component<
                 </Box>
               </Field>
             </Box>
+            <Box direction="row" align="center" margin={{ top: "medium" }}>
+              <TabButton
+                text={V_TABS.SINGLE}
+                onClick={() => this.setState({ tab: V_TABS.SINGLE })}
+                selected={this.state.tab === V_TABS.SINGLE}
+              />
+              <TabButton
+                text={V_TABS.MULTI}
+                onClick={() => this.setState({ tab: V_TABS.MULTI })}
+                selected={this.state.tab === V_TABS.MULTI}
+              />
 
-            <Field margin={"small"}>
+            </Box>
+            {this.state.tab === V_TABS.SINGLE && <Field margin={"small"}>
               <Text>Enter the Solidity Contract Code below</Text>
               <TextArea
                 style={{ minHeight: "300px" }}
@@ -237,7 +279,30 @@ class VerifyContractBase extends React.Component<
                 }}
                 disabled={isLoading}
               />
-            </Field>
+            </Field>}
+
+            {
+              this.state.tab === V_TABS.MULTI &&
+              <Field margin={"small"}>
+                <Text>Select multiple solidity source files</Text>
+                <FileInput
+                  name="file"
+                  max="100000"
+                  multiple
+                  onChange={event => {
+                    if (!event.target.files) return;
+                    const fileList = event.target.files;
+                    const files = [];
+                    for (let i = 0; i < fileList?.length; i += 1) {
+                      const file = fileList[i];
+                      files.push(file);
+                    }
+                    console.log(files);
+                    this.setState({fileList:files});
+                  }}
+                />
+              </Field>
+            }
 
             <Field margin={"small"}>
               <Box direction="row" justify="between">
