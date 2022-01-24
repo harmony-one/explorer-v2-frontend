@@ -119,9 +119,11 @@ enum V_TABS {
   CODE = "Code",
   READ = "Read Contract",
   WRITE = "Write Contract",
+  READ_PROXY = "Read as Proxy",
+  WRITE_PROXY = "Write as Proxy",
 }
 
-const TabBox = styled(Box)<{ selected: boolean }>`
+const TabBox = styled(Box) <{ selected: boolean }>`
   border: 1px solid ${(props) => props.theme.global.colors.border};
   background: ${(props) =>
     props.selected ? props.theme.global.colors.backgroundBack : "transparent"};
@@ -164,7 +166,7 @@ export const VerifiedContractDetails = (props: {
 
   try {
     abiString = JSON.stringify(props.sourceCode.abi, null, 4);
-  } catch {}
+  } catch { }
 
   return (
     <Box direction="column">
@@ -206,19 +208,32 @@ export const VerifiedContractDetails = (props: {
                 value={
                   props.sourceCode.optimizer ||
                   "No" +
-                    (Number(props.sourceCode.optimizerTimes)
-                      ? ` with ${props.sourceCode.optimizerTimes} runs`
-                      : "")
+                  (Number(props.sourceCode.optimizerTimes)
+                    ? ` with ${props.sourceCode.optimizerTimes} runs`
+                    : "")
                 }
               />
-              <Item
-                label="Contract Source Code Verified"
-                value={
-                  <StyledTextArea readOnly={true} rows={15} cols={100}>
-                    {props.sourceCode.sourceCode || ""}
-                  </StyledTextArea>
-                }
-              />
+              {props.sourceCode.sourceCode &&
+                <Item
+                  label="Contract Source Code Verified"
+                  value={
+                    <StyledTextArea readOnly={true} rows={15} cols={100} value={props.sourceCode.sourceCode || ""}>
+                    </StyledTextArea>
+                  }
+                />}
+              {props.sourceCode.supporting?.sources
+                &&
+                Object.keys(props.sourceCode.supporting?.sources).map((source: string, i: number) => {
+                  return <Item
+                    key={i}
+                    label={`Verified ${source}`}
+                    value={
+                      <StyledTextArea readOnly={true} rows={15} cols={100} value={props.sourceCode.supporting.sources[source].source || ""}>
+
+                      </StyledTextArea>
+                    }
+                  />
+                })}
               <Item
                 label="ABI"
                 value={
