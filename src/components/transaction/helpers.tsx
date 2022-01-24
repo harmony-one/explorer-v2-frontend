@@ -290,7 +290,7 @@ export const transactionDisplayValues = (
             : "";
 
     return (
-        <Box direction="row" align="baseline">
+        <Box direction="row" align="baseline" style={{ maxWidth: '700px' }}>
             {!["shardID"].includes(key) && ![0, "0", "—"].includes(displayValue) && (
                 <>
                     {copyText
