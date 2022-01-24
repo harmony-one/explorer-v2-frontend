@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { Transaction, LineChart, Cubes } from "grommet-icons";
 import styled from "styled-components";
 import { useMediaQuery } from "react-responsive";
-import { breakpoints } from "src/Responive/breakpoints";
+import { breakpoints } from "src/responsive/breakpoints";
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
 import { getTransactionCountLast14Days, getWalletsCountLast14Days } from "src/api/client";
 

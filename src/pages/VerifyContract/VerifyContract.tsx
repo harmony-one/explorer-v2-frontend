@@ -12,7 +12,7 @@ import { BasePage, Button } from "src/components/ui";
 import styled from "styled-components";
 import { IVerifyContractData, verifyContractCode } from "src/api/explorerV1";
 import { SubtractCircle } from "grommet-icons";
-import { breakpoints } from "../../Responive/breakpoints";
+import { breakpoints } from "../../responsive/breakpoints";
 import { useMediaQuery } from "react-responsive";
 import { useHistory } from "react-router";
 import { getAddress, getQueryVariable } from "../../utils";
