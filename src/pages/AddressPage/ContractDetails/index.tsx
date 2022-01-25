@@ -213,7 +213,7 @@ export const VerifiedContractDetails = (props: {
                     : "")
                 }
               />
-              {props.sourceCode.sourceCode &&
+              {props.sourceCode.sourceCode && (!props.sourceCode.supporting || props.sourceCode.supporting.length === 0) && 
                 <Item
                   label="Contract Source Code Verified"
                   value={
