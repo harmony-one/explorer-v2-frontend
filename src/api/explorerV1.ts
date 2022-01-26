@@ -16,6 +16,7 @@ export interface IVerifyContractData {
   error: string;
   tab: string;
   fileList?: File[];
+  language: number;
 }
 
 export interface IVerifyContractDataSendData {

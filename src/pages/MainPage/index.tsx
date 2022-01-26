@@ -3,7 +3,7 @@ import { Box, Text } from "grommet";
 import { Button } from "src/components/ui";
 import { useHistory } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { breakpoints } from "src/Responive/breakpoints";
+import { breakpoints } from "src/responsive/breakpoints";
 import { BaseContainer, BasePage } from "src/components/ui";
 import { Metrics } from "src/components/metrics";
 import { LatestBlocksTable } from "./LatestBlocksTable";

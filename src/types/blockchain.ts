@@ -141,6 +141,7 @@ export type RPCStakingTransactionHarmony = {
   to: AddressHarmony;
   gas: string;
   gasPrice: string;
+  gasLimit: string;
   hash: TransactionHarmonyHash;
   input: ByteCode;
   nonce: string;

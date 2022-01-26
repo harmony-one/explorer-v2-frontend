@@ -8,7 +8,7 @@ let globalSetMode = () => {
 };
 
 export const useCurrency = singletonHook(initCurrency, () => {
-  const currentTheme = window.localStorage.getItem('currency') as currencyType || initCurrency;
+  const currentTheme = getStoredValue();
 
   const [mode, setMode] = useState<currencyType>(currentTheme);
   //@ts-ignore
@@ -24,3 +24,5 @@ export const setCurrency = (mode: currencyType) =>  {
 };
 
 export type currencyType = "ONE" | "ETH";
+
+export const getStoredValue = () => window.localStorage.getItem('currency') as currencyType || initCurrency
