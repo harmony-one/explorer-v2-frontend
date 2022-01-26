@@ -37,13 +37,20 @@ export interface IVerifyContractDataSendData {
 export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
   
   if (data.tab === "Multiple Source Files") {
+    console.log("Handling multiple files");
     const formData = new FormData();
     data.fileList?.forEach(file=>{
       formData.append(file.name, file);
     });
 
     for (const [k, v] of Object.entries(data)) {
-      if (k === "fileList") continue;
+      if (k === "fileList") {
+        continue;
+      }
+
+      if (k === "language" && +v === 0) {
+        continue;
+      }
       
       if (k === "libraries") {
         formData.append(k, v.join(","));
@@ -67,6 +74,8 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
     );
 
     const body = await response.json();
+
+    console.log("Handling multiple files", body);
 
     if (response.status !== 200) {
       throw new Error(body?.message);
