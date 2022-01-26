@@ -26,11 +26,13 @@ export function ConfigureButton() {
       label={<Menu size="medium" color={'#fff'} />}
       dropAlign={{ top: "bottom", right: "right" }}
       style={{
+        height: '32px',
         border: "none",
         boxShadow: "none",
         paddingRight: "6px",
         paddingLeft: 0,
       }}
+      dropProps={{ round: '4px' }}
       dropContent={
         <Box
           pad="medium"
@@ -49,21 +51,21 @@ export function ConfigureButton() {
             ]}
             onChange={setThemeMode}
           />
-          <Text
-            size="small"
-            weight="bold"
-            margin={{ bottom: "xsmall", top: "small" }}
-          >
-            Address style
-          </Text>
-          <ToggleButton
-            value={currency}
-            options={[
-              { text: "Harmony", value: "ONE" },
-              { text: "ETH", value: "ETH" },
-            ]}
-            onChange={setCurrency}
-          />
+          {/*<Text*/}
+          {/*  size="small"*/}
+          {/*  weight="bold"*/}
+          {/*  margin={{ bottom: "xsmall", top: "small" }}*/}
+          {/*>*/}
+          {/*  Address style*/}
+          {/*</Text>*/}
+          {/*<ToggleButton*/}
+          {/*  value={currency}*/}
+          {/*  options={[*/}
+          {/*    { text: "Harmony", value: "ONE" },*/}
+          {/*    { text: "ETH", value: "ETH" },*/}
+          {/*  ]}*/}
+          {/*  onChange={setCurrency}*/}
+          {/*/>*/}
           <Text
             size="small"
             weight="bold"

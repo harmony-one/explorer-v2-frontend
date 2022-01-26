@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "grommet";
 import { useMediaQuery } from 'react-responsive';
-import { breakpoints } from "src/Responive/breakpoints";
+import { breakpoints } from "src/responsive/breakpoints";
 
 const sizes = {
   minWidth: "343px",

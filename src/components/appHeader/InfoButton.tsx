@@ -9,7 +9,6 @@ export function InfoButton() {
 
   return (
     <DropButton
-    
       label={
         <Box direction={"row"} align="center">
           <Text size="small" color="white" weight="bold">
@@ -25,6 +24,7 @@ export function InfoButton() {
         setIsOpen(false);
       }}
       open={isOpen}
+      dropProps={{ round: '4px' }}
       dropAlign={{ top: "bottom", right: "right" }}
       dropContent={
         <Box
@@ -66,8 +66,7 @@ export function InfoButton() {
       style={{
         border: "none",
         boxShadow: "none",
-        paddingRight: "6px",
-        paddingBottom: "8px",
+        paddingRight: "6px"
       }}
     />
   );

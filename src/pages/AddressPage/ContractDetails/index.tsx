@@ -158,7 +158,7 @@ export const VerifiedContractDetails = (props: {
   let abiString = "";
 
   const isMainNet =
-    process.env.REACT_APP_RPC_URL_SHARD0 === "https://api.s0.t.hmny.io/";
+    process.env.REACT_APP_RPC_URL_SHARD0 === "https://a.api.s0.t.hmny.io/";
 
   const validChainId = isMainNet
     ? chainId === 1666600000

@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, Heading, Text } from "grommet";
+import { useMediaQuery } from 'react-responsive'
 import { FiatPrice, BaseContainer } from "src/components/ui";
 import { useHistory } from "react-router-dom";
 import { ConfigureButton } from "./ConfigureButton";
 import { InfoButton } from "./InfoButton";
 import { useThemeMode } from "src/hooks/themeSwitcherHook";
-
 import styled, { CSSProperties } from "styled-components";
+import { AddressFormatSwitch } from "./AddressFormatSwitch";
 
 const HeaderLine = (props: any) => {
   //@ts-ignore
@@ -35,6 +36,7 @@ const ProjectName = styled(Box)`
 
 export function AppHeader(props: { style: CSSProperties }) {
   const history = useHistory();
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 960px)' })
 
   return (
     <HeaderLine
@@ -53,15 +55,27 @@ export function AppHeader(props: { style: CSSProperties }) {
         >
           <Box direction={"row"} align={"center"}>
             <img src={require("../../assets/Logo.svg").default} />
-            <ProjectName direction={"column"} align={"start"}>
-              Harmony
-              <Text size={"small"}>Block Explorer</Text>
-            </ProjectName>
+            {!isTabletOrMobile &&
+              <ProjectName direction={"column"} align={"start"}>
+                Harmony
+                <Text size={"small"}>Block Explorer</Text>
+              </ProjectName>
+            }
           </Box>
         </Heading>
         <Box direction="row">
-          <InfoButton />
-          <ConfigureButton />
+          <Box direction="row" align={'center'}>
+            {!isTabletOrMobile &&
+              <Box alignSelf={'center'} margin={'0 16px 0 0'}>
+                <Text size={'small'} color="headerText">Address Format</Text>
+              </Box>
+            }
+            <AddressFormatSwitch />
+          </Box>
+          <Box direction="row" align={'center'}>
+            <InfoButton />
+            <ConfigureButton />
+          </Box>
         </Box>
       </BaseContainer>
     </HeaderLine>
