@@ -427,22 +427,12 @@ export function Transactions(props: {
     setIsLoading(true)
     try {
       let txs = []
-      if (props.type ==='transaction' || props.type === 'staking_transaction') {
-        const pageSize = limit
-        const pageIndex = Math.floor(offset / limit)
-        const params = [{ address: id, pageIndex, pageSize }]
-        txs = props.type ==='transaction'
-          ? await hmyv2_getTransactionsHistory(params)
-          : await hmyv2_getStakingTransactionsHistory(params)
-        txs = txs.map(tx => mapBlockchainTxToRelated(tx))
-      } else {
-        txs = await getRelatedTransactionsByType([
-          0,
-          id,
-          props.type,
-          filter[props.type],
-        ]);
-      }
+      txs = await getRelatedTransactionsByType([
+        0,
+        id,
+        props.type,
+        filter[props.type],
+      ]);
       // for transactions we display call method if any
       if (props.type === "transaction") {
         const methodSignatures = await Promise.all(
@@ -465,9 +455,6 @@ export function Transactions(props: {
       });
 
       setRelatedTrxs(txs);
-      if (props.type === 'transaction' || props.type === 'staking_transaction') {
-        setCachedTxs({ ...cachedTxs, [props.type]: txs });
-      }
       if (props.onTxsLoaded) {
         props.onTxsLoaded(txs)
       }
@@ -484,29 +471,17 @@ export function Transactions(props: {
     setFilter(initFilterState)
   }, [id])
 
-  useEffect(() => {
-    const getTxsCount = async () => {
-      try {
-        if (props.type ==='transaction' || props.type === 'staking_transaction') {
-          if (typeof cachedTotalElements[props.type] !== 'undefined' && id === prevId) {
-            setTotalElements(cachedTotalElements[props.type])
-          } else {
-            const count = props.type ==='transaction'
-              ? await hmyv2_getTransactionsCount(id)
-              : await hmyv2_getStakingTransactionsCount(id)
-            setTotalElements(count)
-            setCachedTotalElements({ ...cachedTotalElements, [props.type]: count })
-          }
-        } else {
-          setTotalElements(initTotalElements)
-        }
-      } catch (e) {
-        console.error('Cannot get txs count', (e as Error).message)
-        setTotalElements(initTotalElements)
-      }
-    }
-    getTxsCount()
-  }, [props.type, id])
+  // useEffect(() => {
+  //   const getTxsCount = async () => {
+  //     try {
+  //       setTotalElements(initTotalElements)
+  //     } catch (e) {
+  //       console.error('Cannot get txs count', (e as Error).message)
+  //       setTotalElements(initTotalElements)
+  //     }
+  //   }
+  //   getTxsCount()
+  // }, [props.type, id])
 
   useEffect(() => {
     if (prevType === props.type) {
@@ -559,7 +534,7 @@ export function Transactions(props: {
         minWidth="1266px"
         hideCounter
         rowDetails={props.rowDetails}
-        showPages={totalElements > 0 && (props.type ==='transaction' || props.type === 'staking_transaction')}
+        showPages={false}
       />
     </Box>
   );
