@@ -69,6 +69,70 @@ export const AbiMethods = (props: {
   );
 };
 
+export const VerifiedButMissingImplementation = (props: {
+  address: string;
+}) => {
+  const history = useHistory();
+
+  return (
+    <Box style={{ padding: "10px" }}>
+      <Box direction="column" gap="30px">
+        <Box direction="row" gap="5px">
+          Proxy Implementation contract 
+          <Text
+            size="small"
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              history.push(`/address/${props.address}`)
+            }
+            color="brand"
+          >
+            {props.address}
+          </Text>
+          is not verified. Are you the contract creator?
+          <Text
+            size="small"
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              history.push(`/verifycontract?address=${props.address}`)
+            }
+            color="brand"
+          >
+            Verify and Publish
+          </Text>
+          your contract source code today!
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export const ProxyContractDetails = (props: {
+  address: string;
+}) => {
+  const history = useHistory();
+
+  return (
+    <Box style={{ padding: "10px" }}>
+      <Box direction="column">
+        <Box direction="row" gap="5px">
+          ABI for the implementation contract at 
+          <Text
+            size="small"
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              history.push(`/address/${props.address}?activeTab=7`)
+            }
+            color="brand"
+          >
+            {props.address}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
 export const NoVerifiedContractDetails = (props: {
   contracts: AddressDetails;
   address: string;
@@ -168,9 +232,12 @@ export const VerifiedContractDetails = (props: {
     abiString = JSON.stringify(props.sourceCode.abi, null, 4);
   } catch { }
 
+  console.log(props.sourceCode);
+
   return (
     <Box direction="column">
-      <Box direction="row" align="center" margin={{ top: "medium" }}>
+      {props.sourceCode?.proxyAddress && !props.sourceCode?.proxy && <VerifiedButMissingImplementation address={props.sourceCode.proxyAddress}/>}
+      <Box direction="row" align="center" margin={{ top: props.sourceCode?.proxyAddress && !props.sourceCode?.proxy ? "" : "medium" }}>
         <TabButton
           text={V_TABS.CODE}
           onClick={() => setTab(V_TABS.CODE)}
@@ -190,6 +257,21 @@ export const VerifiedContractDetails = (props: {
             />
           </>
         ) : null}
+        {props.sourceCode.proxyAddress && props.sourceCode.proxy  ? (
+          <>
+            <TabButton
+              text={V_TABS.READ_PROXY + "(new)"}
+              onClick={() => setTab(V_TABS.READ_PROXY)}
+              selected={tab === V_TABS.READ_PROXY}
+            />
+            <TabButton
+              text={V_TABS.WRITE_PROXY + "(new)"}
+              onClick={() => setTab(V_TABS.WRITE_PROXY)}
+              selected={tab === V_TABS.WRITE_PROXY}
+            />
+          </>
+        ) : null}
+        
       </Box>
       {tab === V_TABS.CODE ? (
         <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
@@ -266,6 +348,19 @@ export const VerifiedContractDetails = (props: {
           </Box>
         </Box>
       ) : null}
+
+      {tab === V_TABS.READ && props.sourceCode.abi  ? (
+        <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+          <AbiMethods
+            abi={props.sourceCode?.abi?.filter(
+              (a) => a.stateMutability === "view" && a.type === "function"
+            )}
+            address={props.address}
+            isRead={V_TABS.READ === tab}
+          />
+        </Box>
+      ) : null}
+      
       {tab === V_TABS.WRITE && props.sourceCode.abi ? (
         <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
           <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
@@ -283,17 +378,39 @@ export const VerifiedContractDetails = (props: {
         </Box>
       ) : null}
 
-      {tab === V_TABS.READ && props.sourceCode.abi ? (
-        <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+      {tab === V_TABS.READ_PROXY && props.sourceCode.proxy ? (
+        <Box style={{ padding: "10px" }}>
+          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""}></ProxyContractDetails>
           <AbiMethods
-            abi={props.sourceCode.abi.filter(
-              (a) => a.stateMutability === "view" && a.type === "function"
+            abi={props.sourceCode.proxy.abi.filter(
+              (a: { stateMutability: string; type: string; }) => a.stateMutability === "view" && a.type === "function"
             )}
-            address={props.address}
-            isRead={V_TABS.READ === tab}
+            address={props.sourceCode.proxyAddress || ""}
+            isRead={V_TABS.READ_PROXY === tab}
+          />
+        </Box>
+      ) : null}
+
+      {tab === V_TABS.WRITE_PROXY && props.sourceCode.proxy ? (
+        <Box style={{ padding: "10px" }}>
+          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""}></ProxyContractDetails>
+          <AbiMethods
+            abi={props.sourceCode.proxy.abi.filter(
+              (a: { stateMutability: string; name: any; type: string; }) =>
+                a.stateMutability !== "view" &&
+                !!a.name &&
+                a.type === "function"
+            )}
+            address={props.sourceCode.proxyAddress || ""}
+            metamaskAddress={metamaskAddress}
+            validChainId={validChainId}
           />
         </Box>
       ) : null}
     </Box>
   );
 };
+
+// 1. get implementation address of the proxy
+// 2. look up when they TAB to the READ or WRITE PROXY. get the source code (fetchContractSource)
+// 3. supply as props and enable the read/write proxy code ()

@@ -147,4 +147,6 @@ export interface ISourceCode {
   chainType: string;
   contractName: string;
   abi?: AbiItem[];
+  proxyAddress?: string;
+  proxy?: any;
 }
