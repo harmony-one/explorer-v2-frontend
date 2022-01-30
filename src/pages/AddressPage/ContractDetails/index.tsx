@@ -393,6 +393,7 @@ export const VerifiedContractDetails = (props: {
 
       {tab === V_TABS.WRITE_PROXY && props.sourceCode.proxy ? (
         <Box style={{ padding: "10px" }}>
+          <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
           <ProxyContractDetails address={props.sourceCode.proxyAddress || ""}></ProxyContractDetails>
           <AbiMethods
             abi={props.sourceCode.proxy.abi.filter(
