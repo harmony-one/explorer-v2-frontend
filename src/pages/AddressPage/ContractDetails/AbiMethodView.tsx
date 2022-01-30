@@ -1,11 +1,11 @@
-import { Box, Spinner, Text, TextInput } from "grommet";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Button } from "src/components/ui/Button";
-import Web3 from "web3";
-import { AbiItem } from "web3-utils";
-import { convertInputs } from "./helpers";
-import { uniqid } from "src/pages/VerifyContract/VerifyContract";
+import {Box, Spinner, Text, TextInput} from 'grommet';
+import React, {useEffect, useState} from 'react';
+import styled from 'styled-components';
+import {Button} from 'src/components/ui/Button';
+import Web3 from 'web3';
+import {AbiItem} from 'web3-utils';
+import {convertInputs} from './helpers';
+import {uniqid} from 'src/pages/VerifyContract/VerifyContract';
 
 const Field = styled(Box)``;
 
@@ -36,7 +36,7 @@ export const ActionButton = styled(Button)`
   font-weight: 500;
 `;
 
-const GreySpan = styled("span")`
+const GreySpan = styled('span')`
   font-size: 14px;
   opacity: 0.7;
   font-weight: 400;
@@ -57,23 +57,23 @@ export const AbiMethodsView = (props: {
   isRead?: boolean;
   validChainId?: boolean;
 }) => {
-  const { abiMethod, address, index } = props;
+  const {abiMethod, address, index} = props;
   const [inputsValue, setInputsValue] = useState<string[]>(
-    [...new Array(abiMethod.inputs?.length)].map(() => "")
+    [...new Array(abiMethod.inputs?.length)].map(() => '')
   );
   const [multipleValue, setMultipleValue] = useState({
     write: {},
     read: {},
   } as any);
-  const [amount, setAmount] = useState("");
-  const [error, setError] = useState("");
-  const [result, setResult] = useState("");
+  const [amount, setAmount] = useState('');
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const query = async () => {
     try {
-      setError("");
-      setResult("");
+      setError('');
+      setResult([]);
       setLoading(true);
 
       // @ts-ignore
@@ -92,7 +92,7 @@ export const AbiMethodsView = (props: {
       if (abiMethod.name) {
         let res;
 
-        if (abiMethod.stateMutability === "view") {
+        if (abiMethod.stateMutability === 'view') {
           res = await contract.methods[abiMethod.name]
             .apply(contract, convertInputs(inputsValue, abiMethod.inputs || []))
             .call();
@@ -100,7 +100,7 @@ export const AbiMethodsView = (props: {
           // @ts-ignore
           const accounts = await ethereum.enable();
 
-          const account = accounts[0] || web3.eth.defaultAccount;
+          const account = accounts[0] || undefined; // if function is not a view method it will require a signer
 
           res = await contract.methods[abiMethod.name]
             .apply(contract, convertInputs(inputsValue, abiMethod.inputs || []))
@@ -112,7 +112,13 @@ export const AbiMethodsView = (props: {
             });
         }
 
-        setResult(typeof res === "object" ? res.status.toString() : res);
+        setResult(
+          Array.isArray(res)
+            ? res
+            : typeof res === 'object'
+            ? Object.values(res)
+            : [res.toString()]
+        );
       }
     } catch (e) {
       // @ts-ignore
@@ -124,7 +130,7 @@ export const AbiMethodsView = (props: {
 
   useEffect(() => {
     if (
-      abiMethod.stateMutability !== "payable" &&
+      abiMethod.stateMutability !== 'payable' &&
       (!abiMethod.inputs || !abiMethod.inputs.length) &&
       props.isRead
     ) {
@@ -138,17 +144,17 @@ export const AbiMethodsView = (props: {
   };
 
   return (
-    <ViewWrapper direction="column" margin={{ bottom: "medium" }}>
-      <NameWrapper background={"backgroundBack"}>
-        <Text size="small">
+    <ViewWrapper direction='column' margin={{bottom: 'medium'}}>
+      <NameWrapper background={'backgroundBack'}>
+        <Text size='small'>
           {index + 1}. {abiMethod.name}
         </Text>
       </NameWrapper>
 
-      <Box pad="20px">
-        {abiMethod.stateMutability === "payable" ? (
-          <Field gap="5px">
-            <Text size="small">
+      <Box pad='20px'>
+        {abiMethod.stateMutability === 'payable' ? (
+          <Field gap='5px'>
+            <Text size='small'>
               payableAmount <span>ONE</span>
             </Text>
             <SmallTextInput
@@ -161,37 +167,33 @@ export const AbiMethodsView = (props: {
           </Field>
         ) : null}
         {abiMethod.inputs && abiMethod.inputs.length ? (
-          <Box gap="12px">
+          <Box gap='12px'>
             {abiMethod.inputs.map((input, idx) => {
-              const name = input.name || "<input>";
-              const isArrayValue = input.type.indexOf("[]") >= 0;
-              const tabMethod = props.isRead ? "read" : "write";
+              const name = input.name || '<input>';
+              const isArrayValue = input.type.indexOf('[]') >= 0;
+              const tabMethod = props.isRead ? 'read' : 'write';
 
               const itemValue = isArrayValue
-                ? multipleValue[tabMethod][idx] || [{ value: "", id: "1" }]
+                ? multipleValue[tabMethod][idx] || [{value: '', id: '1'}]
                 : inputsValue[idx];
 
-              const itemType = input.type.slice(0, input.type.indexOf("[]"));
+              const itemType = input.type.slice(0, input.type.indexOf('[]'));
 
               return (
-                <Field gap="5px">
-                  <Text size="small">
+                <Field gap='5px'>
+                  <Text size='small'>
                     {name} <span>({input.type})</span>
                   </Text>
                   {isArrayValue ? (
-                    <Box direction={"column"}>
+                    <Box direction={'column'}>
                       {itemValue.map(
-                        (
-                          item: { id: string; value: string },
-                          itemId: number
-                        ) => {
+                        (item: {id: string; value: string}, itemId: number) => {
                           return (
                             <Box
-                              direction={"row"}
-                              align={"center"}
-                              margin={"small"}
-                            >
-                              <Text style={{ marginRight: "10px" }}>
+                              direction={'row'}
+                              align={'center'}
+                              margin={'small'}>
+                              <Text style={{marginRight: '10px'}}>
                                 {itemId}.
                               </Text>
                               <SmallTextInput
@@ -220,7 +222,7 @@ export const AbiMethodsView = (props: {
                               />
                               {itemValue.length === 1 ? null : (
                                 <ActionButton
-                                  style={{ marginLeft: "10px" }}
+                                  style={{marginLeft: '10px'}}
                                   onClick={() => {
                                     setMultipleValue({
                                       ...multipleValue,
@@ -232,8 +234,7 @@ export const AbiMethodsView = (props: {
                                         ),
                                       },
                                     });
-                                  }}
-                                >
+                                  }}>
                                   remove
                                 </ActionButton>
                               )}
@@ -242,9 +243,9 @@ export const AbiMethodsView = (props: {
                         }
                       )}
                       <ActionButton
-                        style={{ marginTop: "10px" }}
+                        style={{marginTop: '10px'}}
                         onClick={() => {
-                          itemValue.push({ value: "", id: uniqid() });
+                          itemValue.push({value: '', id: uniqid()});
 
                           setMultipleValue({
                             ...multipleValue,
@@ -253,8 +254,7 @@ export const AbiMethodsView = (props: {
                               [idx]: itemValue,
                             },
                           });
-                        }}
-                      >
+                        }}>
                         + add one more
                       </ActionButton>
                     </Box>
@@ -274,16 +274,15 @@ export const AbiMethodsView = (props: {
         ) : null}
 
         {!result || abiMethod.inputs?.length ? (
-          <Box width="100px" margin={{ top: "20px", bottom: "18px" }}>
+          <Box width='100px' margin={{top: '20px', bottom: '18px'}}>
             {loading ? (
               <Spinner />
-            ) : abiMethod.stateMutability === "view" ? (
+            ) : abiMethod.stateMutability === 'view' ? (
               <ActionButton onClick={query}>Query</ActionButton>
             ) : (
               <ActionButton
                 disabled={!props.metamaskAddress || !props.validChainId}
-                onClick={query}
-              >
+                onClick={query}>
                 Write
               </ActionButton>
             )}
@@ -291,17 +290,25 @@ export const AbiMethodsView = (props: {
         ) : null}
 
         {abiMethod.outputs
-          ? abiMethod.outputs.map((input) => {
+          ? abiMethod.outputs.map((input, i) => {
               return (
                 <Box>
-                  {result ? (
-                    <Text size="small">
-                      {result} <GreySpan>{input.type}</GreySpan>
+                  {result[i] ? (
+                    <Text size='small'>
+                      <GreySpan>
+                        {input.name}
+                        {` (${input.type})`}
+                      </GreySpan>{' '}
+                      {'-> '}
+                      {result[i].toString()}
                     </Text>
                   ) : (
-                    <Text size="small">
-                      {"-> "}
-                      {input.type}
+                    <Text size='small'>
+                      <GreySpan>
+                        {input.name}
+                        {` (${input.type})`}
+                      </GreySpan>{' '}
+                      {'-> '}
                     </Text>
                   )}
                 </Box>
@@ -310,7 +317,7 @@ export const AbiMethodsView = (props: {
           : null}
 
         {error && (
-          <Text color="red" size="small" style={{ marginTop: 5 }}>
+          <Text color='red' size='small' style={{marginTop: 5}}>
             {error}
           </Text>
         )}
