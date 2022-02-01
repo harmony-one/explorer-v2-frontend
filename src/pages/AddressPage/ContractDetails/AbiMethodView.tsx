@@ -290,8 +290,7 @@ export const AbiMethodsView = (props: {
         ) : null}
 
         {abiMethod.outputs
-          ? abiMethod.outputs.map((input, i) => {
-              console.log(result);
+          ? abiMethod.outputs.map((input) => {
               return (
                 <Box>
                   {result.length ? (
