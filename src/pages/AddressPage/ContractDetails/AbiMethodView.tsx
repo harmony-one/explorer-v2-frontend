@@ -291,16 +291,17 @@ export const AbiMethodsView = (props: {
 
         {abiMethod.outputs
           ? abiMethod.outputs.map((input, i) => {
+              console.log(result);
               return (
                 <Box>
-                  {result[i] ? (
+                  {result.length ? (
                     <Text size='small'>
                       <GreySpan>
                         {input.name}
                         {` (${input.type})`}
                       </GreySpan>{' '}
                       {'-> '}
-                      {result[i].toString()}
+                      {result.length === 1 ? [result] : result.toString()}
                     </Text>
                   ) : (
                     <Text size='small'>
