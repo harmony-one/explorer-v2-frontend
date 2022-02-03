@@ -109,6 +109,7 @@ export const VerifiedButMissingImplementation = (props: {
 
 export const ProxyContractDetails = (props: {
   address: string;
+  proxy: any;
 }) => {
   const history = useHistory();
 
@@ -128,6 +129,21 @@ export const ProxyContractDetails = (props: {
             {props.address}
           </Text>
         </Box>
+        {
+          props.proxy?.isBeacon && <Box direction="row" gap="5px">
+          Upgradeable Beacon contract at 
+          <Text
+            size="small"
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              history.push(`/address/${props?.proxy.beaconAddress}?activeTab=7`)
+            }
+            color="brand"
+          >
+            {props?.proxy.beaconAddress}
+          </Text>
+        </Box>
+        }
       </Box>
     </Box>
   );
@@ -380,12 +396,12 @@ export const VerifiedContractDetails = (props: {
 
       {tab === V_TABS.READ_PROXY && props.sourceCode.proxy ? (
         <Box style={{ padding: "10px" }}>
-          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""}></ProxyContractDetails>
+          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>
           <AbiMethods
             abi={props.sourceCode.proxy.abi.filter(
               (a: { stateMutability: string; type: string; }) => a.stateMutability === "view" && a.type === "function"
             )}
-            address={props.sourceCode.proxyAddress || ""}
+            address={props.address || ""}
             isRead={V_TABS.READ_PROXY === tab}
           />
         </Box>
@@ -394,7 +410,7 @@ export const VerifiedContractDetails = (props: {
       {tab === V_TABS.WRITE_PROXY && props.sourceCode.proxy ? (
         <Box style={{ padding: "10px" }}>
           <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
-          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""}></ProxyContractDetails>
+          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>
           <AbiMethods
             abi={props.sourceCode.proxy.abi.filter(
               (a: { stateMutability: string; name: any; type: string; }) =>
@@ -402,7 +418,7 @@ export const VerifiedContractDetails = (props: {
                 !!a.name &&
                 a.type === "function"
             )}
-            address={props.sourceCode.proxyAddress || ""}
+            address={props.address || ""}
             metamaskAddress={metamaskAddress}
             validChainId={validChainId}
           />

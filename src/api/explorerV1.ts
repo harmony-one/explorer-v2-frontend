@@ -126,7 +126,6 @@ export const loadSourceCode = async (address: string): Promise<ISourceCode> => {
   );
 
   const body = await response.json();
-  console.log(body);
 
   if (response.status !== 200) {
     throw new Error(body);
@@ -148,5 +147,6 @@ export interface ISourceCode {
   contractName: string;
   abi?: AbiItem[];
   proxyAddress?: string;
+  proxyDetails?: any;
   proxy?: any;
 }
