@@ -20,7 +20,6 @@ import styled from "styled-components";
 export const StyledBox = styled(Box)`
   transition: all 0.2s linear;
   border-radius: 2px;
-  padding-left: 5px;
 `;
 
 const AddressDescription = styled(Box)`
