@@ -8,12 +8,26 @@ import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { Filter } from "src/types";
+import Big from "big.js";
 
 const getColumns = (
   id: string,
   type: "erc20" | "erc721" | "erc1155"
 ): ColumnConfig<IHoldersInfo>[] => {
-  return [
+  const columns = [
+    {
+      property: "rank",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "30px" }}
+        >
+          Rank
+        </Text>
+      ),
+      render: (data: any) => <div>{data.rank}</div>,
+    },
     {
       property: "ownerAddres",
       header: (
@@ -34,7 +48,7 @@ const getColumns = (
           Balance
         </Text>
       ),
-      render: (data) => {
+      render: (data: any) => {
         return type === "erc1155" ? (
           <>{data.balance}</>
         ) : (
@@ -43,6 +57,24 @@ const getColumns = (
       },
     },
   ];
+
+  if (type === 'erc20' || type === 'erc721') {
+    columns.push(    {
+      property: "percentage",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300 }}
+        >
+          Percentage
+        </Text>
+      ),
+      render: (data: any) => <div>{data.percentage}</div>,
+    })
+  }
+
+  return columns
 };
 
 export function HoldersTab(props: {
@@ -58,6 +90,11 @@ export function HoldersTab(props: {
     erc20Map[props.id]?.holders ||
     erc721Map[props.id]?.holders ||
     erc1155Map[props.id]?.holders;
+
+  const totalSupply =
+    erc20Map[props.id]?.totalSupply ||
+    erc721Map[props.id]?.totalSupply ||
+    erc1155Map[props.id]?.totalSupply;
 
   const limitValue = localStorage.getItem("tableLimitValue");
 
@@ -116,6 +153,16 @@ export function HoldersTab(props: {
             holdersData = [];
           }
         }
+
+        holdersData = holdersData.map((item, index) => {
+          return {
+            ...item,
+            rank: filter.offset + index + 1,
+            percentage: totalSupply && +totalSupply > 0
+              ? Big(item.balance).div(Big(totalSupply)).mul(100).toFixed(4) + '%'
+              : ''
+          }
+        })
 
         setHolders(holdersData);
       } catch (err) {
