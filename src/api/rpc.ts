@@ -2,7 +2,7 @@ import { IGetTxsHistoryParams, RequestOrder, RequestTxType, RPCTransactionHarmon
 
 export type TRPCResponse<T> = { id: number; jsonrpc: "2.0"; result: T, error?: { code: number, message: string } };
 
-const API_URL = 'https://a.api.s0.t.hmny.io/'
+const API_URL = process.env.REACT_APP_RPC_URL_SHARD0 || 'https://a.api.s0.t.hmny.io/';
 
 export const rpcAdapter = <T = any>(...args: Parameters<typeof fetch>) => {
   /**
