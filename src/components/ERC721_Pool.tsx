@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { getAllERC721 } from "src/api/client";
 import { setERC721Pool, ERC721 } from "src/hooks/ERC721_Pool";
 import { IndexedDbKeyPath, IndexedDbStore, saveToIndexedDB } from "../utils/indexedDB";
+import { isTokenBridged } from "../utils";
 
 export function ERC721_Pool() {
   useEffect(() => {
@@ -12,7 +13,10 @@ export function ERC721_Pool() {
         let erc721: ERC721[] = await getAllERC721();
         const erc721Map = {} as Record<string, ERC721>;
         erc721 = erc721.map((item) => {
-          erc721Map[item.address] = item;
+          erc721Map[item.address] = {
+            ...item,
+            isBridged: isTokenBridged(item.address)
+          };
           return {
             [IndexedDbKeyPath]: item.address,
             ...item
