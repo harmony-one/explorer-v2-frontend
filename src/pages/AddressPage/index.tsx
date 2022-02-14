@@ -38,6 +38,7 @@ export function AddressPage() {
   const tabParamName = "activeTab=";
   const oldTabParamName = "txType=";
   let activeTab = 0;
+
   try {
     const newValue = +history.location.search.slice(
       history.location.search.indexOf("activeTab=") + tabParamName.length
@@ -78,6 +79,10 @@ export function AddressPage() {
 
       default: {
       }
+    }
+
+    if (activeTab === 0 && history.location.hash === "#code") {
+      activeTab = 7; // note how do i derive this active tab? its a bit hard coded atm
     }
   } catch {
     activeTab = 0;

@@ -21,7 +21,7 @@ export const toaster = new Toaster();
 export const settingsService = new SettingsService();
 
 function App() {
-  if (document.location.hash) {
+  if (document.location.hash && document.location.hash !== "#code") {
     document.location.href = `${
       document.location.origin
     }/${document.location.hash.slice(2)}`;
