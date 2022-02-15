@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   getByteCodeSignatureByHash,
   getRelatedTransactionsByType,
+  getRelatedTransactionsCountByType
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
@@ -19,13 +20,7 @@ import {
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
-import { getAddress, mapBlockchainTxToRelated } from "src/utils";
-import {
-  hmyv2_getStakingTransactionsCount,
-  hmyv2_getStakingTransactionsHistory,
-  hmyv2_getTransactionsCount,
-  hmyv2_getTransactionsHistory
-} from "../../../api/rpc";
+import { getAddress } from "src/utils";
 
 const Marker = styled.div<{ out: boolean }>`
   border-radius: 2px;
@@ -471,17 +466,22 @@ export function Transactions(props: {
     setFilter(initFilterState)
   }, [id])
 
-  // useEffect(() => {
-  //   const getTxsCount = async () => {
-  //     try {
-  //       setTotalElements(initTotalElements)
-  //     } catch (e) {
-  //       console.error('Cannot get txs count', (e as Error).message)
-  //       setTotalElements(initTotalElements)
-  //     }
-  //   }
-  //   getTxsCount()
-  // }, [props.type, id])
+  useEffect(() => {
+    const getTxsCount = async () => {
+      try {
+        const txsCount = await getRelatedTransactionsCountByType([
+          0,
+          id,
+          props.type,
+        ])
+        setTotalElements(txsCount)
+      } catch (e) {
+        console.error('Cannot get txs count', (e as Error).message)
+        setTotalElements(initTotalElements)
+      }
+    }
+    getTxsCount()
+  }, [props.type, id])
 
   useEffect(() => {
     if (prevType === props.type) {
@@ -534,7 +534,7 @@ export function Transactions(props: {
         minWidth="1266px"
         hideCounter
         rowDetails={props.rowDetails}
-        showPages={false}
+        showPages={totalElements > 0}
       />
     </Box>
   );
