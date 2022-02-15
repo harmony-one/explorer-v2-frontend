@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { singletonHook } from "react-singleton-hook";
 import { IndexedDbStore, loadFromIndexedDB } from "../utils/indexedDB";
+import { isTokenBridged } from "../utils";
 
 const initValue: ERC20_Pool = {};
 
@@ -14,7 +15,10 @@ export const useERC20Pool = singletonHook(initValue, () => {
       const erc20 = await loadFromIndexedDB(IndexedDbStore.ERC20Pool)
       const erc20Map = {} as Record<string, Erc20>;
       erc20.forEach(item => {
-        erc20Map[item.address] = item;
+        erc20Map[item.address] = {
+          ...item,
+          isBridged: isTokenBridged(item.address)
+        };
       })
       setMode(erc20Map)
     } catch (e) {
@@ -50,6 +54,7 @@ export interface Erc20 {
     name?: string
     image?: string;
   };
+  isBridged: boolean;
 }
 
 export type ERC20_Pool = Record<string, Erc20>;

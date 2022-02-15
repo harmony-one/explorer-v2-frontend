@@ -25,15 +25,16 @@ export const ERC721List = () => {
   const erc721 = useERC721Pool();
   const themeMode = useThemeMode();
   const erc721Tokens = Object.values(erc721);
+  const searchableFields = ["name", "symbol", "address"] as Array<keyof ERC721>
 
   const searchedTokenLength = erc721Tokens.filter(
-    filterWithFields(["name", "symbol"], search)
+    filterWithFields(searchableFields, search)
   ).length;
 
   useEffect(() => {
     setData(
       erc721Tokens
-        .filter(filterWithFields(["name", "symbol"], search))
+        .filter(filterWithFields(searchableFields, search))
         .sort(sortWithHolders)
         //@ts-ignore
         .slice(filter.offset, filter.offset + filter.limit)
@@ -90,7 +91,7 @@ export const ERC721List = () => {
               backgroundColor: themeMode === "light" ? "white" : "transparent",
               fontWeight: 500,
             }}
-            placeholder="Search by Name / Symbol"
+            placeholder="Search by Name / Symbol / Address"
           />
         </Box>
         {!erc721Tokens.length && !search && (

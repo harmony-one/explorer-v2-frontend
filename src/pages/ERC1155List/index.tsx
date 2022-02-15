@@ -25,15 +25,16 @@ export const ERC1155List = () => {
   const erc1155 = useERC1155Pool();
   const themeMode = useThemeMode();
   const erc1155Tokens = Object.values(erc1155);
+  const searchableFields = ["name", "symbol", "address"] as Array<keyof ERC1155>
 
   const searchedTokenLength = erc1155Tokens.filter(
-    filterWithFields(["name", "symbol"], search)
+    filterWithFields(searchableFields, search)
   ).length;
 
   useEffect(() => {
     setData(
       erc1155Tokens
-        .filter(filterWithFields(["name", "symbol"], search))
+        .filter(filterWithFields(searchableFields, search))
         .sort(sortWithHolders)
         //@ts-ignore
         .slice(filter.offset, filter.offset + filter.limit)
@@ -90,7 +91,7 @@ export const ERC1155List = () => {
               backgroundColor: themeMode === "light" ? "white" : "transparent",
               fontWeight: 500,
             }}
-            placeholder="Search by Name / Symbol"
+            placeholder="Search by Name / Symbol / Address"
           />
         </Box>
         {!erc1155Tokens.length && !search && (

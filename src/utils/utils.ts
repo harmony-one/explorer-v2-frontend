@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { RelatedTransaction, RelatedTransactionType, RPCTransactionHarmony } from "../types";
 import { getAddress } from "./getAddress/GetAddress";
+import { bridgeTokensMap } from "src/config";
 
 export const getQueryVariable = (variable: string, query: string) => {
   const vars = query.split("&");
@@ -34,3 +35,5 @@ export const mapBlockchainTxToRelated = (
   }
   return resultedTx
 }
+
+export const isTokenBridged = (address: string) => !!bridgeTokensMap[address]
