@@ -25,15 +25,16 @@ export const ERC20List = () => {
   const erc20 = useERC20Pool();
   const themeMode = useThemeMode();
   const erc20Tokens = Object.values(erc20);
+  const searchableFields = ["name", "symbol", "address"] as Array<keyof Erc20>
 
   const searchedTokenLength = erc20Tokens.filter(
-    filterWithFields(["name", "symbol"], search)
+    filterWithFields(searchableFields, search)
   ).length;
 
   useEffect(() => {
     setData(
       erc20Tokens
-        .filter(filterWithFields(["name", "symbol"], search))
+        .filter(filterWithFields(searchableFields, search))
         .sort(sortWithHolders)
         //@ts-ignore
         .slice(filter.offset, filter.offset + filter.limit)
@@ -91,7 +92,7 @@ export const ERC20List = () => {
               backgroundColor: themeMode === "light" ? "white" : "transparent",
               fontWeight: 500,
             }}
-            placeholder="Search by Name / Symbol"
+            placeholder="Search by Name / Symbol / Address"
           />
         </Box>
         {!erc20Tokens.length && !search && (
