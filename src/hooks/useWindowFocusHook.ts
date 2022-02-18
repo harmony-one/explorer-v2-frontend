@@ -4,7 +4,7 @@ import { singletonHook } from "react-singleton-hook";
 const currentFocus: focusType = true;
 
 let globalGetHidden = () => {
-    throw new Error("you must useWindowFocus before setting its state");
+    return false; // on init should return false
 };
 
 export const useWindowFocused = singletonHook(currentFocus, () => {
