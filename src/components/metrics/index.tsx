@@ -58,6 +58,15 @@ export const options = {
       grid: {
         display: false,
         drawBorder: false,
+      },
+      ticks: {
+        // For a category axis, the val is the index so the lookup via getLabelForValue is needed
+        // @ts-ignore
+        callback: function(val:any, index:any) {
+          // @ts-ignore
+          if (val === 0) return "";
+          return val;
+        },
       }
     }
   }
@@ -342,11 +351,22 @@ function BlockTransactionsHistory() {
   const data = {
     labels: result.map((i) => dayjs(i.timestamp).format("DD-MM")),
     datasets: [{
-      label: "Wallets",
+      label: "Transactions",
       data: result.map((i) => +i.count),
       backgroundColor: 'rgba(0, 174, 233, 0.5)'
     }]
   }
+
+  let max = 0;
+  result.forEach(e=>{
+    if (max < +e.count) {
+      max = +e.count;
+    }
+  });
+
+  const opts = {...options};
+  // @ts-ignore
+  opts.scales.y.ticks.stepSize = Math.round(max/4);
 
   return (
     <Box>
@@ -360,7 +380,7 @@ function BlockTransactionsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={options} data={data} height="110px" />
+          <Bar options={opts} data={data} height="110px" />
         )}
       </Box>
     </Box>
@@ -402,6 +422,17 @@ function WalletsHistory() {
     }]
   }
 
+  let max = 0;
+  result.forEach(e=>{
+    if (max < +e.count) {
+      max = +e.count;
+    }
+  });
+
+  const opts = {...options};
+  // @ts-ignore
+  opts.scales.y.ticks.stepSize = Math.round(max/4);
+  
   return (
     <Box>
       <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
@@ -414,7 +445,7 @@ function WalletsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={options} data={data} height="110px" />
+          <Bar options={opts} data={data} height="110px" />
         )}
       </Box>
     </Box>

@@ -117,8 +117,8 @@ export function AddressPage() {
   let type = erc721Map[id]
     ? "erc721"
     : erc1155Map[id]
-    ? "erc1155"
-    : getType(contracts, erc20Token);
+      ? "erc1155"
+      : getType(contracts, erc20Token);
 
   try {
     oneAddress = getAddress(oneAddress).bech32;
@@ -180,13 +180,13 @@ export function AddressPage() {
             type === "erc721"
               ? await getTokenERC721Assets([id])
               : await (
-                  await getTokenERC1155Assets([id])
-                ).map((item) => {
-                  if (item.meta && item.meta.image) {
-                    item.meta.image = `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${item.meta.image}`;
-                  }
-                  return item;
-                });
+                await getTokenERC1155Assets([id])
+              ).map((item) => {
+                if (item.meta && item.meta.image) {
+                  item.meta.image = `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${item.meta.image}`;
+                }
+                return item;
+              });
 
           let inventoryHolders1155 = [] as any[];
 
@@ -382,9 +382,21 @@ export function AddressPage() {
 
           {type === "erc20" &&
             <Tab title={<Text size="small">Events</Text>}>
-              <EventsTab id={id}/>
+              <EventsTab id={id} />
             </Tab>
           }
+
+          {type === "erc721" || type === "erc1155" || type === "erc20" ? (
+            <Tab title={<Text size="small">Tools</Text>}>
+              <HoldersTab
+                id={id}
+                type={type}
+                inventory={
+                  inventoryHolders.length ? inventoryHolders : inventory
+                }
+              />
+            </Tab>
+          ) : null}
 
           {/*{type === "erc1155" && inventory.length ? (*/}
           {/*  <Tab*/}
