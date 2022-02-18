@@ -60,13 +60,7 @@ export const options = {
         drawBorder: false,
       },
       ticks: {
-        // For a category axis, the val is the index so the lookup via getLabelForValue is needed
-        // @ts-ignore
-        callback: function(val:any, index:any) {
-          // @ts-ignore
-          if (val === 0) return "";
-          return val;
-        },
+        autoSkip: true
       }
     }
   }
@@ -357,17 +351,6 @@ function BlockTransactionsHistory() {
     }]
   }
 
-  let max = 0;
-  result.forEach(e=>{
-    if (max < +e.count) {
-      max = +e.count;
-    }
-  });
-
-  const opts = {...options};
-  // @ts-ignore
-  opts.scales.y.ticks.stepSize = Math.round(max/4);
-
   return (
     <Box>
       <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
@@ -380,7 +363,7 @@ function BlockTransactionsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={opts} data={data} height="110px" />
+          <Bar options={options} data={data} height="110px" />
         )}
       </Box>
     </Box>
@@ -408,11 +391,6 @@ function WalletsHistory() {
     getElements();
   }, []);
 
-  // const data = result.map((i) => ({
-  //     date: dayjs(i.date).format("DD-MM"),
-  //     count: +i.count,
-  // }));
-
   const data = {
     labels: result.map((i) => dayjs(i.date).format("DD-MM")),
     datasets: [{
@@ -422,16 +400,27 @@ function WalletsHistory() {
     }]
   }
 
-  let max = 0;
+  let min = Number.MAX_SAFE_INTEGER;
   result.forEach(e=>{
-    if (max < +e.count) {
-      max = +e.count;
+    if (min > +e.count) {
+      min = +e.count;
     }
   });
 
-  const opts = {...options};
-  // @ts-ignore
-  opts.scales.y.ticks.stepSize = Math.round(max/4);
+  const walletsChartOptions = {
+    ...options,
+    scales: {
+      ...options.scales,
+      y: {
+        ...options.scales.y,
+        // Example - need to calculate min value from dataset.
+        // Can be calculated with round to closest number divided by 100000 without remainder.
+        // For example, dataset: [525145, 589123, 603723]. Min value = 525145
+        // Closest rounded min = 500000
+        min: Math.floor(min/100000) * 100000
+      }
+    }
+  } 
   
   return (
     <Box>
@@ -445,7 +434,7 @@ function WalletsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={opts} data={data} height="110px" />
+          <Bar options={walletsChartOptions} data={data} height="110px" />
         )}
       </Box>
     </Box>

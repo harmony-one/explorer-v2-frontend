@@ -386,18 +386,6 @@ export function AddressPage() {
             </Tab>
           }
 
-          {type === "erc721" || type === "erc1155" || type === "erc20" ? (
-            <Tab title={<Text size="small">Tools</Text>}>
-              <HoldersTab
-                id={id}
-                type={type}
-                inventory={
-                  inventoryHolders.length ? inventoryHolders : inventory
-                }
-              />
-            </Tab>
-          ) : null}
-
           {/*{type === "erc1155" && inventory.length ? (*/}
           {/*  <Tab*/}
           {/*    title={<Text size="small">Inventory ({inventory.length})</Text>}*/}

@@ -54,7 +54,6 @@ export const BlockDetails: FunctionComponent<BlockDetailsProps> = ({
   const [showDetails, setShowDetails] = useState(true);
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
   const focus = useWindowFocused();
-  console.log(focus, "block details");
 
   useEffect(() => {
     let tId = 0;
