@@ -10,6 +10,7 @@ import { TipContent } from "src/components/ui";
 import { Box, DataTable, Tip, Anchor, Text } from "grommet";
 
 import { CircleQuestion, CaretDownFill, CaretUpFill } from "grommet-icons";
+import { useWindowFocused } from "src/hooks/useWindowFocusHook";
 
 const columns = [
   {
@@ -52,6 +53,7 @@ export const BlockDetails: FunctionComponent<BlockDetailsProps> = ({
 }) => {
   const [showDetails, setShowDetails] = useState(true);
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
+  const focus = useWindowFocused();
 
   useEffect(() => {
     let tId = 0;

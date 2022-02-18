@@ -7,6 +7,7 @@ import { Address } from "src/components/ui";
 import { getTransactions } from "src/api/client";
 import { FormNextLink } from "grommet-icons";
 import { DateTime } from "../../components/ui";
+import { getTabHidden, useWindowFocused } from "src/hooks/useWindowFocusHook";
 
 function getColumns(props: any) {
   const { history } = props;
@@ -97,6 +98,8 @@ const filter = {
 };
 
 export function LatestTransactionsTable() {
+  const hidden = useWindowFocused();
+
   const history = useHistory();
   const [transactions, setTransactions] = useState<RPCTransactionHarmony[]>([]);
   const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
@@ -107,6 +110,11 @@ export function LatestTransactionsTable() {
     let tId = 0 as any;
     const exec = async () => {
       try {
+        const hidden = getTabHidden();
+        if (hidden) {
+          // tab is not focused 
+          return;
+        }
         let trxs = await Promise.all(
           availableShards.map((shardNumber) =>
             getTransactions([shardNumber, filter])
