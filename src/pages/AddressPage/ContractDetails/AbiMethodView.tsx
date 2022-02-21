@@ -273,7 +273,7 @@ export const AbiMethodsView = (props: {
           </Box>
         ) : null}
 
-        {!result || abiMethod.inputs?.length ? (
+        {!result || abiMethod.inputs?.length || abiMethod.stateMutability !== 'view' ? (
           <Box width='100px' margin={{top: '20px', bottom: '18px'}}>
             {loading ? (
               <Spinner />
