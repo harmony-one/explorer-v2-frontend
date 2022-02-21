@@ -12,6 +12,7 @@ import { Block } from "src/types";
 import { getBlocks } from "src/api/client";
 import { calculateSecondPerBlocks, calculateSecondsPerBlock } from "./helpers";
 import { ShardDropdown } from "src/components/ui/ShardDropdown";
+import { getTabHidden, useWindowFocused } from "src/hooks/useWindowFocusHook";
 
 const filter = {
   offset: 0,
@@ -23,6 +24,8 @@ const filter = {
 };
 
 export function MainPage() {
+  const focus = useWindowFocused();
+
   const history = useHistory();
   const isLessDesktop = useMediaQuery({ maxDeviceWidth: breakpoints.desktop });
 
@@ -39,6 +42,10 @@ export function MainPage() {
     let tId = 0 as any;
     const exec = async () => {
       try {
+        if (getTabHidden()) {
+          // ignore if not focused, we don't load blocks ...
+          return;
+        }; 
         let allBlocks = [];
         let blocks = await Promise.all(
           selectedShard === "All Shards"

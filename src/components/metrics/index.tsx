@@ -10,8 +10,61 @@ import { useMediaQuery } from "react-responsive";
 import { breakpoints } from "src/responsive/breakpoints";
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
 import { getTransactionCountLast14Days, getWalletsCountLast14Days } from "src/api/client";
+import { Bar } from 'react-chartjs-2';
 
 import { getCount } from "src/api/client";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      backgroundColor: 'rgb(0,0,0)'
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        display: false,
+        drawBorder: false,
+      },
+      ticks: {
+        autoSkip: true,
+        maxRotation: 0,
+        minRotation: 0
+      },
+    },
+    y: {
+      grid: {
+        display: false,
+        drawBorder: false,
+      },
+      ticks: {
+        autoSkip: true
+      }
+    }
+  }
+};
 
 export const Metrics = (params: {
   latency: number;
@@ -83,23 +136,23 @@ export const Metrics = (params: {
         <BlockTransactionsHistory />
       </Box>
 
-        {isLessLaptop && (
-            <Line
-                horizontal
-                style={{ marginTop: isLessTablet ? "16px" : "24px" }}
-            />
-        )}
+      {isLessLaptop && (
+        <Line
+          horizontal
+          style={{ marginTop: isLessTablet ? "16px" : "24px" }}
+        />
+      )}
 
-        <Box
-            justify="between"
-            pad={{
-                left: isLessLaptop ? "0" : "medium",
-            }}
-            margin={{ top: isLessLaptop ? "medium" : "0" }}
-            style={{ height: "140px", flex: "1 1 100%" }}
-        >
-            <WalletsHistory />
-        </Box>
+      <Box
+        justify="between"
+        pad={{
+          left: isLessLaptop ? "0" : "medium",
+        }}
+        margin={{ top: isLessLaptop ? "medium" : "0" }}
+        style={{ height: "140px", flex: "1 1 100%" }}
+      >
+        <WalletsHistory />
+      </Box>
 
     </BasePage>
   );
@@ -289,67 +342,28 @@ function BlockTransactionsHistory() {
     getElements();
   }, []);
 
-  const data = result.map((i) => ({
-    date: dayjs(i.timestamp).format("DD-MM"),
-    count: +i.count,
-  }));
+  const data = {
+    labels: result.map((i) => dayjs(i.timestamp).format("DD-MM")),
+    datasets: [{
+      label: "Transactions",
+      data: result.map((i) => +i.count),
+      backgroundColor: 'rgba(0, 174, 233, 0.5)'
+    }]
+  }
 
   return (
     <Box>
       <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
         {"TRANSACTION HISTORY"}
       </Text>
-      <Box style={{ flex: "1 1 100%", marginTop: "30px" }}>
+      <Box style={{ flex: "1 1 100%", marginTop: "10px" }}>
         {isLoading && (
           <Box justify="center" align="center" height="110px">
             <Spinner />
           </Box>
         )}
         {!isLoading && (
-          <DataChart
-            data={data}
-            detail
-            axis={{
-              x: {
-                granularity: "medium",
-                property: "date",
-              },
-              y: {
-                granularity: "medium",
-                property: "count",
-              },
-            }}
-            series={[
-              {
-                property: "date",
-                label: "Date",
-                render: (value) => (
-                  <Text size="xsmall" color="minorText">
-                    {value}
-                  </Text>
-                ),
-              },
-              {
-                property: "count",
-                label: "Transactions",
-                render: (value) => (
-                  <Text size="xsmall" color="minorText">
-                    {formatNumber(value)}
-                  </Text>
-                ),
-              },
-            ]}
-            size="fill"
-            chart={[
-              {
-                property: "count",
-                type: "bar",
-                color: "brand",
-                opacity: "medium",
-                thickness: "small",
-              },
-            ]}
-          />
+          <Bar options={options} data={data} height="110px" />
         )}
       </Box>
     </Box>
@@ -358,90 +372,73 @@ function BlockTransactionsHistory() {
 
 
 interface WalletHitoryItem {
-    date: string;
-    count: string;
+  date: string;
+  count: string;
 }
 
 function WalletsHistory() {
-    const [result, setResult] = useState<WalletHitoryItem[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [result, setResult] = useState<WalletHitoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        const getElements = async () => {
-            setIsLoading(true);
-            const res = await getWalletsCountLast14Days();
-            setResult(res);
-            setIsLoading(false);
-        };
+  useEffect(() => {
+    const getElements = async () => {
+      setIsLoading(true);
+      const res = await getWalletsCountLast14Days();
+      setResult(res);
+      setIsLoading(false);
+    };
 
-        getElements();
-    }, []);
+    getElements();
+  }, []);
 
-    const data = result.map((i) => ({
-        date: dayjs(i.date).format("DD-MM"),
-        count: +i.count,
-    }));
+  const data = {
+    labels: result.map((i) => dayjs(i.date).format("DD-MM")),
+    datasets: [{
+      label: "Wallets",
+      data: result.map((i) => +i.count),
+      backgroundColor: 'rgba(0, 174, 233, 0.5)'
+    }]
+  }
 
-    return (
-        <Box>
-            <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
-                {"WALLETS"}
-            </Text>
-            <Box style={{ flex: "1 1 100%", marginTop: "30px" }}>
-                {isLoading && (
-                    <Box justify="center" align="center" height="110px">
-                        <Spinner />
-                    </Box>
-                )}
-                {!isLoading && (
-                    <DataChart
-                        data={data}
-                        detail
-                        axis={{
-                            x: {
-                                granularity: "medium",
-                                property: "date",
-                            },
-                            y: {
-                                granularity: "medium",
-                                property: "count",
-                            },
-                        }}
-                        series={[
-                            {
-                                property: "date",
-                                label: "Date",
-                                render: (value) => (
-                                    <Text size="xsmall" color="minorText">
-                                        {value}
-                                    </Text>
-                                ),
-                            },
-                            {
-                                property: "count",
-                                label: "Wallets",
-                                render: (value) => (
-                                    <Text size="xsmall" color="minorText">
-                                        {formatNumber(value)}
-                                    </Text>
-                                ),
-                            },
-                        ]}
-                        size="fill"
-                        chart={[
-                            {
-                                property: "count",
-                                type: "bar",
-                                color: "brand",
-                                opacity: "medium",
-                                thickness: "small",
-                            },
-                        ]}
-                    />
-                )}
-            </Box>
-        </Box>
-    );
+  let min = Number.MAX_SAFE_INTEGER;
+  result.forEach(e=>{
+    if (min > +e.count) {
+      min = +e.count;
+    }
+  });
+
+  const walletsChartOptions = {
+    ...options,
+    scales: {
+      ...options.scales,
+      y: {
+        ...options.scales.y,
+        // Example - need to calculate min value from dataset.
+        // Can be calculated with round to closest number divided by 100000 without remainder.
+        // For example, dataset: [525145, 589123, 603723]. Min value = 525145
+        // Closest rounded min = 500000
+        min: Math.floor(min/100000) * 100000
+      }
+    }
+  } 
+  
+  return (
+    <Box>
+      <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
+        {"WALLETS"}
+      </Text>
+      <Box style={{ flex: "1 1 100%", marginTop: "10px" }}>
+        {isLoading && (
+          <Box justify="center" align="center" height="110px">
+            <Spinner />
+          </Box>
+        )}
+        {!isLoading && (
+          <Bar options={walletsChartOptions} data={data} height="110px" />
+        )}
+      </Box>
+    </Box>
+  );
 }
 
 const Line = styled.div<{ horizontal?: boolean; vertical?: boolean }>`

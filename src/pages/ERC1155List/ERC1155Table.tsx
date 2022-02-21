@@ -14,7 +14,8 @@ import {
 } from "src/components/ui";
 import { Erc20 } from "../../hooks/ERC20_Pool";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
-import { CircleQuestion } from "grommet-icons";
+import { CircleQuestion, StatusGood } from "grommet-icons";
+import { isTokenBridged } from "../../utils";
 
 interface TransactionTableProps {
   data: any[];
@@ -142,7 +143,14 @@ function getColumns(props: any) {
           Name
         </Text>
       ),
-      render: (data: Erc20) => <Text size="small">{data.name}</Text>,
+      render: (data: Erc20) => <Box direction={'row'} style={{ display: 'flex', alignItems: 'center' }}>
+        <Text size={'small'}>{data.name}</Text>
+        {data.isBridged && <div style={{ marginLeft: "4px", height: '14px', cursor: 'pointer' }}>
+          <Tip content={'Token is available on Harmony Bridge'}>
+            <StatusGood size={'14px'} color={'successText'} />
+          </Tip>
+        </div>}
+      </Box>,
     },
     {
       property: "symbol",
