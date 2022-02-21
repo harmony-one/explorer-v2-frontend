@@ -15,6 +15,7 @@ import {
 } from "src/api/client";
 import { revertErrorMessage } from "src/web3/parseByteCode";
 import { hmyv2_getTransactionReceipt } from "src/api/rpc";
+import useQuery from "../../hooks/useQuery";
 
 const extractError = (err: any) => {
   const errorMessages = err!.split(":");
@@ -29,19 +30,11 @@ const extractError = (err: any) => {
 
 export const TransactionPage = () => {
   const history = useHistory();
-  const tabParamName = "activeTab=";
-  let activeTab = 0;
-  try {
-    activeTab = +history.location.search.slice(
-      history.location.search.indexOf("activeTab=") + tabParamName.length
-    );
-  } catch {
-    activeTab = 0;
-  }
+  const { id } = useParams<{id: string}>();
+  const query = useQuery();
+  const activeTab = query.get('activeTab') || '0';
 
   // hash or number
-  // @ts-ignore
-  const { id } = useParams();
   const [tx, setTx] = useState<RPCStakingTransactionHarmony>(
     {} as RPCStakingTransactionHarmony
   );
