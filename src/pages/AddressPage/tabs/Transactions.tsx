@@ -100,7 +100,8 @@ function getColumns(id: string): ColumnConfig<any>[] {
         <Address
           address={data.transactionHash || data.hash}
           type="tx"
-          isShort
+          isShortEllipsis={true}
+          style={{ width: "170px" }}
         />
       ),
     },
@@ -265,7 +266,8 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Address
           address={data.transactionHash || data.hash}
           type="staking-tx"
-          isShort
+          isShortEllipsis={true}
+          style={{ width: "170px" }}
         />
       ),
     },
