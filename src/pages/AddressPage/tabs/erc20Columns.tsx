@@ -102,7 +102,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         </Text>
       ),
       render: (data: any) => (
-        <Address address={data.transactionHash || data.hash} type="tx" isShort />
+        <Address address={data.transactionHash || data.hash} type="tx" isShortEllipsis={true} style={{ width: '170px' }} />
       )
     },
     {
