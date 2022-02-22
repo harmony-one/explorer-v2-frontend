@@ -1,14 +1,19 @@
 import React, { useEffect } from "react";
 import { getAllERC20 } from "src/api/client";
 import { setERC20Pool, Erc20 } from "src/hooks/ERC20_Pool";
+import { getTabHidden, useWindowFocused } from "src/hooks/useWindowFocusHook";
 import { IndexedDbKeyPath, IndexedDbStore, saveToIndexedDB } from "../utils/indexedDB";
 import { isTokenBridged } from "../utils";
 
 export function ERC20_Pool() {
+  const focus = useWindowFocused();
   useEffect(() => {
     let tId = 0;
 
     const getRates = async () => {
+      if (getTabHidden()) {
+        return; // hidden tab, ignore the refresh request
+      }
       try {
         let erc20: Erc20[] = await getAllERC20();
         const erc20Map = {} as Record<string, Erc20>;

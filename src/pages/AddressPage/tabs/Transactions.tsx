@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, ColumnConfig, Text } from "grommet";
+import { Box, ColumnConfig, Text, Tip } from "grommet";
 import { useParams } from "react-router-dom";
 import {
   getByteCodeSignatureByHash,
@@ -21,6 +21,17 @@ import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
 import { getAddress } from "src/utils";
+
+const TxMethod = styled(Text)`
+  width: 100px;
+
+  > div {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`
 
 const Marker = styled.div<{ out: boolean }>`
   border-radius: 2px;
@@ -84,7 +95,8 @@ function getColumns(id: string): ColumnConfig<any>[] {
         <Address
           address={data.transactionHash || data.hash}
           type="tx"
-          isShort
+          isShortEllipsis={true}
+          style={{ width: "170px" }}
         />
       ),
     },
@@ -118,11 +130,13 @@ function getColumns(id: string): ColumnConfig<any>[] {
         }
 
         return (
-          <Text size="12px">
-            <NeutralMarker background={"backgroundBack"}>
-              {signature}
-            </NeutralMarker>
-          </Text>
+          <Tip content={<span>{signature}</span>}>
+            <TxMethod size="10px">
+              <NeutralMarker background={"backgroundBack"}>
+                {signature}
+              </NeutralMarker>
+            </TxMethod>
+          </Tip>
         );
       },
     },
@@ -151,14 +165,14 @@ function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "320px" }}
+          style={{ fontWeight: 300, width: "180px" }}
         >
           From
         </Text>
       ),
       render: (data: RelatedTransaction) => (
         <Text size="12px">
-          <Address address={data.from} />
+          <Address address={data.from} isShortEllipsis={true} style={{ width: '180px' }} />
         </Text>
       ),
     },
@@ -179,14 +193,14 @@ function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "320px" }}
+          style={{ fontWeight: 300, width: "180px" }}
         >
           To
         </Text>
       ),
       render: (data: RelatedTransaction) => (
         <Text size="12px">
-          <Address address={data.to} />
+          <Address address={data.to} isShortEllipsis={true} style={{ width: '180px' }} />
         </Text>
       ),
     },
@@ -247,7 +261,8 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Address
           address={data.transactionHash || data.hash}
           type="staking-tx"
-          isShort
+          isShortEllipsis={true}
+          style={{ width: "170px" }}
         />
       ),
     },
