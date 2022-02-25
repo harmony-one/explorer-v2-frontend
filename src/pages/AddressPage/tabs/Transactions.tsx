@@ -21,6 +21,7 @@ import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
 import { getAddress } from "src/utils";
+import { ExportToCsvButton } from "../../../components/ui/ExportToCsvButton";
 
 const TxMethod = styled(Text)`
   width: 100px;
@@ -551,6 +552,9 @@ export function Transactions(props: {
         rowDetails={props.rowDetails}
         showPages={totalElements > 0}
       />
+      <Box style={{ alignItems: 'flex-end' }}>
+        <ExportToCsvButton address={id} type={'transactions'} />
+      </Box>
     </Box>
   );
 }

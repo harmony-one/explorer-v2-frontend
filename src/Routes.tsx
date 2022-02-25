@@ -11,6 +11,7 @@ import { ERC20List } from "src/pages/ERC20List";
 import { ERC721List } from "src/pages/ERC721List";
 import { VerifyContract } from "./pages/VerifyContract/VerifyContract";
 import { ERC1155List } from "./pages/ERC1155List";
+import { ExportData } from "./pages/ExportData";
 import { InventoryDetailsPage } from "./pages/InventoryDetailsPage/InventoryDetailsPage";
 
 export function Routes() {
@@ -81,6 +82,10 @@ export function Routes() {
 
         <Route path="/verifycontract">
           <VerifyContract />
+        </Route>
+
+        <Route path="/exportData">
+          <ExportData />
         </Route>
 
         <Route path="*">
