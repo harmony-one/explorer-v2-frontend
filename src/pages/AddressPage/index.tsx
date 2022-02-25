@@ -32,6 +32,7 @@ import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
+import { getERC20Balance as getNodeERC20Balance } from "../../web3/erc20Methods";
 
 export function AddressPage() {
   const history = useHistory();
@@ -215,10 +216,24 @@ export function AddressPage() {
   }, [id, erc721Map]);
 
   useEffect(() => {
+    const getErc20Tokens = async () => {
+      let erc20tokens = await getUserERC20Balances([id]);
+      try {
+        erc20tokens = await Promise.all(erc20tokens.map(async token => {
+          const balance = await getNodeERC20Balance(id, token.tokenAddress)
+          return {
+            ...token,
+            balance
+          }
+        }))
+      } catch {}
+      return erc20tokens
+    }
+
     const getTokens = async () => {
       try {
+        let erc20tokens = await getErc20Tokens();
         let erc721Tokens = await getUserERC721Assets([id]);
-        let tokens = await getUserERC20Balances([id]);
         let erc1155tokens = await getUserERC1155Balances([id]);
 
         const erc721BalanceMap = erc721Tokens.reduce((prev, cur) => {
@@ -232,7 +247,7 @@ export function AddressPage() {
         }, {} as { [token: string]: number });
 
         setTokens([
-          ...tokens.map((token) => ({ ...token, isERC20: true })),
+          ...erc20tokens.map((token) => ({ ...token, isERC20: true })),
           ...erc721Tokens.map((token) => ({
             ...token,
             balance: erc721BalanceMap[token.tokenAddress].toString(),
