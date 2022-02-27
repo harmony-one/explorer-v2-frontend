@@ -19,6 +19,7 @@ const Icon = styled(StatusGood)`
 interface IAddress {
   address: string;
   isShort?: boolean;
+  isShortEllipsis?: boolean;
   type?: "tx" | "address" | "staking-tx";
   style?: CSSProperties;
   color?: string;
@@ -27,10 +28,20 @@ interface IAddress {
   hideCopyBtn?: boolean;
 }
 
+const AddressText = styled(Text)<{ isShortEllipsis?: boolean }>`
+  ${({ isShortEllipsis }) => isShortEllipsis && `
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  `}
+`
+
 export const Address = (props: IAddress) => {
   const {
     address,
     isShort,
+    isShortEllipsis,
     style,
     type = "address",
     color = "brand",
@@ -97,7 +108,7 @@ export const Address = (props: IAddress) => {
           />
         )}
         <Link to={address === EMPTY_ADDRESS ? "" : `/${type}/${address}`}>
-          <Text
+          <AddressText
             size="small"
             color={color}
             style={{
@@ -111,6 +122,7 @@ export const Address = (props: IAddress) => {
                   : "none",
               ...style,
             }}
+            isShortEllipsis={isShortEllipsis}
             onClick={
               address === EMPTY_ADDRESS
                 ? undefined
@@ -126,7 +138,7 @@ export const Address = (props: IAddress) => {
               (isShort
                 ? `${outPutAddress.substr(0, 4)}...${outPutAddress.substr(-4)}`
                 : outPutAddress)}
-          </Text>
+          </AddressText>
         </Link>
       </Box>
     </div>
