@@ -12,6 +12,7 @@ import { ERC721List } from "src/pages/ERC721List";
 import { VerifyContract } from "./pages/VerifyContract/VerifyContract";
 import { ERC1155List } from "./pages/ERC1155List";
 import { InventoryDetailsPage } from "./pages/InventoryDetailsPage/InventoryDetailsPage";
+import { ApprovalPage } from "./pages/ApprovalPage";
 
 export function Routes() {
   return (
@@ -41,6 +42,10 @@ export function Routes() {
 
         <Route exact path="/transactions/shard/:shardNumber">
           <AllTransactionsPage />
+        </Route>
+
+        <Route exact path="/approvalsTool">
+          <ApprovalPage />
         </Route>
 
         <Route path="/tx/:id">
