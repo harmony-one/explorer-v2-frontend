@@ -8,6 +8,7 @@ import { InfoButton } from "./InfoButton";
 import { useThemeMode } from "src/hooks/themeSwitcherHook";
 import styled, { CSSProperties } from "styled-components";
 import { AddressFormatSwitch } from "./AddressFormatSwitch";
+import { ToolsButton } from "./ToolsButton";
 
 const HeaderLine = (props: any) => {
   //@ts-ignore
@@ -74,6 +75,7 @@ export function AppHeader(props: { style: CSSProperties }) {
           </Box>
           <Box direction="row" align={'center'}>
             <InfoButton />
+            <ToolsButton />
             <ConfigureButton />
           </Box>
         </Box>

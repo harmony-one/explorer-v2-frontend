@@ -41,6 +41,11 @@ export type RPCBlock = {
 
 export type LogsBloom = string;
 
+export type TokenType =
+  | "ERC20"
+  | "ERC1155"
+  | "ERC721";
+
 export type RPCBlockHarmony = {
   difficulty: string;
   extraData: string;
@@ -274,4 +279,22 @@ export interface AddressDetails {
 export interface IHexSignature {
   hash: string;
   signature: string;
+}
+
+// tokenAmount is erc20 token amount approved (allowance)
+// tokenId is any specific token approved for this txn (or null if not approved)
+// NOTE: tokenId of 0 may be valid, check undefined/null status!!
+export interface ApprovalDetails {
+  hash: string;
+  lastUpdated: Date;
+  assetAddress: string;
+  spender: string;
+  allowance: string;
+  action: string;
+  account: string;
+  contract: string;
+  tokenAmount?: number;
+  tokenId?: number;
+  type: TokenType;
+  isFullApproval?: boolean;
 }

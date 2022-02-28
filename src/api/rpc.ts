@@ -1,4 +1,9 @@
-import { IGetTxsHistoryParams, RequestOrder, RequestTxType, RPCTransactionHarmony } from "../types";
+import { ERC1155_Pool } from "src/hooks/ERC1155_Pool";
+import { ERC20_Pool } from "src/hooks/ERC20_Pool";
+import { ERC721_Pool } from "src/hooks/ERC721_Pool";
+import { HarmonyAddress } from "src/utils";
+import { convertTxnToObj, filterTransactions, hasAllowance, matchesApprovalMethod } from "src/utils/approvals";
+import { ApprovalDetails, IGetTxsHistoryParams, RequestOrder, RequestTxType, RPCTransactionHarmony, TokenType } from "../types";
 
 export type TRPCResponse<T> = { id: number; jsonrpc: "2.0"; result: T, error?: { code: number, message: string } };
 
@@ -44,7 +49,7 @@ export const hmyv2_getTransactionReceipt = (
         params,
       }),
     }
-  ); 
+  );
 };
 
 export const getAllBalance = (params: [string, "latest"]) => {
@@ -120,7 +125,7 @@ export const hmyv2_getTransactionsHistory = (params: IGetTxsHistoryParams[]) => 
       jsonrpc: "2.0",
       method: "hmyv2_getTransactionsHistory",
       id: 1,
-      params: [{...defaultGetHistoryParams, ...params[0]}],
+      params: [{ ...defaultGetHistoryParams, ...params[0] }],
     }),
   }).then(data => {
     if (data.error) {
@@ -156,7 +161,7 @@ export const hmyv2_getStakingTransactionsHistory = (params: IGetTxsHistoryParams
       jsonrpc: "2.0",
       method: "hmyv2_getStakingTransactionsHistory",
       id: 1,
-      params: [{...defaultGetHistoryParams, ...params[0]}],
+      params: [{ ...defaultGetHistoryParams, ...params[0] }],
     }),
   }).then(data => {
     if (data.error) {
@@ -183,3 +188,62 @@ export const hmyv2_getStakingTransactionsCount = (address: string, txType: Reque
     return data.result
   });
 };
+
+/**
+ * Given address get all the approvals made by this address for all types of ERC1155, ERC721, and ERC20 tokens.
+ * Supply optional contractAddress argument to filter to only the specified token.
+ * 
+ * Use pageIndex and pageSize to control how many events to load from the RPC, supply txnHistory to remove previous
+ * 
+ * @param address 
+ * @param contractAddress 
+ * @param pageIndex 
+ * @param pageSize 
+ * @param txnHistory 
+ */
+export const getAllApprovalsForTokens = async (address: string,
+  contractAddress: string = "",
+  pageIndex = 0,
+  pageSize = 100,
+  txnHistory: any[] = [],
+  erc20Pool: ERC20_Pool = {},
+  erc1155Pool: ERC1155_Pool = {},
+  erc721Pool: ERC721_Pool = {}
+): Promise<{ txnHistory: ApprovalDetails[], dataObj: RPCTransactionHarmony[] }> => {
+  const params: IGetTxsHistoryParams[] = [{
+    address,
+    pageIndex,
+    pageSize,
+    fullTx: true,
+    txType: RequestTxType.SENT,
+    order: RequestOrder.ASC
+  }];
+
+  // if null, return all approvals
+  const contractHarmonyAddr = contractAddress && contractAddress.length > 0 ? new HarmonyAddress(contractAddress) : null;
+
+  let dataObj: RPCTransactionHarmony[] = await hmyv2_getTransactionsHistory(params);
+
+  for (let tx of dataObj) {
+    if (matchesApprovalMethod(tx) && (tx.to === contractAddress || tx.to === contractHarmonyAddr?.bech32 || !contractHarmonyAddr)) {
+      const spender = "0x" + tx.input.substring(34, 74);
+      const to = new HarmonyAddress(tx.to).basicHex;
+      let type: TokenType = "ERC20";
+      if (erc1155Pool[to]) {
+        type = "ERC1155";
+      }
+      else if (erc721Pool[to]) {
+        type = "ERC721";
+      }
+      // remove from list
+      txnHistory = filterTransactions(tx, txnHistory, spender, erc20Pool, erc1155Pool, erc721Pool);
+      //txnHistory.filter(transaction => !(transaction.spender === spender && transaction.contract === tx.to)) // remove from list txn spender AND contract matches...
+      if (hasAllowance(tx, spender, type)) {
+        const approvedObj = convertTxnToObj(tx, type);
+        txnHistory.push(approvedObj);
+      }
+    }
+  }
+
+  return { txnHistory, dataObj };
+}

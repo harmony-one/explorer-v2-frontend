@@ -32,6 +32,7 @@ import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
+import { ToolsTab } from "./tabs/tools";
 
 export function AddressPage() {
   const history = useHistory();
@@ -385,6 +386,12 @@ export function AddressPage() {
               <EventsTab id={id} />
             </Tab>
           }
+
+          {(type === "erc721" || type === "erc1155" || type === "erc20") ? (
+            <Tab title={<Text size="small">Tools</Text>}>
+              <ToolsTab contractAddress={id} showTools={true} />
+            </Tab>
+          ) : null}
 
           {/*{type === "erc1155" && inventory.length ? (*/}
           {/*  <Tab*/}
