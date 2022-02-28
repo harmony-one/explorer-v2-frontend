@@ -389,7 +389,7 @@ export function AddressPage() {
 
           {(type === "erc721" || type === "erc1155" || type === "erc20") ? (
             <Tab title={<Text size="small">Tools</Text>}>
-              <ToolsTab contractAddress={id} showTools={true } />
+              <ToolsTab contractAddress={id} showTools={true} />
             </Tab>
           ) : null}
 

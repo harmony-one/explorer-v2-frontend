@@ -76,8 +76,7 @@ export function TokenApprovals(props: { contractAddress?: string }) {
             } while (result.dataObj.length >= pageSize);
         }
         catch (error) {
-            // @ts-ignore
-            setError(error.message);
+            setError((error as Error).message)
         }
 
         setIsLoading(false);

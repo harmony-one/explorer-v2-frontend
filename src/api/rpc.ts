@@ -239,7 +239,6 @@ export const getAllApprovalsForTokens = async (address: string,
       txnHistory = filterTransactions(tx, txnHistory, spender, erc20Pool, erc1155Pool, erc721Pool);
       //txnHistory.filter(transaction => !(transaction.spender === spender && transaction.contract === tx.to)) // remove from list txn spender AND contract matches...
       if (hasAllowance(tx, spender, type)) {
-
         const approvedObj = convertTxnToObj(tx, type);
         txnHistory.push(approvedObj);
       }

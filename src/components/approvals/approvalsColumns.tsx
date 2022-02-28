@@ -38,7 +38,6 @@ export function getApprovalsColumns(revokeClicked:(tx:ApprovalDetails) => void):
         </Text>
       ),
       render: (data: ApprovalDetails) => {
-
         return (
           <Text size="12px">
             {data.lastUpdated.toLocaleString()}
