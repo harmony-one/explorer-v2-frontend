@@ -183,7 +183,7 @@ export function getRelatedTransactionsByType(
 }
 
 export function getRelatedTransactionsCountByType(
-  params: [0, string, TRelatedTransaction]
+  params: [0, string, TRelatedTransaction, any]
 ) {
   return transport("getRelatedTransactionsCountByType", params) as Promise<number>;
 }

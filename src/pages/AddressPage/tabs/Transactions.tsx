@@ -61,6 +61,8 @@ const NeutralMarker = styled(Box)`
   font-weight: bold;
 `;
 
+const internalTxsBlocksFrom = 23000000
+
 function getColumns(id: string): ColumnConfig<any>[] {
   return [
     // {
@@ -290,7 +292,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "320px" }}
+          style={{ fontWeight: 300, width: "170px" }}
         >
           Validator
         </Text>
@@ -298,7 +300,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
       render: (data: RelatedTransaction) => (
         <Text size="12px">
           {data.msg?.validatorAddress ? (
-            <Address address={data.msg?.validatorAddress || data.from} />
+            <Address address={data.msg?.validatorAddress || data.from} isShortEllipsis={true} style={{ width: "170px" }} />
           ) : (
             "—"
           )}
@@ -322,7 +324,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "320px" }}
+          style={{ fontWeight: 300, width: "170px" }}
         >
           Delegator
         </Text>
@@ -330,7 +332,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
       render: (data: RelatedTransaction) => (
         <Text size="12px">
           {data.msg?.delegatorAddress ? (
-            <Address address={data.msg?.delegatorAddress} />
+            <Address address={data.msg?.delegatorAddress} isShortEllipsis={true} style={{ width: "170px" }} />
           ) : (
             "—"
           )}
@@ -438,11 +440,15 @@ export function Transactions(props: {
     setIsLoading(true)
     try {
       let txs = []
+      const txsFilter = {...filter[props.type]}
+      if (props.type === 'internal_transaction') {
+        txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
+      }
       txs = await getRelatedTransactionsByType([
         0,
         id,
         props.type,
-        filter[props.type],
+        txsFilter,
       ]);
       // for transactions we display call method if any
       if (props.type === "transaction") {
@@ -485,10 +491,18 @@ export function Transactions(props: {
   useEffect(() => {
     const getTxsCount = async () => {
       try {
+        const countFilter = {...filter[props.type]}
+        // Note: internal_transactions index from & to supported only for block_number >= internalTxsBlocksFrom
+        // Limit count by 100000 results
+        if (props.type === 'internal_transaction') {
+          countFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
+          countFilter.limit = 100000
+        }
         const txsCount = await getRelatedTransactionsCountByType([
           0,
           id,
           props.type,
+          countFilter,
         ])
         setTotalElements(txsCount)
       } catch (e) {
