@@ -182,6 +182,12 @@ export function getRelatedTransactionsByType(
   >;
 }
 
+export function getRelatedTransactionsCountByType(
+  params: [0, string, TRelatedTransaction, any]
+) {
+  return transport("getRelatedTransactionsCountByType", params) as Promise<number>;
+}
+
 export function getBinancePairPrice(params: [string]) {
   const cacheValue = pairCache[params[0]];
   return cacheValue

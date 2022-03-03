@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   getByteCodeSignatureByHash,
   getRelatedTransactionsByType,
+  getRelatedTransactionsCountByType
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
@@ -19,13 +20,8 @@ import {
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
-import { getAddress, mapBlockchainTxToRelated } from "src/utils";
-import {
-  hmyv2_getStakingTransactionsCount,
-  hmyv2_getStakingTransactionsHistory,
-  hmyv2_getTransactionsCount,
-  hmyv2_getTransactionsHistory
-} from "../../../api/rpc";
+import { getAddress } from "src/utils";
+import { ExportToCsvButton } from "../../../components/ui/ExportToCsvButton";
 
 const TxMethod = styled(Text)`
   width: 100px;
@@ -64,6 +60,8 @@ const NeutralMarker = styled(Box)`
   text-align: center;
   font-weight: bold;
 `;
+
+const internalTxsBlocksFrom = 23000000
 
 function getColumns(id: string): ColumnConfig<any>[] {
   return [
@@ -294,7 +292,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "320px" }}
+          style={{ fontWeight: 300, width: "170px" }}
         >
           Validator
         </Text>
@@ -302,7 +300,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
       render: (data: RelatedTransaction) => (
         <Text size="12px">
           {data.msg?.validatorAddress ? (
-            <Address address={data.msg?.validatorAddress || data.from} />
+            <Address address={data.msg?.validatorAddress || data.from} isShortEllipsis={true} style={{ width: "170px" }} />
           ) : (
             "—"
           )}
@@ -326,7 +324,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "320px" }}
+          style={{ fontWeight: 300, width: "170px" }}
         >
           Delegator
         </Text>
@@ -334,7 +332,7 @@ const getStackingColumns = (id: string): ColumnConfig<any>[] => {
       render: (data: RelatedTransaction) => (
         <Text size="12px">
           {data.msg?.delegatorAddress ? (
-            <Address address={data.msg?.delegatorAddress} />
+            <Address address={data.msg?.delegatorAddress} isShortEllipsis={true} style={{ width: "170px" }} />
           ) : (
             "—"
           )}
@@ -442,22 +440,16 @@ export function Transactions(props: {
     setIsLoading(true)
     try {
       let txs = []
-      if (props.type ==='transaction' || props.type === 'staking_transaction') {
-        const pageSize = limit
-        const pageIndex = Math.floor(offset / limit)
-        const params = [{ address: id, pageIndex, pageSize }]
-        txs = props.type ==='transaction'
-          ? await hmyv2_getTransactionsHistory(params)
-          : await hmyv2_getStakingTransactionsHistory(params)
-        txs = txs.filter(tx => tx).map(tx => mapBlockchainTxToRelated(tx))
-      } else {
-        txs = await getRelatedTransactionsByType([
-          0,
-          id,
-          props.type,
-          filter[props.type],
-        ]);
+      const txsFilter = {...filter[props.type]}
+      if (props.type === 'internal_transaction') {
+        txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
       }
+      txs = await getRelatedTransactionsByType([
+        0,
+        id,
+        props.type,
+        txsFilter,
+      ]);
       // for transactions we display call method if any
       if (props.type === "transaction") {
         const methodSignatures = await Promise.all(
@@ -480,9 +472,6 @@ export function Transactions(props: {
       });
 
       setRelatedTrxs(txs);
-      if (props.type === 'transaction' || props.type === 'staking_transaction') {
-        setCachedTxs({ ...cachedTxs, [props.type]: txs });
-      }
       if (props.onTxsLoaded) {
         props.onTxsLoaded(txs)
       }
@@ -502,25 +491,33 @@ export function Transactions(props: {
   useEffect(() => {
     const getTxsCount = async () => {
       try {
-        if (props.type ==='transaction' || props.type === 'staking_transaction') {
-          if (typeof cachedTotalElements[props.type] !== 'undefined' && id === prevId) {
-            setTotalElements(cachedTotalElements[props.type])
-          } else {
-            const count = props.type ==='transaction'
-              ? await hmyv2_getTransactionsCount(id)
-              : await hmyv2_getStakingTransactionsCount(id)
-            setTotalElements(count)
-            setCachedTotalElements({ ...cachedTotalElements, [props.type]: count })
-          }
-        } else {
-          setTotalElements(initTotalElements)
+        const countFilter = {...filter[props.type]}
+        // Note: internal_transactions index from & to supported only for block_number >= internalTxsBlocksFrom
+        if (props.type === 'internal_transaction') {
+          countFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
         }
+        const txsCount = await getRelatedTransactionsCountByType([
+          0,
+          id,
+          props.type,
+          countFilter,
+        ])
+        setTotalElements(txsCount)
+        setCachedTotalElements({
+          ...cachedTotalElements,
+          [props.type]: txsCount
+        })
       } catch (e) {
         console.error('Cannot get txs count', (e as Error).message)
         setTotalElements(initTotalElements)
       }
     }
-    getTxsCount()
+    const cachedValue = cachedTotalElements[props.type]
+    if (cachedValue) {
+      setTotalElements(cachedValue)
+    } else {
+      getTxsCount()
+    }
   }, [props.type, id])
 
   useEffect(() => {
@@ -574,8 +571,13 @@ export function Transactions(props: {
         minWidth="1266px"
         hideCounter
         rowDetails={props.rowDetails}
-        showPages={totalElements > 0 && (props.type ==='transaction' || props.type === 'staking_transaction')}
+        showPages={totalElements > 0}
       />
+      {props.type === 'transaction' &&
+        <Box style={{ alignItems: 'flex-end' }}>
+          <ExportToCsvButton address={id} type={'transactions'} />
+        </Box>
+      }
     </Box>
   );
 }
