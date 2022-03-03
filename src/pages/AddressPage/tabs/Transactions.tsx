@@ -493,10 +493,8 @@ export function Transactions(props: {
       try {
         const countFilter = {...filter[props.type]}
         // Note: internal_transactions index from & to supported only for block_number >= internalTxsBlocksFrom
-        // Limit count by 100000 results
         if (props.type === 'internal_transaction') {
           countFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
-          countFilter.limit = 100000
         }
         const txsCount = await getRelatedTransactionsCountByType([
           0,
@@ -566,9 +564,11 @@ export function Transactions(props: {
         rowDetails={props.rowDetails}
         showPages={totalElements > 0}
       />
-      <Box style={{ alignItems: 'flex-end' }}>
-        <ExportToCsvButton address={id} type={'transactions'} />
-      </Box>
+      {props.type === 'transaction' &&
+        <Box style={{ alignItems: 'flex-end' }}>
+          <ExportToCsvButton address={id} type={'transactions'} />
+        </Box>
+      }
     </Box>
   );
 }
