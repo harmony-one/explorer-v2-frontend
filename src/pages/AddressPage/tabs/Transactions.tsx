@@ -449,7 +449,7 @@ export function Transactions(props: {
         txs = props.type ==='transaction'
           ? await hmyv2_getTransactionsHistory(params)
           : await hmyv2_getStakingTransactionsHistory(params)
-        txs = txs.map(tx => mapBlockchainTxToRelated(tx))
+        txs = txs.filter(tx => tx).map(tx => mapBlockchainTxToRelated(tx))
       } else {
         txs = await getRelatedTransactionsByType([
           0,
