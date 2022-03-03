@@ -503,12 +503,21 @@ export function Transactions(props: {
           countFilter,
         ])
         setTotalElements(txsCount)
+        setCachedTotalElements({
+          ...cachedTotalElements,
+          [props.type]: txsCount
+        })
       } catch (e) {
         console.error('Cannot get txs count', (e as Error).message)
         setTotalElements(initTotalElements)
       }
     }
-    getTxsCount()
+    const cachedValue = cachedTotalElements[props.type]
+    if (cachedValue) {
+      setTotalElements(cachedValue)
+    } else {
+      getTxsCount()
+    }
   }, [props.type, id])
 
   useEffect(() => {
