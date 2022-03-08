@@ -38,10 +38,19 @@ export function ToolsButton() {
             style={{ textDecoration: "underline" }}
             onClick={(e) => {
               setIsOpen(false);
-              history.push("/approvalsTool");
+              history.push("/tools/approvals");
             }}
           >
             Token Approvals 
+          </Anchor>
+          <Anchor
+            style={{ textDecoration: "underline" }}
+            onClick={(e) => {
+              setIsOpen(false);
+              history.push("/tools/checkHrc");
+            }}
+          >
+            Check HRC
           </Anchor>
         </Box>
       }
