@@ -37,3 +37,19 @@ export const mapBlockchainTxToRelated = (
 }
 
 export const isTokenBridged = (address: string) => !!bridgeTokensMap[address]
+
+export const copyTextToClipboard = (value: string) => {
+  const copyTextareaInput = document.createElement("textarea");
+  copyTextareaInput.value = value;
+  document.body.appendChild(copyTextareaInput);
+
+  copyTextareaInput.focus();
+  copyTextareaInput.select();
+
+  try {
+    document.execCommand("copy");
+  } catch {
+  } finally {
+    document.body.removeChild(copyTextareaInput);
+  }
+};

@@ -14,6 +14,7 @@ import { ERC1155List } from "./pages/ERC1155List";
 import { ExportData } from "./pages/ExportData";
 import { InventoryDetailsPage } from "./pages/InventoryDetailsPage/InventoryDetailsPage";
 import { ApprovalPage } from "./pages/ApprovalPage";
+import { CheckHRC } from "./pages/tools/CheckHRC";
 
 export function Routes() {
   return (
@@ -45,8 +46,12 @@ export function Routes() {
           <AllTransactionsPage />
         </Route>
 
-        <Route exact path="/approvalsTool">
+        <Route exact path="/tools/approvals">
           <ApprovalPage />
+        </Route>
+
+        <Route exact path="/tools/checkHrc">
+          <CheckHRC />
         </Route>
 
         <Route path="/tx/:id">
