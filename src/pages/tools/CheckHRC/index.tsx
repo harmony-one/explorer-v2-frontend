@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Heading, Select, Spinner, Text, TextArea, TextInput, Tip } from "grommet";
-import { Validate, Alert, StatusGood } from "grommet-icons";
+import { Alert, StatusGood } from "grommet-icons";
 import { BaseContainer, BasePage } from "../../../components/ui";
 import useQuery from "../../../hooks/useQuery";
 import { getContractsByField } from "../../../api/client";
@@ -230,7 +230,7 @@ export function CheckHRC() {
             {(!isContractLoading && contractAddress) &&
               <Box justify="center" align="center" margin={'24px 0 0 24px'}>
                 {isAllEventsMatched
-                  ? <Tip content={'All events found'}><Validate size="medium" color={'successText'} /></Tip>
+                  ? <Tip content={'All events found'}><StatusGood size="medium" color={'successText'} /></Tip>
                   : <Tip content={'Some events missing'}><Alert size="medium" color={'minorText'} /></Tip>}
               </Box>
             }
