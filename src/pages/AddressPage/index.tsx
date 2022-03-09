@@ -160,7 +160,6 @@ export function AddressPage() {
     const getContracts = async () => {
       try {
         let contracts: any = await getContractsByField([0, "address", id]);
-        console.log('contracts', contracts)
 
         const mergedContracts: AddressDetails = erc721Map[contracts.address]
           ? { ...contracts, ...erc721Map[contracts.address] }
