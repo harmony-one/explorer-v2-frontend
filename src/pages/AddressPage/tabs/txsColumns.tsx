@@ -338,22 +338,21 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         </Text>
       ),
       render: (data: any) => {
-        const { eventType } = data
         let signature;
 
-        if (eventType) {
-          signature = eventType
-        } else {
-          try {
-            // @ts-ignore
-            signature =
-              data.signatures &&
-              data.signatures.map((s: any) => s.signature)[0].split("(")[0];
-          } catch (err) {}
+        try {
+          // @ts-ignore
+          signature =
+            data.signatures &&
+            data.signatures.map((s: any) => s.signature)[0].split("(")[0];
+        } catch (err) {}
 
-          if (!signature && data.value !== "0") {
-            signature = "transfer";
-          }
+        if (!signature && data.value !== "0") {
+          signature = "transfer";
+        }
+
+        if (!signature && data.input.length >= 10) {
+          signature = data.input.slice(2, 10);
         }
 
         if (!signature) {
