@@ -1,4 +1,5 @@
 import { AbiItem } from "web3-utils";
+import { getContractsByField } from "./client";
 
 export interface IVerifyContractData {
   contractAddress: string;
@@ -35,11 +36,11 @@ export interface IVerifyContractDataSendData {
 }
 
 export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
-  
+
   if (data.tab === "Multiple Source Files") {
     console.log("Handling multiple files");
     const formData = new FormData();
-    data.fileList?.forEach(file=>{
+    data.fileList?.forEach(file => {
       formData.append(file.name, file);
     });
 
@@ -51,7 +52,7 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
       if (k === "language" && +v === 0) {
         continue;
       }
-      
+
       if (k === "libraries") {
         formData.append(k, v.join(","));
       }
@@ -60,7 +61,7 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
       }
     }
 
-    const response = await  fetch(
+    const response = await fetch(
       `${process.env.REACT_APP_EXPLORER_V1_API_URL}codeVerification`,
       {
         method: "POST",
@@ -74,9 +75,6 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
     );
 
     const body = await response.json();
-
-    console.log("Handling multiple files", body);
-
     if (response.status !== 200) {
       throw new Error(body?.message);
     }

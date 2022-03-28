@@ -11,7 +11,8 @@ export const useONEExchangeRate = singletonHook({}, () => {
   const options: APIPollingOptions<any> = {
     fetchFunc,
     initialState: {},
-    delay: 30000
+    delay: 30000,
+    disableTabListener: true
   }
   const res = useAPIPolling(options)
 
