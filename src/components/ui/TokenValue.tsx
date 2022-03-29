@@ -5,6 +5,7 @@ import { formatNumber as _formatNumber } from "src/components/ui/utils";
 
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
+import styled from "styled-components";
 
 interface ONEValueProps {
   value: string | number;
@@ -12,11 +13,28 @@ interface ONEValueProps {
   style?: React.CSSProperties;
   formatNumber?: boolean;
   hideSymbol?: boolean;
+  isShort?: boolean;
 }
 
 Big.DP = 21;
 Big.NE = -20;
 Big.PE = 15;
+
+const TextWrapper = styled(Text)<{ isShort: boolean }>`
+  ${(props) => props.isShort &&
+  `
+    width: 200px;
+    display: flex;
+  
+    b {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  `
+  }
+`
 
 // @ts-ignore
 export const TokenValue = (props: ONEValueProps) => {
@@ -26,6 +44,7 @@ export const TokenValue = (props: ONEValueProps) => {
     style,
     formatNumber,
     hideSymbol = false,
+    isShort = false
   } = props;
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
@@ -49,8 +68,8 @@ export const TokenValue = (props: ONEValueProps) => {
   const v = formatNumber ? _formatNumber(bi.toNumber()) : bi.toString();
 
   return (
-    <Text size="small" style={style}>
+    <TextWrapper size="small" isShort={isShort} style={style}>
       <b>{v}</b> {hideSymbol ? null : tokenInfo.symbol}
-    </Text>
+    </TextWrapper>
   );
 };

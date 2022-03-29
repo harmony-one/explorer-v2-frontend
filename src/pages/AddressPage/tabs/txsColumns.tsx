@@ -7,6 +7,7 @@ import styled, { css } from "styled-components";
 import { ABIManager, IABI } from "../../../web3/ABIManager";
 import ERC721ABI from "../../../web3/abi/ERC721ABI.json";
 import ERC1155ABI from "../../../web3/abi/ERC1155ABI.json";
+import { CopyBtn } from "../../../components/ui/CopyBtn";
 
 const erc721ABIManager = ABIManager(ERC721ABI as IABI)
 const erc1155ABIManager = ABIManager(ERC1155ABI as IABI)
@@ -152,25 +153,25 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Address address={data.transactionHash || data.hash} type="tx" isShortEllipsis={true} style={{ width: '170px' }} />
       )
     },
-    // {
-    //   property: 'event',
-    //   header: (
-    //     <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
-    //       Event
-    //     </Text>
-    //   ),
-    //   render: (data: any) => {
-    //     const eventType = data.eventType || '-'
-    //
-    //     return (
-    //       <Text size="12px">
-    //         <NeutralMarker background={'backgroundBack'}>
-    //           {eventType}
-    //         </NeutralMarker>
-    //       </Text>
-    //     )
-    //   }
-    // },
+    {
+      property: 'event',
+      header: (
+        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+          Event
+        </Text>
+      ),
+      render: (data: any) => {
+        const eventType = data.eventType || '-'
+
+        return (
+          <TxMethod size="10px">
+            <NeutralMarker background={'backgroundBack'}>
+              {eventType}
+            </NeutralMarker>
+          </TxMethod>
+        )
+      }
+    },
     {
       property: 'from',
       header: (
@@ -234,11 +235,18 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
           Value
         </Text>
       ),
-      render: (data: RelatedTransaction) => {
-        const { address, value } = data
+      render: (data: any) => {
+        const { address, value, eventType } = data
 
         if (!value) {
           return '?'
+        }
+
+        if (eventType === 'Approval') {
+          return (
+            <Box direction={'row'} gap={'4px'} align={'center'}>
+              <CopyBtn value={value} showNotification={true}/><TokenValue isShort={true} tokenAddress={address} value={value} />
+            </Box>)
         }
 
         return (
@@ -497,6 +505,25 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
       ),
     },
     {
+      property: 'event',
+      header: (
+        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+          Event
+        </Text>
+      ),
+      render: (data: any) => {
+        const eventType = data.eventType || '-'
+
+        return (
+          <TxMethod size="10px">
+            <NeutralMarker background={'backgroundBack'}>
+              {eventType}
+            </NeutralMarker>
+          </TxMethod>
+        )
+      }
+    },
+    {
       property: "from",
       header: (
         <Text
@@ -535,11 +562,13 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
           To
         </Text>
       ),
-      render: (data: RelatedTransaction) => (
-        <Text size="12px">
-          <Address address={data.to} isShortEllipsis={true} style={{ width: '180px' }} />
-        </Text>
-      ),
+      render: (data: RelatedTransaction) => {
+        return (
+          <Text size="12px">
+            {data.to.trim() && <Address address={data.to} isShortEllipsis={true} style={{ width: '180px' }} />}
+          </Text>
+        )
+      },
     },
     // {
     //   property: "value",
