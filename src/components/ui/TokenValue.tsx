@@ -69,7 +69,7 @@ export const TokenValue = (props: ONEValueProps) => {
 
   return (
     <TextWrapper size="small" isShort={isShort} style={style}>
-      <b>{v}</b> {hideSymbol ? null : tokenInfo.symbol}
+      <b>{v}</b> {hideSymbol ? null : <span style={{ whiteSpace: 'nowrap' }}>{tokenInfo.symbol}</span>}
     </TextWrapper>
   );
 };

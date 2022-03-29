@@ -197,7 +197,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
       render: (data: RelatedTransaction) => {
         const { from } = data
         return (
-          <Text size="12px">
+          <Text size="10px">
             <Marker out={from === id}>
               {from === id ? 'OUT' : 'IN'}
             </Marker>
@@ -244,8 +244,8 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
 
         if (eventType === 'Approval') {
           return (
-            <Box direction={'row'} gap={'4px'} align={'center'}>
-              <CopyBtn value={value} showNotification={true}/><TokenValue isShort={true} tokenAddress={address} value={value} />
+            <Box direction={'row'} gap={'4px'}>
+              <TokenValue isShort={true} tokenAddress={address} value={value} />
             </Box>)
         }
 
@@ -544,7 +544,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
       property: "marker",
       header: <></>,
       render: (data: RelatedTransaction) => (
-        <Text size="12px">
+        <Text size="10px">
           <Marker out={data.from === id}>
             {data.from === id ? "OUT" : "IN"}
           </Marker>

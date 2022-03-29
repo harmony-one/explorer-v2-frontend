@@ -75,7 +75,7 @@ export const theme = {
         
         tr {
           th, td {
-            padding: 16px 12px;
+            padding: 16px 8px;
           }
           td:last-child {
             text-align: right;
