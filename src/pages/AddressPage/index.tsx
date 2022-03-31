@@ -113,19 +113,11 @@ export function AddressPage() {
 
   const erc20Token = erc20Map[id] || null;
 
-  let oneAddress = id;
-
   let type = erc721Map[id]
     ? "erc721"
     : erc1155Map[id]
       ? "erc1155"
       : getType(contracts, erc20Token);
-
-  try {
-    oneAddress = getAddress(oneAddress).bech32;
-  } catch {
-    oneAddress = oneAddress;
-  }
 
   useEffect(() => {
     const getActiveIndex = () => {
@@ -149,12 +141,18 @@ export function AddressPage() {
   }, [id]);
 
   useEffect(() => {
-    // if (!!contracts) {
-    loadSourceCode(oneAddress)
-      .then((res) => setSourceCode(res))
-      .catch(() => setSourceCode(null));
-    // }
-  }, [oneAddress]);
+    // contract defined and contract address same as id
+    // note: when we toggle there is scenarios where the id are not the same
+    // @ts-ignore
+    if (!!contracts && contracts?.address === id) {
+      loadSourceCode(id)
+        .then((res) => setSourceCode(res))
+        .catch((except) => {
+          console.log(except);
+          setSourceCode(null)
+        });
+    }
+  }, [id, contracts]);
 
   useEffect(() => {
     const getContracts = async () => {

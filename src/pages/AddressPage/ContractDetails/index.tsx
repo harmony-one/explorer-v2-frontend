@@ -248,8 +248,6 @@ export const VerifiedContractDetails = (props: {
     abiString = JSON.stringify(props.sourceCode.abi, null, 4);
   } catch { }
 
-  console.log(props.sourceCode);
-
   return (
     <Box direction="column">
       {props.sourceCode?.proxyAddress && !props.sourceCode?.proxy && <VerifiedButMissingImplementation address={props.sourceCode.proxyAddress}/>}
