@@ -9,7 +9,6 @@ import styled from "styled-components";
 import { useMediaQuery } from "react-responsive";
 import { breakpoints } from "src/responsive/breakpoints";
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
-import { getTransactionCountLast14Days, getWalletsCountLast14Days } from "src/api/client";
 import { Bar } from 'react-chartjs-2';
 
 import { getCount } from "src/api/client";
@@ -22,6 +21,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { getActiveWallets, getTransactionsCount } from "../../api/3rdPartyApi";
 
 ChartJS.register(
   CategoryScale,
@@ -334,7 +334,7 @@ function BlockTransactionsHistory() {
   useEffect(() => {
     const getElements = async () => {
       setIsLoading(true);
-      const res = await getTransactionCountLast14Days();
+      const res = await getTransactionsCount();
       setResult(res);
       setIsLoading(false);
     };
@@ -383,8 +383,8 @@ function WalletsHistory() {
   useEffect(() => {
     const getElements = async () => {
       setIsLoading(true);
-      const res = await getWalletsCountLast14Days();
-      setResult(res);
+      const walletsData = await getActiveWallets(14)
+      setResult(walletsData);
       setIsLoading(false);
     };
 
@@ -394,7 +394,7 @@ function WalletsHistory() {
   const data = {
     labels: result.map((i) => dayjs(i.date).format("DD-MM")),
     datasets: [{
-      label: "Wallets",
+      label: "Active wallets",
       data: result.map((i) => +i.count),
       backgroundColor: 'rgba(0, 174, 233, 0.5)'
     }]
@@ -425,7 +425,7 @@ function WalletsHistory() {
   return (
     <Box>
       <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
-        {"WALLETS"}
+        {"ACTIVE WALLETS"}
       </Text>
       <Box style={{ flex: "1 1 100%", marginTop: "10px" }}>
         {isLoading && (
