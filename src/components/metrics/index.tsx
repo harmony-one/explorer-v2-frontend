@@ -153,6 +153,7 @@ export const Metrics = (params: {
       >
         <WalletsHistory />
       </Box>
+
     </BasePage>
   );
 };
@@ -393,7 +394,7 @@ function WalletsHistory() {
   const data = {
     labels: result.map((i) => dayjs(i.date).format("DD-MM")),
     datasets: [{
-      label: "Active wallets",
+      label: "Wallets",
       data: result.map((i) => +i.count),
       backgroundColor: 'rgba(0, 174, 233, 0.5)'
     }]
@@ -406,23 +407,26 @@ function WalletsHistory() {
     }
   });
 
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 960px)' })
+  const walletsChartOptions = {
+    ...options,
+    scales: {
+      ...options.scales,
+      y: {
+        ...options.scales.y,
+        // Example - need to calculate min value from dataset.
+        // Can be calculated with round to closest number divided by 100000 without remainder.
+        // For example, dataset: [525145, 589123, 603723]. Min value = 525145
+        // Closest rounded min = 500000
+        min: Math.floor(min/100000) * 100000
+      }
+    }
+  } 
   
   return (
     <Box>
-      <Box direction={'row'}>
-        <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
-          {"ACTIVE WALLETS"}
-        </Text>
-        {!isTabletOrMobile &&
-          <Box direction={'row'}>
-            By&nbsp;
-            <a href={`https://harmony-transactions.vercel.app/`} target={'_blank'}>
-              <Text color={'brand'} size={'small'}>Metrics DAO</Text>
-            </a>
-          </Box>
-        }
-      </Box>
+      <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
+        {"WALLETS"}
+      </Text>
       <Box style={{ flex: "1 1 100%", marginTop: "10px" }}>
         {isLoading && (
           <Box justify="center" align="center" height="110px">
@@ -430,7 +434,7 @@ function WalletsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={options} data={data} height="110px" />
+          <Bar options={walletsChartOptions} data={data} height="110px" />
         )}
       </Box>
     </Box>
