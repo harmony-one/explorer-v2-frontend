@@ -6,7 +6,8 @@ export const parseHexToText = (hex: string) => {
   let text = ''
   try {
     text = web3.utils.hexToUtf8(hex)
-    if (text && /[\p{Letter}\p{Mark}]+/gu.test(text)) {
+    // Allow only english letters and some symbols
+    if (text && /^[A-Za-z0-9,.;\- ]*$/.test(text)) {
       return text
     }
   } catch (e) {}
