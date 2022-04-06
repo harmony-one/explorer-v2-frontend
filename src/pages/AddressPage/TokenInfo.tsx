@@ -59,9 +59,9 @@ export function TokensInfo(props: { value: Token[] }) {
             balance
           }
         }))
-        console.log('ERC20 node balances updated')
         setTokensList(balances)
         setNodeBalancesLoaded(true)
+        console.log('ERC20 node balances updated')
       } catch (e) {
         console.error('Cannot update node balances', (e as Error).message)
       }
