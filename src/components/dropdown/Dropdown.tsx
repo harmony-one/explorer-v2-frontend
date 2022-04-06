@@ -88,9 +88,16 @@ export class Dropdown<T = {}> extends React.Component<
     document.body.removeEventListener("click", this.handleClickBody as any);
   }
 
+  setOpened = (isOpen: boolean) => {
+    this.setState({ ...this.state, isOpen });
+    if (this.props.onToggle) {
+      this.props.onToggle(isOpen)
+    }
+  }
+
   handleClickBody = (e: React.MouseEvent<HTMLElement>) => {
     if (!(this.element && this.element.contains(e.target as Node))) {
-      this.setState({ ...this.state, isOpen: false });
+      this.setOpened(false)
     }
   };
 
@@ -101,7 +108,7 @@ export class Dropdown<T = {}> extends React.Component<
       this.props.onClickItem(item);
     }
 
-    this.setState({ ...this.state, isOpen: false });
+    this.setOpened(false)
   };
 
   renderGroupItems() {
@@ -126,9 +133,9 @@ export class Dropdown<T = {}> extends React.Component<
       return items.length ? (
         <Fragment key={`${groupItem.groupBy}`}>
           <Fragment>{groupItem.renderGroupItem()}</Fragment>
-          {items.map((item) => (
+          {items.map((item, index) => (
             <DataItem
-              key={`${item[this.props.keyField]}`}
+              key={`${item[this.props.keyField] || index}`}
               background={"backgroundDropdownItem"}
               onClick={(evt) => this.onClickItem(item, evt)}
               itemHeight={itemHeight}
@@ -160,7 +167,7 @@ export class Dropdown<T = {}> extends React.Component<
       >
         <Value
           onClick={() => {
-            this.setState({ ...this.state, isOpen: !this.state.isOpen });
+            this.setOpened(!this.state.isOpen)
           }}
           direction={"row"}
           flex
@@ -171,14 +178,14 @@ export class Dropdown<T = {}> extends React.Component<
               onClick={(e) => {
                 console.log("CLICK");
                 e.stopPropagation();
-                this.setState({ ...this.state, isOpen: false });
+                this.setOpened(false)
               }}
             />
           ) : (
             <CaretDownFill
               onClick={(e) => {
                 e.stopPropagation();
-                this.setState({ ...this.state, isOpen: true });
+                this.setOpened(true)
               }}
             />
           )}
@@ -211,9 +218,9 @@ export class Dropdown<T = {}> extends React.Component<
             ) : null}
             {group.length
               ? this.renderGroupItems()
-              : this.props.items.map((item) => (
+              : this.props.items.map((item, index) => (
                   <DataItem
-                    key={`${item[this.props.keyField]}`}
+                    key={`${item[this.props.keyField] || index}`}
                     onClick={(evt) => this.onClickItem(item, evt)}
                     itemHeight={itemHeight}
                     style={{ ...itemStyles }}
