@@ -32,6 +32,7 @@ import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
+import { ToolsTab } from "./tabs/tools";
 import { getERC20Balance as getNodeERC20Balance } from "../../web3/erc20Methods";
 
 export function AddressPage() {
@@ -113,19 +114,11 @@ export function AddressPage() {
 
   const erc20Token = erc20Map[id] || null;
 
-  let oneAddress = id;
-
   let type = erc721Map[id]
     ? "erc721"
     : erc1155Map[id]
       ? "erc1155"
       : getType(contracts, erc20Token);
-
-  try {
-    oneAddress = getAddress(oneAddress).bech32;
-  } catch {
-    oneAddress = oneAddress;
-  }
 
   useEffect(() => {
     const getActiveIndex = () => {
@@ -149,12 +142,18 @@ export function AddressPage() {
   }, [id]);
 
   useEffect(() => {
-    // if (!!contracts) {
-    loadSourceCode(oneAddress)
-      .then((res) => setSourceCode(res))
-      .catch(() => setSourceCode(null));
-    // }
-  }, [oneAddress]);
+    // contract defined and contract address same as id
+    // note: when we toggle there is scenarios where the id are not the same
+    // @ts-ignore
+    if (!!contracts && contracts?.address === id) {
+      loadSourceCode(id)
+        .then((res) => setSourceCode(res))
+        .catch((except) => {
+          console.log(except);
+          setSourceCode(null)
+        });
+    }
+  }, [id, contracts]);
 
   useEffect(() => {
     const getContracts = async () => {
@@ -400,6 +399,12 @@ export function AddressPage() {
               <EventsTab id={id} />
             </Tab>
           }
+
+          {(type === "erc721" || type === "erc1155" || type === "erc20") ? (
+            <Tab title={<Text size="small">Tools</Text>}>
+              <ToolsTab contractAddress={id} showTools={true} />
+            </Tab>
+          ) : null}
 
           {/*{type === "erc1155" && inventory.length ? (*/}
           {/*  <Tab*/}

@@ -3,26 +3,11 @@ import React from "react";
 import { toaster } from "../../App";
 import { Box, Text } from "grommet";
 import styled from "styled-components";
+import { copyTextToClipboard } from "../../utils";
 
 const Icon = styled(StatusGood)`
   margin-right: 5px;
 `;
-
-const copyText = (value: string) => {
-  const copyTextareaInput = document.createElement("textarea");
-  copyTextareaInput.value = value;
-  document.body.appendChild(copyTextareaInput);
-
-  copyTextareaInput.focus();
-  copyTextareaInput.select();
-
-  try {
-    document.execCommand("copy");
-  } catch {
-  } finally {
-    document.body.removeChild(copyTextareaInput);
-  }
-};
 
 const showToasterNotification = () => {
   toaster.show({
@@ -42,7 +27,7 @@ export function CopyBtn(props: {
 }) {
 
   const onClick = (e: React.MouseEvent<SVGSVGElement>) => {
-    copyText(props.value);
+    copyTextToClipboard(props.value);
     if (props.onClick) {
       props.onClick(e);
     }

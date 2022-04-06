@@ -6,6 +6,7 @@ import Web3 from 'web3';
 import {AbiItem} from 'web3-utils';
 import {convertInputs} from './helpers';
 import {uniqid} from 'src/pages/VerifyContract/VerifyContract';
+import detectEthereumProvider from '@metamask/detect-provider';
 
 const Field = styled(Box)``;
 
@@ -47,7 +48,7 @@ const TextBold = styled(Text)`
 `;
 
 const GAS_LIMIT = 6721900;
-const GAS_PRICE = 3000000000;
+const GAS_PRICE = 30000000000;
 
 export const AbiMethodsView = (props: {
   abiMethod: AbiItem;
@@ -76,13 +77,13 @@ export const AbiMethodsView = (props: {
       setResult([]);
       setLoading(true);
 
-      // @ts-ignore
-      const web3 = window.web3;
+      // fix when there are multiple ethereum providers; detect it! returns actual provider
+      const web3:any = await detectEthereumProvider();
 
       const web3URL = props.isRead
         ? process.env.REACT_APP_RPC_URL_SHARD0
         : web3
-        ? web3.currentProvider
+        ? web3
         : process.env.REACT_APP_RPC_URL_SHARD0;
 
       const hmyWeb3 = new Web3(web3URL);
@@ -101,6 +102,8 @@ export const AbiMethodsView = (props: {
           const accounts = await ethereum.enable();
 
           const account = accounts[0] || undefined; // if function is not a view method it will require a signer
+          
+          console.log("account is", account);
 
           res = await contract.methods[abiMethod.name]
             .apply(contract, convertInputs(inputsValue, abiMethod.inputs || []))
