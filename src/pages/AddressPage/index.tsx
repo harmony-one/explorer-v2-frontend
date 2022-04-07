@@ -98,7 +98,7 @@ export function AddressPage() {
   const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
   const [inventoryHolders, setInventoryForHolders] = useState<
     IUserERC721Assets[]
-  >([]);
+    >([]);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
