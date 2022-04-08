@@ -18,11 +18,6 @@ interface ONEValueProps {
   hideTip?: boolean;
 }
 
-const BoxTipContainer = styled.div`
-  position: absolute;
-  left:50%; top:50%; transform: translate(-50%, -50%)
-`
-
 // @ts-ignore
 export const ONEValue = (props: ONEValueProps) => {
   const { value, timestamp = "", hideTip = false } = props;
@@ -145,7 +140,7 @@ export const ONEValueWithInternal = (props: ONEValueProps & { tx: any }) => {
   const [isLoading, setLoading] = useState(false)
   const [internalTxs, setInternalTxs] = useState<InternalTransaction[]>([])
 
-  const clickRef = React.useRef();
+  const clickRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
   useClickOutside(clickRef, () => setDetailsOpened(false));
 
   useEffect(() => {
@@ -174,7 +169,6 @@ export const ONEValueWithInternal = (props: ONEValueProps & { tx: any }) => {
       <ONEValue {...props} />
     </Box>
     {props.tx.hasInternalValues && +props.tx.value === 0 &&
-      // @ts-ignore
       <Box ref={clickRef}>
         <Box onClick={() => setDetailsOpened(!detailsOpened)}>
           <Text size={'small'} color={'brand'} style={{ textDecoration: 'underline' }}>Show internal</Text>
