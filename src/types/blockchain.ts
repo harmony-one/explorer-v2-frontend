@@ -260,6 +260,7 @@ export interface RelatedTransaction {
   type?: string;
   msg?: { amount: string; delegatorAddress: string; validatorAddress: string };
   amount?: string
+  hasInternalValues: boolean
 }
 
 export type RelatedTransactionType =

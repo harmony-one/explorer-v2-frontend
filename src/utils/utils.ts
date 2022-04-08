@@ -13,29 +13,6 @@ export const getQueryVariable = (variable: string, query: string) => {
   }
 };
 
-export const mapBlockchainTxToRelated = (
-  tx: RPCTransactionHarmony,
-  type: RelatedTransactionType = 'transaction'
-): RelatedTransaction => {
-  const resultedTx = {
-    ...tx,
-    transactionType: type,
-    address: '',
-    transactionHash: tx.ethHash || tx.hash,
-    timestamp: dayjs(+tx.timestamp * 1000).toString()
-  }
-  if (tx.from) {
-    resultedTx.from = getAddress(tx.from).basicHex
-  }
-  if (tx.to) {
-    resultedTx.to = getAddress(tx.to).basicHex
-  }
-  if (typeof tx.value !== 'undefined') {
-    resultedTx.value = BigInt(tx.value).toString()
-  }
-  return resultedTx
-}
-
 export const isTokenBridged = (address: string) => !!bridgeTokensMap[address]
 
 export const copyTextToClipboard = (value: string) => {
