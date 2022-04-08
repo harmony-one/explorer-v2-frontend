@@ -10,7 +10,7 @@ import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
   Address,
   ONEValue,
-  DateTime,
+  DateTime, ONEValueWithInternal, TipContent
 } from "src/components/ui";
 import {
   Filter,
@@ -133,9 +133,9 @@ function getColumns(id: string): ColumnConfig<any>[] {
         }
 
         return (
-          <Tip content={<span>{signature}</span>}>
+          <Tip content={<TipContent message={signature} />} plain>
             <TxMethod size="10px">
-              <NeutralMarker background={"backgroundBack"}>
+              <NeutralMarker background={"backgroundTip"}>
                 {signature}
               </NeutralMarker>
             </TxMethod>
@@ -220,7 +220,7 @@ function getColumns(id: string): ColumnConfig<any>[] {
       ),
       render: (data: RelatedTransaction) => (
         <Box justify="center">
-          <ONEValue value={data.value} timestamp={data.timestamp} />
+          <ONEValueWithInternal tx={data} value={data.value} timestamp={data.timestamp} />
         </Box>
       ),
     },
