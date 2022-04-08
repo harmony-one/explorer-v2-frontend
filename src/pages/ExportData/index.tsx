@@ -8,8 +8,6 @@ import { getRelatedTransactionsByType } from "../../api/client";
 import { downloadCSV } from "./export-utils";
 import dayjs from "dayjs";
 import { toaster } from "../../App";
-import { RelatedTransaction } from "../../types";
-import Big from "big.js";
 
 const IconError = styled(StatusCritical)`
   margin-right: 5px;
@@ -79,32 +77,6 @@ export const ExportData = () => {
     })
   }
 
-  const parseOneValue = (value: string) => Big(value).div(10 ** 18).toString()
-
-  const mapExportTxToEtherScan = (tx: RelatedTransaction & { gas: string; input: string }) => {
-    const direction = tx.from === address ? 'out' : 'in'
-    const valueIn = direction === 'in' ? parseOneValue(tx.value) : 0
-    const valueOut = direction === 'in' ? 0 : parseOneValue(tx.value)
-    const fee = parseOneValue(tx.gas)
-    return {
-      Txhash: tx.transactionHash,
-      Blockno: tx.blockNumber,
-      UnixTimestamp: dayjs(tx.timestamp).unix(),
-      DateTime: dayjs(tx.timestamp).format('YYYY-MM-DD HH:mm:ss'),
-      From: tx.from,
-      To: tx.to,
-      ContractAddress: '',
-      'Value_IN(ONE)': valueIn,
-      'Value_OUT(ONE)': valueOut,
-      'TxnFee(ONE)': fee,
-      'TxnFee(USD)': '',
-      'Historical $Price/Eth': '',
-      Status: '',
-      ErrCode: '',
-      Method: tx.input.slice(0, 10) || ''
-    }
-  }
-
   const onDownloadClicked = async () => {
     try {
       setIsDownloading(true)
@@ -114,11 +86,7 @@ export const ExportData = () => {
         'transaction',
         filter,
       ]);
-      // @ts-ignore
-      const mappedData = data.map(mapExportTxToEtherScan)
-      console.log('data', data)
-      // return false
-      downloadCSV(mappedData, `export_${address}.csv`)
+      downloadCSV(data, `export_${address}.csv`)
     } catch (e) {
       console.error('Error on download:', (e as Error).message)
       showErrorNotification()
