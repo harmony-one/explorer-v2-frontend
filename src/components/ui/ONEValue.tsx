@@ -140,7 +140,7 @@ export const ONEValueWithInternal = (props: ONEValueProps & { tx: any }) => {
   const [isLoading, setLoading] = useState(false)
   const [internalTxs, setInternalTxs] = useState<InternalTransaction[]>([])
 
-  const clickRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+  const clickRef = React.useRef() as React.RefObject<HTMLDivElement>;
   useClickOutside(clickRef, () => setDetailsOpened(false));
 
   useEffect(() => {

@@ -1,8 +1,8 @@
 import React from 'react'
 
-export const useClickOutside = (ref: any, handler: any) => {
-  const listener = (event: any) => {
-    if (!ref.current || ref.current.contains(event.target)) {
+export const useClickOutside = (ref: React.RefObject<HTMLDivElement>, handler: (e: TouchEvent | MouseEvent) => void) => {
+  const listener = (event: TouchEvent | MouseEvent) => {
+    if (!ref.current || ref.current.contains(event.target as Node)) {
       return;
     }
     handler(event);
