@@ -1,16 +1,15 @@
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
 import { getNearestPriceForTimestamp } from "src/components/ONE_USDT_Rate";
-import { Text, Box, Tip, Card, CardBody, Spinner } from "grommet";
+import { Box, Card, CardBody, Spinner, Text, Tip } from "grommet";
 import { TipContent } from "./Tooltip";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { formatNumber } from "./utils";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { getInternalTransactionsByField } from "../../api/client";
-import { InternalTransaction } from "../../types";
+import { InternalTransaction, TransactionExtraMark } from "../../types";
 import { Address } from "./Address";
 import { FormNextLink } from "grommet-icons";
-import styled from "styled-components";
 
 interface ONEValueProps {
   value: string | number;
@@ -103,7 +102,7 @@ const InternalValues = (props: { tx: any, isLoading: boolean, internalTxs: Inter
         {!isLoading && <Box gap={'8px'}>
           {internalTxs.length > 0 &&
             <Box>
-              <Text size={'small'}>Internal values</Text>
+              <Text size={'small'}>Internal transfers</Text>
             </Box>
           }
           <Box>
@@ -164,14 +163,16 @@ export const ONEValueWithInternal = (props: ONEValueProps & { tx: any }) => {
     }
   }, [detailsOpened])
 
-  return <Box direction={'row'} gap={'8px'}>
+  return <Box direction={'row'} gap={'8px'} align={'center'}>
     <Box>
       <ONEValue {...props} />
     </Box>
-    {props.tx.hasInternalValues && +props.tx.value === 0 &&
+    {props.tx.extraMark === TransactionExtraMark.hasInternalONETransfers && +props.tx.value === 0 &&
       <Box ref={clickRef}>
         <Box onClick={() => setDetailsOpened(!detailsOpened)}>
-          <Text size={'small'} color={'brand'} style={{ textDecoration: 'underline' }}>Show internal</Text>
+          <Text size={'small'} color={'brand'}>
+            Show internal
+          </Text>
         </Box>
           {detailsOpened &&
             <Box align={'center'}>
