@@ -10,6 +10,7 @@ import { getInternalTransactionsByField } from "../../api/client";
 import { InternalTransaction, TransactionExtraMark } from "../../types";
 import { Address } from "./Address";
 import { FormNextLink } from "grommet-icons";
+import styled from "styled-components";
 
 interface ONEValueProps {
   value: string | number;
@@ -85,9 +86,9 @@ export const ONEValue = (props: ONEValueProps) => {
   );
 };
 
-const InternalValues = (props: { tx: any, isLoading: boolean, internalTxs: InternalTransaction[] }) => {
+const InternalTransfers = (props: { tx: any, isLoading: boolean, internalTxs: InternalTransaction[] }) => {
   const { tx, isLoading, internalTxs } = props
-  return <Card background="backgroundTip" style={{ boxShadow: 'none' }}>
+  return <Card background="backgroundTip" style={{ boxShadow: 'none'}}>
       <CardBody pad="medium">
         {isLoading &&
           <Box justify={'center'} align={'center'}>
@@ -101,11 +102,9 @@ const InternalValues = (props: { tx: any, isLoading: boolean, internalTxs: Inter
         }
         {!isLoading && <Box gap={'8px'}>
           {internalTxs.length > 0 &&
-            <Box>
-              <Text size={'small'}>Internal transfers</Text>
-            </Box>
+            <Box><Text size={'small'}>Internal transfers</Text></Box>
           }
-          <Box>
+          <Box overflow={'auto'} style={{ display: 'block', maxHeight: '300px' }}>
             {internalTxs
               .filter((internalTx, i) => +internalTx.value > 0)
               .map((internalTx) => {
@@ -133,6 +132,12 @@ const InternalValues = (props: { tx: any, isLoading: boolean, internalTxs: Inter
       </CardBody>
     </Card>
 }
+
+const InternalTransfersContainer = styled(Box)`
+  position: absolute;
+  min-width: 260px;
+  margin-top: 12px;
+`
 
 export const ONEValueWithInternal = (props: ONEValueProps & { tx: any }) => {
   const [detailsOpened, setDetailsOpened] = useState(false)
@@ -176,9 +181,9 @@ export const ONEValueWithInternal = (props: ONEValueProps & { tx: any }) => {
         </Box>
           {detailsOpened &&
             <Box align={'center'}>
-              <Box margin={{ top: '12px' }} style={{ position: 'absolute', minWidth: '260px' }}>
-                <InternalValues tx={props.tx} isLoading={isLoading} internalTxs={internalTxs} />
-              </Box>
+              <InternalTransfersContainer>
+                <InternalTransfers tx={props.tx} isLoading={isLoading} internalTxs={internalTxs} />
+              </InternalTransfersContainer>
             </Box>
           }
       </Box>
