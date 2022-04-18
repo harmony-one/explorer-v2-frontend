@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { RelatedTransaction, RelatedTransactionType, RPCTransactionHarmony } from "../types";
+import { RelatedTransaction, RelatedTransactionType, RPCTransactionHarmony, TransactionExtraMark } from "../types";
 import { getAddress } from "./getAddress/GetAddress";
 import { bridgeTokensMap } from "src/config";
 
@@ -30,3 +30,27 @@ export const copyTextToClipboard = (value: string) => {
     document.body.removeChild(copyTextareaInput);
   }
 };
+
+export const mapBlockchainTxToRelated = (
+  tx: RPCTransactionHarmony,
+  type: RelatedTransactionType = 'transaction'
+): RelatedTransaction => {
+  const resultedTx = {
+    ...tx,
+    transactionType: type,
+    address: '',
+    transactionHash: tx.ethHash || tx.hash,
+    timestamp: dayjs(+tx.timestamp * 1000).toString(),
+    extraMark: TransactionExtraMark.normal
+  }
+  if (tx.from) {
+    resultedTx.from = getAddress(tx.from).basicHex
+  }
+  if (tx.to) {
+    resultedTx.to = getAddress(tx.to).basicHex
+  }
+  if (typeof tx.value !== 'undefined') {
+    resultedTx.value = BigInt(tx.value).toString()
+  }
+  return resultedTx
+}

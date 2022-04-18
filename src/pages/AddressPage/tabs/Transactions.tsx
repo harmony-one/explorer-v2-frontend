@@ -20,8 +20,13 @@ import {
 import styled, { css } from "styled-components";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getERC20Columns } from "./erc20Columns";
-import { getAddress } from "src/utils";
+import { getAddress, mapBlockchainTxToRelated } from "src/utils";
 import { ExportToCsvButton } from "../../../components/ui/ExportToCsvButton";
+import {
+  hmyv2_getStakingTransactionsCount, hmyv2_getStakingTransactionsHistory,
+  hmyv2_getTransactionsCount,
+  hmyv2_getTransactionsHistory
+} from "../../../api/rpc";
 
 const TxMethod = styled(Text)`
   width: 100px;
@@ -400,7 +405,7 @@ const usePrevious = (value: TRelatedTransaction) => {
 export function Transactions(props: {
   type: TRelatedTransaction;
   rowDetails?: (row: any) => JSX.Element;
-  onTxsLoaded?: (txs: RPCTransactionHarmony[]) => void;
+  onTxsLoaded?: (txs: RelatedTransaction[]) => void;
 }) {
   const limitValue = localStorage.getItem("tableLimitValue");
 
@@ -436,10 +441,17 @@ export function Transactions(props: {
 
   const { limit = 10, offset = 0 } = filter[props.type];
 
-  const loadTransactions = async () => {
-    setIsLoading(true)
-    try {
-      let txs = []
+  const getTransactionsFromRPC = async (): Promise<RelatedTransaction[]> => {
+    let txs = []
+    if (props.type ==='transaction' || props.type === 'staking_transaction') {
+      const pageSize = limit
+      const pageIndex = Math.floor(offset / limit)
+      const params = [{ address: id, pageIndex, pageSize }]
+      txs = props.type ==='transaction'
+        ? await hmyv2_getTransactionsHistory(params)
+        : await hmyv2_getStakingTransactionsHistory(params)
+      txs = txs.map(tx => mapBlockchainTxToRelated(tx))
+    } else {
       const txsFilter = {...filter[props.type]}
       if (props.type === 'internal_transaction') {
         txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
@@ -450,6 +462,26 @@ export function Transactions(props: {
         props.type,
         txsFilter,
       ]);
+    }
+    return txs
+  }
+
+  const loadTransactions = async () => {
+    setIsLoading(true)
+    try {
+      let txs = await getTransactionsFromRPC()
+      // let txs = []
+      // const txsFilter = {...filter[props.type]}
+      // if (props.type === 'internal_transaction') {
+      //   txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
+      // }
+      // txs = await getRelatedTransactionsByType([
+      //   0,
+      //   id,
+      //   props.type,
+      //   txsFilter,
+      // ]);
+
       // for transactions we display call method if any
       if (props.type === "transaction") {
         const methodSignatures = await Promise.all(
@@ -489,6 +521,23 @@ export function Transactions(props: {
   }, [id])
 
   useEffect(() => {
+    const getTxsCountFromRPC = async () => {
+      try {
+        if (props.type ==='transaction' || props.type === 'staking_transaction') {
+          const count = props.type ==='transaction'
+            ? await hmyv2_getTransactionsCount(id)
+            : await hmyv2_getStakingTransactionsCount(id)
+          setTotalElements(count)
+          setCachedTotalElements({ ...cachedTotalElements, [props.type]: count })
+        } else {
+          setTotalElements(0)
+        }
+      } catch (e) {
+        console.error('Cannot get txs count', (e as Error).message)
+        setTotalElements(initTotalElements)
+      }
+    }
+
     const getTxsCount = async () => {
       try {
         const countFilter = {...filter[props.type]}
@@ -512,11 +561,13 @@ export function Transactions(props: {
         setTotalElements(initTotalElements)
       }
     }
+
     const cachedValue = cachedTotalElements[props.type]
-    if (cachedValue) {
+
+    if (cachedValue && id === prevId) {
       setTotalElements(cachedValue)
     } else {
-      getTxsCount()
+      getTxsCountFromRPC()
     }
   }, [props.type, id])
 
