@@ -265,6 +265,7 @@ export interface RelatedTransaction {
   type?: string;
   msg?: { amount: string; delegatorAddress: string; validatorAddress: string };
   amount?: string
+  input: string
   extraMark: TransactionExtraMark
 }
 

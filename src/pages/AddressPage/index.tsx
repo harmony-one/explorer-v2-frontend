@@ -24,7 +24,7 @@ import {
 import { Inventory } from "./tabs/inventory/Inventory";
 import { getAllBalance, getBalance } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
-import { AddressDetails, RPCTransactionHarmony } from "../../types";
+import { AddressDetails, RelatedTransaction, RPCTransactionHarmony } from "../../types";
 import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
@@ -298,7 +298,7 @@ export function AddressPage() {
     "erc1155",
   ];
 
-  const onTxsLoaded = (txs: RPCTransactionHarmony[]) => {
+  const onTxsLoaded = (txs: RelatedTransaction[]) => {
     const inputWithText = txs.find(tx => parseHexToText(tx.input))
     setAddressDescription(inputWithText ? 'One or more inbound transactions contains a message' : '')
   }
