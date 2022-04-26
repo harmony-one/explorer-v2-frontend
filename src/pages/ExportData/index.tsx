@@ -8,6 +8,7 @@ import { getRelatedTransactionsByType } from "../../api/client";
 import { downloadCSV } from "./export-utils";
 import dayjs from "dayjs";
 import { toaster } from "../../App";
+import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
 
 const IconError = styled(StatusCritical)`
   margin-right: 5px;
@@ -39,6 +40,7 @@ export const ExportData = () => {
   const initialDateFrom = dayjs().startOf('month').format(dateFormat)
   const initialDateTo = dayjs().format(dateFormat)
 
+  const { lastPrice } = useONEExchangeRate();
   const [isDownloading, setIsDownloading] = useState(false)
   const [dateFrom, setDateFrom] = useState(initialDateFrom)
   const [dateTo, setDateTo] = useState(initialDateTo)
@@ -80,13 +82,13 @@ export const ExportData = () => {
   const onDownloadClicked = async () => {
     try {
       setIsDownloading(true)
-      const data = await getRelatedTransactionsByType([
+      const txs = await getRelatedTransactionsByType([
         0,
         address,
         'transaction',
         filter,
       ]);
-      downloadCSV(data, `export_${address}.csv`)
+      downloadCSV({ address, txs, onePrice: lastPrice }, `export_${address}.csv`)
     } catch (e) {
       console.error('Error on download:', (e as Error).message)
       showErrorNotification()
