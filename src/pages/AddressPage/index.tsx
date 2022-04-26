@@ -251,26 +251,20 @@ export function AddressPage() {
   }, [id]);
 
   const renderTitle = () => {
-    const erc1155 = erc1155Map[id] || {};
-    const { meta = {}, ...restErc1155 } = erc1155;
-    const data = {
-      ...contracts,
-      ...erc20Token,
-      address: id,
-      token: tokens,
-      ...meta,
-    };
+    const erc721Token = erc721Map[id] || {};
+    const erc1155Token = erc1155Map[id] || {};
 
     if (type === "erc20") {
-      return `HRC20 ${data.name}`;
+      return `HRC20 ${erc20Token.name || ''}`;
     }
 
     if (type === "erc721") {
-      return `ERC721 ${data.name}`;
+      return `ERC721 ${erc721Token.name || ''}`;
     }
 
     if (type === "erc1155") {
-      const title = `HRC1155 ${data.name || ""}`;
+      const title = `HRC1155 ${erc1155Token.name || ""}`;
+      const { meta = {}, ...restErc1155 } = erc1155Token;
       return meta.image ? (
         <Box direction={"row"} align={"center"}>
           <ERC1155Icon imageUrl={meta.image} />
