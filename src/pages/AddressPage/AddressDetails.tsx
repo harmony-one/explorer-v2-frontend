@@ -16,6 +16,7 @@ import { binanceAddressMap } from "src/config/BinanceAddressMap";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { CircleQuestion } from "grommet-icons";
 import styled from "styled-components";
+import { useERC721Pool } from "../../hooks/ERC721_Pool";
 
 export const StyledBox = styled(Box)`
   transition: all 0.2s linear;
@@ -38,11 +39,13 @@ interface AddressDetailsProps {
 export function AddressDetailsDisplay(props: AddressDetailsProps) {
   const { address, addressDescription, contracts, tokens, balance } = props;
   const erc20Map = useERC20Pool();
+  const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
 
   const erc20Token = erc20Map[address] || null;
   const type = getType(contracts, erc20Token);
+  const erc721Token = erc721Map[address] || {};
   const erc1151data = erc1155Map[address] || {};
   const { meta = {}, ...restErc1151data } = erc1151data;
 
@@ -60,6 +63,7 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
   const data = {
     ...contracts,
     ...erc20Token,
+    ...erc721Token,
     token: tokens,
     balance,
     ...restErc1151data,
