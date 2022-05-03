@@ -12,9 +12,9 @@ import { AddressDetails } from "src/types";
 import { TokensInfo } from "./TokenInfo";
 import { Erc20, useERC20Pool } from "src/hooks/ERC20_Pool";
 import { ONEValueDropdown } from "src/components/ui/OneValueDropdown";
-import { binanceAddressMap } from "src/config/BinanceAddressMap";
+import { addressAliasMap } from "src/config";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
-import { CircleQuestion } from "grommet-icons";
+import { CircleQuestion, Share } from "grommet-icons";
 import styled from "styled-components";
 import { useERC721Pool } from "../../hooks/ERC721_Pool";
 
@@ -171,6 +171,37 @@ const addressPropertyDisplayNames: Record<
   circulatingSupply: () => "Circulating Supply",
 };
 
+const AddressPostfix = (props: { value: string }) => {
+  const addressAlias = addressAliasMap[props.value]
+  if(!addressAlias) {
+    return null
+  }
+
+  const {name, link, description} = addressAlias
+
+  return <Box margin={{ left: 'xsmall' }} direction={'row'}>
+    (
+    {description &&
+      <Tip content={<TipContent message={description} />}>
+        {name}
+      </Tip>
+    }
+    {!description &&
+      {name}
+    }
+    {link &&
+      <Box margin={{ left: 'xsmall', top: 'xxsmall', right: 'xxsmall' }}>
+        <Share size={'small'}
+               color={'brand'}
+               style={{ cursor: 'pointer' }}
+               onClick={() => window.open(link, '_blank')}
+        />
+      </Box>
+    }
+    )
+  </Box>
+}
+
 const addressPropertyDisplayValues: Record<
   string,
   (
@@ -189,7 +220,7 @@ const addressPropertyDisplayValues: Record<
           style={{ maxWidth: "550px" }}
         >
           <Address address={value} displayHash />
-          {binanceAddressMap[value] ? ` (${binanceAddressMap[value]})` : null}
+          <AddressPostfix value={value} />
         </StyledBox>
         {data.addressDescription &&
           <AddressDescription margin={'12px 0 0'}>

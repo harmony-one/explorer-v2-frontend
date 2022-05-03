@@ -6,7 +6,7 @@ import { Search } from "grommet-icons";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
-import { binanceAddressMap } from "src/config/BinanceAddressMap";
+import { addressAliasMap } from "src/config";
 
 let timeoutID: any | null = null;
 const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -45,8 +45,8 @@ export function ApprovalSearch(props: {
             parsedName = erc1155Map[address].name;
         }
 
-        if (binanceAddressMap[address]) {
-            parsedName = binanceAddressMap[address];
+        if (addressAliasMap[address]) {
+            parsedName = addressAliasMap[address].name;
         }
 
         parsedName = address === EMPTY_ADDRESS ? "0x0" : parsedName;
