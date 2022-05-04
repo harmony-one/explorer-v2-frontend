@@ -187,7 +187,7 @@ const AddressPostfix = (props: { value: string }) => {
       </Tip>
     }
     {!description &&
-      {name}
+      name
     }
     {link &&
       <Box margin={{ left: 'xsmall', right: 'xxsmall' }}>
