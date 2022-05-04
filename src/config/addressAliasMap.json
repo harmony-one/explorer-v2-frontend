@@ -106,6 +106,16 @@
         "link": "https://www.massstake.com",
         "description": "Member of the Foundational Nodes, more than 2 years as a Harmony validator"
     },
+    "0x3736aC8400751bf07c6A2E4db3F4f3D9D422abB2": {
+        "name": "Gnosis Safe Mastercopy: 1.2.0",
+        "link": "https://multisig.harmony.one",
+        "description": "Logic for Gnosis Safe proxies version 1.2.0"
+    },
+    "0x4f9b1dEf3a0f6747bF8C870a27D3DeCdf029100e": {
+        "name": "Gnosis Safe Proxy Factory: 1.2.0",
+        "link": "https://multisig.harmony.one",
+        "description": "Factory contract to deploy Gnosis Safe proxies version 1.2.0"
+    },
     "0x1548c6227cbd78e51eb0a679c1f329b9a5a99beb": {
         "name": "DaVinci Images",
         "link": "https://davinci.gallery"

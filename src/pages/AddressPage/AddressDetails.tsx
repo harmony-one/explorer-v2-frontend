@@ -190,12 +190,10 @@ const AddressPostfix = (props: { value: string }) => {
       {name}
     }
     {link &&
-      <Box margin={{ left: 'xsmall', top: 'xxsmall', right: 'xxsmall' }}>
-        <Share size={'small'}
-               color={'brand'}
-               style={{ cursor: 'pointer' }}
-               onClick={() => window.open(link, '_blank')}
-        />
+      <Box margin={{ left: 'xsmall', right: 'xxsmall' }}>
+        <a href={link} target={'_blank'}>
+          <Share size={'small'} color={'brand'} style={{ cursor: 'pointer' }} />
+        </a>
       </Box>
     }
     )
@@ -217,7 +215,7 @@ const addressPropertyDisplayValues: Record<
         <StyledBox
           direction={"row"}
           background={isNewAddress ? "backgroundSuccess" : ""}
-          style={{ maxWidth: "550px" }}
+          style={{ maxWidth: "600px" }}
         >
           <Address address={value} displayHash />
           <AddressPostfix value={value} />
