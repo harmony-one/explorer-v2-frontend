@@ -18,7 +18,7 @@ const mapRelatedTxToExport = (ownerAddress: string, tx: RelatedTransaction, oneP
 
   const convertValue = (value: string | number, n = 4) => {
     const precision = 18
-    const bigIntValue = BigInt(value) / BigInt(10 ** (precision - n))
+    const bigIntValue = BigInt(parseInt(value.toString())) / BigInt(10 ** (precision - n))
     return parseInt(bigIntValue.toString()) / (10 ** n);
   }
 

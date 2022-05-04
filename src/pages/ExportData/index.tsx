@@ -48,7 +48,10 @@ export const ExportData = () => {
   const dateInputProps = {
     format: 'mm/dd/yyyy',
     value: (new Date()).toISOString(),
-    calendarProps: { size: 'medium' },
+    calendarProps: {
+      size: 'medium',
+      bounds: [dayjs().subtract(5, 'year').format(dateFormat), dayjs().format(dateFormat)]
+    },
     inputProps: { width: '170px' }
   }
 
