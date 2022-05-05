@@ -5,7 +5,7 @@ import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
-import { binanceAddressMap } from "src/config/BinanceAddressMap";
+import { addressAliasMap } from "src/config";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { CopyBtn } from "./CopyBtn";
 import { toaster } from "src/App";
@@ -74,8 +74,8 @@ export const Address = (props: IAddress) => {
     parsedName = erc1155Map[address].name;
   }
 
-  if (binanceAddressMap[address] && !displayHash) {
-    parsedName = binanceAddressMap[address];
+  if (addressAliasMap[address] && !displayHash) {
+    parsedName = addressAliasMap[address].name;
   }
 
   parsedName = address === EMPTY_ADDRESS ? "0x0" : parsedName;

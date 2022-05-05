@@ -1,0 +1,139 @@
+{
+    "0x71b413da5cc729ff805e2dca1dcde04d29ef2b6a": {
+        "name": "Binance",
+        "link": "https://binance.com"
+    },
+    "0x379e121bc55fc0412ab344aa5f522f6d707f5e6a": {
+        "name": "Binance Gateway",
+        "link": "https://www.binance.com"
+    },
+    "0x20b0facba605454547fb0d12e3f38446b2eac9a7": {
+        "name": "KuCoin",
+        "link": "https://kucoin.com"
+    },
+    "0xe05941d0919d058cfbb173655178201721002dbb": {
+        "name": "Binance Staking",
+        "link": "https://binance.com/en/staking"
+    },
+    "0x31d3726cd534088255b2e173d2b2f08b0087f237": {
+        "name": "RoboValidator Staking",
+        "link": "https://robovalidator.com",
+        "description": "RoboValidator automatically bids for slots to ensure a guaranteed seat every epoch with max efficiency."
+    },
+    "0xa835fbebeaa62a1f125fb0710c570a8c968cebb1": {
+        "name": "KuCoin Staking",
+        "link": "https://www.kucoin.com",
+        "description": "KuCoin is a global cryptocurrency exchange for numerous digital assets and cryptocurrencies."
+    },
+    "0xc2dd9719e1da0f67af0764cd5470802cb7e6b854": {
+        "name": "KysenPool Dragon",
+        "link": "https://www.kysenpool.io/en/networks#harmony",
+        "description": "Global Proof-of-Stake Validator experienced operating nodes for Cardano (ADA), Cosmos (ATOM), Terra (LUNA), Harmony (ONE), Kava (KAVA) and Desmos (DSM)"
+    },
+    "0xafebf82ea09eca9ce1913d68fe053226def85732": {
+        "name": "Validator.ONE",
+        "link": "https://twitter.validator.one",
+        "description": "Validator.ONE is an original Harmony foundation node. As an experienced validator, we utilize our deep understanding of the Harmony blockchain to optimize staking rewards and node uptime."
+    },
+    "0xb26aa1ff4442bacb4a1c8d71754a6724a1aa9313": {
+        "name": "P-OPS Team Validator",
+        "link": "https://pops.one",
+        "description": "Community run Validator by highly qualified global P-OPS Team"
+    },
+    "0x0a87b64db9631da3a8049838f3dc8c32ab7bd47c": {
+        "name": "RockTheBlockchain",
+        "link": "https://www.rocktheblockchain.com",
+        "description": "Stable, reliable, and trusted validator for Harmony, IT certified in ITIL, Microsoft, and Cisco Systems."
+    },
+    "0x6e3615578043a02c337b3cf43a359705f9cb3647": {
+        "name": "Staking4All",
+        "link": "https://staking4all.org",
+        "description": "Validator for Proof of Stake blockchains"
+    },
+    "0xedfa5429ba86204b2e48379db2c9d081a41d7c6b": {
+        "name": "三潭映月 Validator",
+        "link": "https://www.mainto.cn",
+        "description": "欢迎大家来中国·杭州玩. Welcome to Hangzhou, China"
+    },
+    "0xd9a43e2019590ebd3151dc72b7caa24f2104d587": {
+        "name": "Kratos.crazy.one",
+        "link": "https://kratosvalidator.com",
+        "description": "Kratos is a Cloud Architect | Entrepreneur | Investor (2M ONE Self Stake) | Believer of Harmony | Top validator since Mainnet"
+    },
+    "0x3df9b5759c9d851e56a7fa56eddbce19ce0839bf": {
+        "name": "Chainode Tech Validator",
+        "link": "https://www.chainode.tech/",
+        "description": "Chainode Tech is your partner for staking & validating on cutting edge blockchain protocols"
+    },
+    "0x3d88ff444d18f7bcc530f5f5171048e725aec79c": {
+        "name": "Chickens Validator",
+        "link": "https://github.com/xChickens",
+        "description": "The validator run by Chris Liu (Chickens), the first Harmony software intern and the original dev of Harmony's Testnet (Pangaea)"
+    },
+    "0x63e7e9bb58aa72739a7cec06f6ea9fe73eb7a598": {
+        "name": "Fortune Validator",
+        "link": "https://fortune-one.uk",
+        "description": "Stable validator with a robust redundancy system. Developer of vStatsBot, a validator monitoring tool."
+    },
+    "0xd143988234df9117f4baa00b5f8d4a56d64e56ea": {
+        "name": "StrongMindsHold",
+        "link": "https://twitter.com/TimPos4?s=09",
+        "description": "We are a proven professional staking service provider with an exemplary record on the Harmony blockchain"
+    },
+    "0x05bdb096a46a57b057a839a7a21de7f699851c1e": {
+        "name": "Smart Stake",
+        "link": "https://SmartStake.io",
+        "description": "Transparent, professional, & feature rich service. Harmony grant recipient."
+    },
+    "one13jewk8w7jah3r9jfahh8rlzpr5r6valascd0mn": {
+        "name": "JungleCity",
+        "link": "https://junglecity.tech",
+        "description": "Foundational Node Validator - Actively managed hardware-secured nodes with geo-separate active-active backups."
+    },
+    "0xfe6f41ef98fba9cd1d0e7f9a7d58069374517264": {
+        "name": "HarmonyHUB",
+        "link": "https://harmonyHUB.one",
+        "description": "Formerly Harmony Community Node - HarmonyHUB is a news aggreagator meant to deliver you the news, and save you time."
+    },
+    "0xf54b44ab06c2934cc9578b3da95ec695d07ab15b": {
+        "name": "Honest Mining",
+        "link": "https://honestmining.com",
+        "description": "Best Harmony ONE Staking Platform"
+    },
+    "0x1d283773701ef4e8b54fe5fbd8df7519875aaacf": {
+        "name": "Fuzz.Fi Validator",
+        "link": "https://fuzz.fi",
+        "description": "Fuzz.Fi is a swap platform that gives incentives to users who stake to the Fuzz.Fi validator through the use of our FUZZ token."
+    },
+    "0x79f8e1b732ba63987873d5eb86c81364c2cf5021": {
+        "name": "Mass Stake | Embiei",
+        "link": "https://www.massstake.com",
+        "description": "Member of the Foundational Nodes, more than 2 years as a Harmony validator"
+    },
+    "0x3736aC8400751bf07c6A2E4db3F4f3D9D422abB2": {
+        "name": "Gnosis Safe Mastercopy: 1.2.0",
+        "link": "https://multisig.harmony.one",
+        "description": "Logic for Gnosis Safe proxies version 1.2.0"
+    },
+    "0x4f9b1dEf3a0f6747bF8C870a27D3DeCdf029100e": {
+        "name": "Gnosis Safe Proxy Factory: 1.2.0",
+        "link": "https://multisig.harmony.one",
+        "description": "Factory contract to deploy Gnosis Safe proxies version 1.2.0"
+    },
+    "0x1548c6227cbd78e51eb0a679c1f329b9a5a99beb": {
+        "name": "DaVinci Images",
+        "link": "https://davinci.gallery"
+    },
+    "0xbde650853b535d738ce67f1bdeb335e38834a9e9": {
+        "name": "DaVinci Music",
+        "link": "https://davinci.gallery"
+    },
+    "0x474d8fd12780fbe2b7b7bd74eb326bb75ded91d8": {
+        "name": "DaVinci Videos",
+        "link": "https://davinci.gallery"
+    },
+    "0x51f6290510be3c802471e27f0843a3a54a8226df": {
+        "name": "DaVinci Books",
+        "link": "https://davinci.gallery"
+    }
+}
