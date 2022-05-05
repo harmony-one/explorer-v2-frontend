@@ -257,7 +257,7 @@ export interface RelatedTransaction {
   transactionType: RelatedTransactionType;
   address: string;
   blockNumber: string;
-  transactionHash: string;
+  hash: string;
   from: string;
   to: string;
   value: string;
@@ -266,6 +266,8 @@ export interface RelatedTransaction {
   msg?: { amount: string; delegatorAddress: string; validatorAddress: string };
   amount?: string
   input: string
+  gas: string
+  gasPrice: string
   extraMark: TransactionExtraMark
 }
 

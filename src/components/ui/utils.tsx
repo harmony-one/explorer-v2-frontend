@@ -1,6 +1,7 @@
 import Big from "big.js";
 import React from "react";
 import { useONEExchangeRate } from "src/hooks/useONEExchangeRate";
+import { calculateFee } from "../../utils/fee";
 
 export function formatNumber(
   num: number,
@@ -67,23 +68,12 @@ export function CalculateFee(transaction: any) {
 }
 
 export function CalculateTransactionFee(transaction: any) {
-  const { lastPrice } = useONEExchangeRate();
+  const { lastPrice: price } = useONEExchangeRate();
 
-  const fee =
-    isNaN(transaction.gas) || isNaN(transaction.gasPrice)
-      ? 0
-      : (Number(transaction.gas) * Number(transaction.gasPrice)) /
-        10 ** 14 /
-        10000;
-
-  const normalizedFee = Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 18,
-  }).format(fee);
-
-  const price = lastPrice;
+  const fee = calculateFee(transaction.gas, transaction.gasPrice)
 
   const bi =
-    (Big(normalizedFee) as unknown as number) /
+    (Big(fee) as unknown as number) /
     (Big(10 ** 14) as unknown as any);
   const v = parseInt(bi.toString()) / 10000;
   let USDValue = "";
@@ -98,7 +88,7 @@ export function CalculateTransactionFee(transaction: any) {
 
   return (
     <>
-      {normalizedFee} ONE
+      {fee} ONE
       {!USDValue || USDValue === "0.00" || USDValue == "0" ? null : (
         <>($ {USDValue})</>
       )}
