@@ -12,10 +12,11 @@ import { AddressDetails } from "src/types";
 import { TokensInfo } from "./TokenInfo";
 import { Erc20, useERC20Pool } from "src/hooks/ERC20_Pool";
 import { ONEValueDropdown } from "src/components/ui/OneValueDropdown";
-import { binanceAddressMap } from "src/config/BinanceAddressMap";
+import { addressAliasMap } from "src/config";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
-import { CircleQuestion } from "grommet-icons";
+import { CircleQuestion, Share } from "grommet-icons";
 import styled from "styled-components";
+import { useERC721Pool } from "../../hooks/ERC721_Pool";
 
 export const StyledBox = styled(Box)`
   transition: all 0.2s linear;
@@ -38,11 +39,13 @@ interface AddressDetailsProps {
 export function AddressDetailsDisplay(props: AddressDetailsProps) {
   const { address, addressDescription, contracts, tokens, balance } = props;
   const erc20Map = useERC20Pool();
+  const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
 
   const erc20Token = erc20Map[address] || null;
   const type = getType(contracts, erc20Token);
+  const erc721Token = erc721Map[address] || {};
   const erc1151data = erc1155Map[address] || {};
   const { meta = {}, ...restErc1151data } = erc1151data;
 
@@ -60,6 +63,7 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
   const data = {
     ...contracts,
     ...erc20Token,
+    ...erc721Token,
     token: tokens,
     balance,
     ...restErc1151data,
@@ -167,6 +171,35 @@ const addressPropertyDisplayNames: Record<
   circulatingSupply: () => "Circulating Supply",
 };
 
+const AddressPostfix = (props: { value: string }) => {
+  const addressAlias = addressAliasMap[props.value]
+  if(!addressAlias) {
+    return null
+  }
+
+  const {name, link, description} = addressAlias
+
+  return <Box margin={{ left: 'xsmall' }} direction={'row'}>
+    (
+    {description &&
+      <Tip content={<TipContent message={description} />}>
+        {name}
+      </Tip>
+    }
+    {!description &&
+      name
+    }
+    {link &&
+      <Box margin={{ left: 'xsmall', right: 'xxsmall' }}>
+        <a href={link} target={'_blank'}>
+          <Share size={'small'} color={'brand'} style={{ cursor: 'pointer' }} />
+        </a>
+      </Box>
+    }
+    )
+  </Box>
+}
+
 const addressPropertyDisplayValues: Record<
   string,
   (
@@ -182,10 +215,10 @@ const addressPropertyDisplayValues: Record<
         <StyledBox
           direction={"row"}
           background={isNewAddress ? "backgroundSuccess" : ""}
-          style={{ maxWidth: "550px" }}
+          style={{ maxWidth: "600px" }}
         >
           <Address address={value} displayHash />
-          {binanceAddressMap[value] ? ` (${binanceAddressMap[value]})` : null}
+          <AddressPostfix value={value} />
         </StyledBox>
         {data.addressDescription &&
           <AddressDescription margin={'12px 0 0'}>

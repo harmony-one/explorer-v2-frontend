@@ -21,6 +21,7 @@ export function ERC721_Pool() {
         erc721 = erc721.map((item) => {
           erc721Map[item.address] = {
             ...item,
+            decimals: item.decimals || 0,
             isBridged: isTokenBridged(item.address)
           };
           return {

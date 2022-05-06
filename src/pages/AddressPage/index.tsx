@@ -24,7 +24,7 @@ import {
 import { Inventory } from "./tabs/inventory/Inventory";
 import { getAllBalance, getBalance } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
-import { AddressDetails, RPCTransactionHarmony } from "../../types";
+import { AddressDetails, RelatedTransaction, RPCTransactionHarmony } from "../../types";
 import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
@@ -98,7 +98,7 @@ export function AddressPage() {
   const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
   const [inventoryHolders, setInventoryForHolders] = useState<
     IUserERC721Assets[]
-  >([]);
+    >([]);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
@@ -251,26 +251,20 @@ export function AddressPage() {
   }, [id]);
 
   const renderTitle = () => {
-    const erc1155 = erc1155Map[id] || {};
-    const { meta = {}, ...restErc1155 } = erc1155;
-    const data = {
-      ...contracts,
-      ...erc20Token,
-      address: id,
-      token: tokens,
-      ...meta,
-    };
+    const erc721Token = erc721Map[id] || {};
+    const erc1155Token = erc1155Map[id] || {};
 
     if (type === "erc20") {
-      return `HRC20 ${data.name}`;
+      return `HRC20 ${erc20Token.name || ''}`;
     }
 
     if (type === "erc721") {
-      return `ERC721 ${data.name}`;
+      return `ERC721 ${erc721Token.name || ''}`;
     }
 
     if (type === "erc1155") {
-      const title = `HRC1155 ${data.name || ""}`;
+      const title = `HRC1155 ${erc1155Token.name || ""}`;
+      const { meta = {}, ...restErc1155 } = erc1155Token;
       return meta.image ? (
         <Box direction={"row"} align={"center"}>
           <ERC1155Icon imageUrl={meta.image} />
@@ -299,7 +293,7 @@ export function AddressPage() {
   ];
 
   const txsCommonProps = {
-    onTxsLoaded: (txs: RPCTransactionHarmony[]) => {
+    onTxsLoaded: (txs: RelatedTransaction[]) => {
       let description = ''
       if (activeIndex === 0) {
         const inputWithText = txs.find(tx => parseHexToText(tx.input))

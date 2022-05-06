@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Text, Tip } from "grommet";
 import {
   Address,
@@ -18,10 +18,12 @@ import { getAddress } from "src/utils/getAddress/GetAddress";
 import { useHistory } from "react-router-dom";
 import { useERC1155Pool } from "../../hooks/ERC1155_Pool";
 import { Alert } from "grommet-icons";
+import { getERC20Balance } from "../../web3/erc20Methods";
 
 interface Token {
   balance: string;
   tokenAddress: string;
+  ownerAddress: string;
   isERC20?: boolean;
   isERC721?: boolean;
   isERC1155?: boolean;
@@ -37,13 +39,43 @@ export function TokensInfo(props: { value: Token[] }) {
   const currency = useCurrency();
   const history = useHistory();
 
-  const { value } = props;
+  const [tokensList, setTokensList] = useState(props.value)
+  const [isDropdownVisible, setDropdownVisible] = useState(false)
+  const [isNodeBalancesLoaded, setNodeBalancesLoaded] = useState(false)
 
-  if (!value.filter((i) => filterWithBalance(i.balance)).length) {
+  // Tokens list was updated from parent component
+  useEffect(() => {
+    setTokensList(props.value)
+    setNodeBalancesLoaded(false)
+  }, [props.value])
+
+  useEffect(() => {
+    const loadErc20BalancesFromNode = async () => {
+      try {
+        const balances = await Promise.all(tokensList.map(async token => {
+          const balance = await getERC20Balance(token.ownerAddress, token.tokenAddress)
+          return {
+            ...token,
+            balance
+          }
+        }))
+        setTokensList(balances)
+        setNodeBalancesLoaded(true)
+        console.log('ERC20 node balances updated')
+      } catch (e) {
+        console.error('Cannot update node balances', (e as Error).message)
+      }
+    }
+    if (isDropdownVisible && !isNodeBalancesLoaded) {
+      loadErc20BalancesFromNode()
+    }
+  }, [isDropdownVisible])
+
+  if (!tokensList.filter((i) => filterWithBalance(i.balance)).length) {
     return <span>—</span>;
   }
 
-  const erc20Tokens = value
+  const erc20Tokens = tokensList
     .filter((i) => filterWithBalance(i.balance))
     .filter((i) => i.isERC20 && erc20Map[i.tokenAddress])
     .map((item) => ({
@@ -53,7 +85,7 @@ export function TokensInfo(props: { value: Token[] }) {
     }))
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 
-  const erc721Tokens = value
+  const erc721Tokens = tokensList
     .filter((i) => filterWithBalance(i.balance))
     .filter((i) => i.isERC721 && erc721Map[i.tokenAddress])
     .map((item) => ({
@@ -62,7 +94,7 @@ export function TokensInfo(props: { value: Token[] }) {
       name: erc721Map[item.tokenAddress].name,
     }));
 
-  const erc1155Tokens = value
+  const erc1155Tokens = tokensList
     .filter((i) => filterWithBalance(i.balance))
     .filter((i) => i.isERC1155 && erc1155Map[i.tokenAddress])
     .map((item) => ({
@@ -271,6 +303,7 @@ export function TokensInfo(props: { value: Token[] }) {
               ),
             },
           ]}
+          onToggle={(isVisible: boolean) => setDropdownVisible(isVisible)}
         />
       </Box>
     </Box>
