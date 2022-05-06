@@ -292,9 +292,17 @@ export function AddressPage() {
     "erc1155",
   ];
 
-  const onTxsLoaded = (txs: RelatedTransaction[]) => {
-    const inputWithText = txs.find(tx => parseHexToText(tx.input))
-    setAddressDescription(inputWithText ? 'One or more inbound transactions contains a message' : '')
+  const txsCommonProps = {
+    onTxsLoaded: (txs: RelatedTransaction[]) => {
+      let description = ''
+      if (activeIndex === 0) {
+        const inputWithText = txs.find(tx => parseHexToText(tx.input))
+        if (inputWithText) {
+          description = 'One or more inbound transactions contains a message'
+        }
+      }
+      setAddressDescription(description)
+    }
   }
 
   return (
@@ -324,23 +332,23 @@ export function AddressPage() {
           }}
         >
           <Tab title={<Text size="small">Transactions</Text>}>
-            <Transactions type={"transaction"} onTxsLoaded={onTxsLoaded} />
+            <Transactions {...txsCommonProps} type={"transaction"} />
           </Tab>
 
           <Tab title={<Text size="small">Staking</Text>}>
-            <Transactions type={"staking_transaction"} />
+            <Transactions {...txsCommonProps} type={"staking_transaction"} />
           </Tab>
 
           <Tab title={<Text size="small">Internal</Text>}>
-            <Transactions type={"internal_transaction"} />
+            <Transactions {...txsCommonProps} type={"internal_transaction"} />
           </Tab>
 
           <Tab title={<Text size="small">HRC20 Transfers</Text>}>
-            <Transactions type={"erc20"} />
+            <Transactions {...txsCommonProps} type={"erc20"} />
           </Tab>
 
           <Tab title={<Text size="small">NFT Transfers</Text>}>
-            <Transactions type={"erc721"} />
+            <Transactions {...txsCommonProps} type={"erc721"} />
           </Tab>
 
           {type === "erc721" || type === "erc1155" || type === "erc20" ? (
