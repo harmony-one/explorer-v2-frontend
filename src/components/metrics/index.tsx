@@ -70,9 +70,9 @@ export const Metrics = (params: {
   latency: number;
   latencyPerBlock: number[];
 }) => {
-  const isLessLaptop = useMediaQuery({ maxDeviceWidth: "852px" });
-  const isLessTablet = useMediaQuery({ maxDeviceWidth: breakpoints.tablet });
-  const isLessMobileM = useMediaQuery({ maxDeviceWidth: "468px" });
+  const isLessLaptop = useMediaQuery({ query: '(max-width: 852px)' });
+  const isLessTablet = useMediaQuery({ query: `(max-width: ${breakpoints.tablet})` });
+  const isLessMobileM = useMediaQuery({ query: '(max-width: 468px)' });
 
   return (
     <BasePage
@@ -80,78 +80,70 @@ export const Metrics = (params: {
       justify="between"
       wrap={isLessLaptop}
       margin={{ bottom: "medium" }}
+      style={{ width: '100%' }}
     >
       <Box
-        justify="between"
-        pad={{ right: isLessMobileM ? "0" : "medium" }}
-        border={{
-          size: isLessMobileM ? "0" : "xsmall",
-          side: "right",
-          color: "border",
-        }}
-        style={{
-          height: isLessMobileM ? "auto" : "140px",
-          flex: isLessLaptop ? "1 1 40%" : "1 1 100%",
-        }}
-        gap={isLessMobileM ? "small" : "0"}
+        direction={'row'}
+        style={{ flexWrap: 'wrap', flexBasis: isLessLaptop ? '100%' : '50%'}}
       >
-        <ONEPrice />
-        {!isLessMobileM && <Line horizontal />}
-        <TransactionsCount />
+        <Box
+          justify="between"
+          pad={{ right: isLessMobileM ? "0" : "medium" }}
+          border={{
+            size: isLessMobileM ? "0" : "xsmall",
+            side: "right",
+            color: "border",
+          }}
+          style={{
+            height: isLessMobileM ? "auto" : "140px",
+            flex: 1
+          }}
+          gap={isLessMobileM ? "small" : "0"}
+        >
+          <ONEPrice />
+          {!isLessMobileM && <Line horizontal />}
+          <TransactionsCount />
+        </Box>
+        <Box
+          justify="between"
+          pad={{ left: "medium", right: isLessLaptop ? "0" : "medium" }}
+          border={{
+            size: isLessLaptop ? "0" : "xsmall",
+            side: "right",
+            color: "border",
+          }}
+          style={{
+            height: isLessMobileM ? "auto" : "140px",
+            flex: 1
+          }}
+        >
+          <ShardCount />
+          {!isLessMobileM && <Line horizontal />}
+          <BlockLatency
+            latency={params.latency}
+            latencyPerBlock={params.latencyPerBlock}
+          />
+        </Box>
+        {isLessLaptop && (
+          <Line
+            horizontal
+            style={{ marginTop: isLessTablet ? "16px" : "24px" }}
+          />
+        )}
       </Box>
       <Box
-        justify="between"
-        pad={{ left: "medium", right: isLessLaptop ? "0" : "medium" }}
-        border={{
-          size: isLessLaptop ? "0" : "xsmall",
-          side: "right",
-          color: "border",
-        }}
-        style={{
-          height: isLessMobileM ? "auto" : "140px",
-          flex: isLessLaptop ? "1 1 50%" : "1 1 100%",
-        }}
+        direction={'row'}
+        wrap={isLessLaptop}
+        pad={{ left: 'medium' }}
+        gap={'medium'}
+        style={{ flexWrap: 'wrap', flexBasis: isLessLaptop ? '100%' : '50%' }}
       >
-        <ShardCount />
-        {!isLessMobileM && <Line horizontal />}
-        <BlockLatency
-          latency={params.latency}
-          latencyPerBlock={params.latencyPerBlock}
-        />
-      </Box>
-      {isLessLaptop && (
-        <Line
-          horizontal
-          style={{ marginTop: isLessTablet ? "16px" : "24px" }}
-        />
-      )}
-      <Box
-        justify="between"
-        pad={{
-          left: isLessLaptop ? "0" : "medium",
-        }}
-        margin={{ top: isLessLaptop ? "medium" : "0" }}
-        style={{ height: "140px", flex: "1 1 100%" }}
-      >
-        <BlockTransactionsHistory />
-      </Box>
-
-      {isLessLaptop && (
-        <Line
-          horizontal
-          style={{ marginTop: isLessTablet ? "16px" : "24px" }}
-        />
-      )}
-
-      <Box
-        justify="between"
-        pad={{
-          left: isLessLaptop ? "0" : "medium",
-        }}
-        margin={{ top: isLessLaptop ? "medium" : "0" }}
-        style={{ height: "140px", flex: "1 1 100%" }}
-      >
-        <WalletsHistory />
+        <Box style={{flex: isLessMobileM ? 'unset' : 1}}>
+          <BlockTransactionsHistory />
+        </Box>
+        <Box style={{flex: isLessMobileM ? 'unset' : 1}}>
+          <WalletsHistory />
+        </Box>
       </Box>
     </BasePage>
   );

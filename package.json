@@ -74,6 +74,7 @@
     "web-vitals": "^1.0.1"
   },
   "resolutions": {
-     "@types/react": "17.0.30"
+    "@types/react": "17.0.30",
+    "react-error-overlay": "6.0.9"
   }
 }
