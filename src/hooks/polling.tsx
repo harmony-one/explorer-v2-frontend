@@ -6,11 +6,12 @@ export type APIPollingOptions<DataType> = {
   initialState: DataType
   delay: number
   onError?: (e: Error, setData?: Dispatch<any>) => void
-  updateTrigger?: any
+  updateTrigger?: any,
+  disableTabListener?: boolean
 }
 
 function useAPIPolling<DataType>(opts: APIPollingOptions<DataType>): DataType {
-  const { initialState, fetchFunc, delay, onError, updateTrigger } = opts
+  const { initialState, fetchFunc, delay, onError, updateTrigger, disableTabListener } = opts
   const focus = useWindowFocused();
 
   const timerId = useRef<any>()
@@ -39,7 +40,7 @@ function useAPIPolling<DataType>(opts: APIPollingOptions<DataType>): DataType {
   }
 
   const pollingRoutine = () => {
-    if (getTabHidden()) {
+    if (getTabHidden() && !disableTabListener) {
       return; // don't poll if the tab is hidden
     }
     fetchCallId.current += 1

@@ -248,11 +248,16 @@ export type Address2Transaction = {
   transactionType: AddressTransactionType;
 };
 
+export enum TransactionExtraMark {
+  normal = 'normal',
+  hasInternalONETransfers = 'hasInternalONETransfers',
+}
+
 export interface RelatedTransaction {
   transactionType: RelatedTransactionType;
   address: string;
   blockNumber: string;
-  transactionHash: string;
+  hash: string;
   from: string;
   to: string;
   value: string;
@@ -260,6 +265,10 @@ export interface RelatedTransaction {
   type?: string;
   msg?: { amount: string; delegatorAddress: string; validatorAddress: string };
   amount?: string
+  input: string
+  gas: string
+  gasPrice: string
+  extraMark: TransactionExtraMark
 }
 
 export type RelatedTransactionType =

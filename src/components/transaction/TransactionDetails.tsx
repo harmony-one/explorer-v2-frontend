@@ -129,7 +129,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
         ) === -1
       );
     } else {
-      return key !== "gas";
+      return key !== "gas" && key !== 'extraMark';
     }
   });
   const sortedKeys = keys

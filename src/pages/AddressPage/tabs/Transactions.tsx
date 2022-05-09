@@ -8,16 +8,383 @@ import {
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
+  Address,
+  ONEValue,
+  DateTime, ONEValueWithInternal, TipContent
+} from "src/components/ui";
+import {
   Filter,
   RelatedTransaction,
   RelatedTransactionType, RPCTransactionHarmony
 } from "src/types";
 import { TRelatedTransaction } from "src/api/client.interface";
-import { getAddress } from "src/utils";
+import { getAddress, mapBlockchainTxToRelated } from "src/utils";
 import { ExportToCsvButton } from "../../../components/ui/ExportToCsvButton";
+import {
+  hmyv2_getStakingTransactionsCount, hmyv2_getStakingTransactionsHistory,
+  hmyv2_getTransactionsCount,
+  hmyv2_getTransactionsHistory
+} from "../../../api/rpc";
+
+const TxMethod = styled(Text)`
+  width: 100px;
+
+  > div {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`
+
+const Marker = styled.div<{ out: boolean }>`
+  border-radius: 2px;
+  padding: 5px;
+
+  text-align: center;
+  font-weight: bold;
+
+  ${(props) =>
+    props.out
+      ? css`
+          background: rgb(239 145 62);
+          color: #fff;
+        `
+      : css`
+          background: rgba(105, 250, 189, 0.8);
+          color: #1b295e;
+        `};
+`;
+
+const NeutralMarker = styled(Box)`
+  border-radius: 2px;
+  padding: 5px;
+
+  text-align: center;
+  font-weight: bold;
+`;
 import { getColumns, getERC20Columns, getNFTColumns, getStackingColumns } from "./txsColumns";
 
 const internalTxsBlocksFrom = 23000000
+
+function getColumns(id: string): ColumnConfig<any>[] {
+  return [
+    // {
+    //   property: "type",
+    //   size: "",
+    //   header: (
+    //     <Text
+    //       color="minorText"
+    //       size="small"
+    //       style={{ fontWeight: 300, width: "140px" }}
+    //     >
+    //       Type
+    //     </Text>
+    //   ),
+    //   render: (data: RelatedTransaction) => (
+    //     <Text size="small" style={{ width: "140px" }}>
+    //       {relatedTxMap[data.transactionType] || data.transactionType}
+    //     </Text>
+    //   ),
+    // },
+    {
+      property: "hash",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "95px" }}
+        >
+          Hash
+        </Text>
+      ),
+      render: (data: any) => (
+        <Address
+          address={data.transactionHash || data.hash}
+          type="tx"
+          isShortEllipsis={true}
+          style={{ width: "170px" }}
+        />
+      ),
+    },
+    {
+      property: "method",
+      header: (
+        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+          Method
+        </Text>
+      ),
+      render: (data: any) => {
+        let signature;
+
+        try {
+          // @ts-ignore
+          signature =
+            data.signatures &&
+            data.signatures.map((s: any) => s.signature)[0].split("(")[0];
+        } catch (err) {}
+
+        if (!signature && data.value !== "0") {
+          signature = "transfer";
+        }
+
+        if (!signature && data.input.length >= 10) {
+          signature = data.input.slice(2, 10);
+        }
+
+        if (!signature) {
+          return <Text size="small">{"—"}</Text>;
+        }
+
+        return (
+          <Tip content={<TipContent message={signature} />} plain>
+            <TxMethod size="10px">
+              <NeutralMarker background={"backgroundTip"}>
+                {signature}
+              </NeutralMarker>
+            </TxMethod>
+          </Tip>
+        );
+      },
+    },
+    // {
+    //   property: "shard",
+    //   header: (
+    //     <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+    //       Shard
+    //     </Text>
+    //   ),
+    //   render: (data: RelatedTransaction) => (
+    //     <Box direction="row" gap="3px" align="center">
+    //       <Text size="small">{0}</Text>
+    //       <FormNextLink
+    //         size="small"
+    //         color="brand"
+    //         style={{ marginBottom: "2px" }}
+    //       />
+    //       <Text size="small">{0}</Text>
+    //     </Box>
+    //   ),
+    // },
+    {
+      property: "from",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "180px" }}
+        >
+          From
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Text size="12px">
+          <Address address={data.from} isShortEllipsis={true} style={{ width: '180px' }} />
+        </Text>
+      ),
+    },
+    {
+      property: "marker",
+      header: <></>,
+      render: (data: RelatedTransaction) => (
+        <Text size="12px">
+          <Marker out={data.from === id}>
+            {data.from === id ? "OUT" : "IN"}
+          </Marker>
+        </Text>
+      ),
+    },
+    {
+      property: "to",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "180px" }}
+        >
+          To
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Text size="12px">
+          <Address address={data.to} isShortEllipsis={true} style={{ width: '180px' }} />
+        </Text>
+      ),
+    },
+    {
+      property: "value",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "120px" }}
+        >
+          Value
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Box justify="center">
+          <ONEValueWithInternal tx={data} value={data.value} timestamp={data.timestamp} />
+        </Box>
+      ),
+    },
+
+    {
+      property: "timestamp",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "140px" }}
+        >
+          Timestamp
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Box direction="row" gap="xsmall" justify="end">
+          <DateTime
+            date={data.timestamp}
+          />
+        </Box>
+      ),
+    },
+  ];
+}
+
+const getStackingColumns = (id: string): ColumnConfig<any>[] => {
+  return [
+    {
+      property: "hash",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "95px" }}
+        >
+          Hash
+        </Text>
+      ),
+      render: (data: any) => (
+        <Address
+          address={data.transactionHash || data.hash}
+          type="staking-tx"
+          isShortEllipsis={true}
+          style={{ width: "170px" }}
+        />
+      ),
+    },
+    {
+      property: "type",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "140px" }}
+        >
+          Type
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Text size="small" style={{ width: "140px" }}>
+          {data.type}
+        </Text>
+      ),
+    },
+    {
+      property: "validator",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "170px" }}
+        >
+          Validator
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Text size="12px">
+          {data.msg?.validatorAddress ? (
+            <Address address={data.msg?.validatorAddress || data.from} isShortEllipsis={true} style={{ width: "170px" }} />
+          ) : (
+            "—"
+          )}
+        </Text>
+      ),
+    },
+    {
+      property: "marker",
+      header: <></>,
+      render: (data: RelatedTransaction) => (
+        <Text size="12px">
+          <Marker out={data.from === id}>
+            {data.from === id ? "OUT" : "IN"}
+          </Marker>
+        </Text>
+      ),
+    },
+    {
+      property: "delegator",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "170px" }}
+        >
+          Delegator
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Text size="12px">
+          {data.msg?.delegatorAddress ? (
+            <Address address={data.msg?.delegatorAddress} isShortEllipsis={true} style={{ width: "170px" }} />
+          ) : (
+            "—"
+          )}
+        </Text>
+      ),
+    },
+    {
+      property: "value",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "220px" }}
+        >
+          Value
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Box justify="center">
+          {data.msg?.amount ? (
+            <ONEValue value={data.msg?.amount} timestamp={data.timestamp} />
+          ) : data.amount ? (
+            <ONEValue value={data.amount} timestamp={data.timestamp} />
+          ) : (
+            "—"
+          )}
+        </Box>
+      ),
+    },
+    {
+      property: "timestamp",
+      header: (
+        <Text
+          color="minorText"
+          size="small"
+          style={{ fontWeight: 300, width: "140px" }}
+        >
+          Timestamp
+        </Text>
+      ),
+      render: (data: RelatedTransaction) => (
+        <Box direction="row" gap="xsmall" justify="end">
+          <DateTime date={data.timestamp} />
+        </Box>
+      ),
+    },
+  ];
+};
 
 const relatedTxMap: Record<RelatedTransactionType, string> = {
   transaction: "Transaction",
@@ -37,7 +404,7 @@ const usePrevious = (value: TRelatedTransaction) => {
 export function Transactions(props: {
   type: TRelatedTransaction;
   rowDetails?: (row: any) => JSX.Element;
-  onTxsLoaded?: (txs: RPCTransactionHarmony[]) => void;
+  onTxsLoaded?: (txs: RelatedTransaction[]) => void;
 }) {
   const limitValue = localStorage.getItem("tableLimitValue");
 
@@ -73,10 +440,17 @@ export function Transactions(props: {
 
   const { limit = 10, offset = 0 } = filter[props.type];
 
-  const loadTransactions = async () => {
-    setIsLoading(true)
-    try {
-      let txs = []
+  const getTransactionsFromRPC = async (): Promise<RelatedTransaction[]> => {
+    let txs = []
+    if (props.type ==='transaction' || props.type === 'staking_transaction') {
+      const pageSize = limit
+      const pageIndex = Math.floor(offset / limit)
+      const params = [{ address: id, pageIndex, pageSize }]
+      txs = props.type ==='transaction'
+        ? await hmyv2_getTransactionsHistory(params)
+        : await hmyv2_getStakingTransactionsHistory(params)
+      txs = txs.map(tx => mapBlockchainTxToRelated(tx))
+    } else {
       const txsFilter = {...filter[props.type]}
       if (props.type === 'internal_transaction') {
         txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
@@ -87,6 +461,26 @@ export function Transactions(props: {
         props.type,
         txsFilter,
       ]);
+    }
+    return txs
+  }
+
+  const loadTransactions = async () => {
+    setIsLoading(true)
+    try {
+      let txs = await getTransactionsFromRPC()
+      // let txs = []
+      // const txsFilter = {...filter[props.type]}
+      // if (props.type === 'internal_transaction') {
+      //   txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
+      // }
+      // txs = await getRelatedTransactionsByType([
+      //   0,
+      //   id,
+      //   props.type,
+      //   txsFilter,
+      // ]);
+
       // for transactions we display call method if any
       if (props.type === "transaction") {
         const methodSignatures = await Promise.all(
@@ -126,6 +520,23 @@ export function Transactions(props: {
   }, [id])
 
   useEffect(() => {
+    const getTxsCountFromRPC = async () => {
+      try {
+        if (props.type ==='transaction' || props.type === 'staking_transaction') {
+          const count = props.type ==='transaction'
+            ? await hmyv2_getTransactionsCount(id)
+            : await hmyv2_getStakingTransactionsCount(id)
+          setTotalElements(count)
+          setCachedTotalElements({ ...cachedTotalElements, [props.type]: count })
+        } else {
+          setTotalElements(0)
+        }
+      } catch (e) {
+        console.error('Cannot get txs count', (e as Error).message)
+        setTotalElements(initTotalElements)
+      }
+    }
+
     const getTxsCount = async () => {
       try {
         const countFilter = {...filter[props.type]}
@@ -149,11 +560,13 @@ export function Transactions(props: {
         setTotalElements(initTotalElements)
       }
     }
+
     const cachedValue = cachedTotalElements[props.type]
-    if (cachedValue) {
+
+    if (cachedValue && id === prevId) {
       setTotalElements(cachedValue)
     } else {
-      getTxsCount()
+      getTxsCountFromRPC()
     }
   }, [props.type, id])
 

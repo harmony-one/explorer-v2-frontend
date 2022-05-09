@@ -24,7 +24,7 @@ import {
 import { Inventory } from "./tabs/inventory/Inventory";
 import { getAllBalance, getBalance } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
-import { AddressDetails, RPCTransactionHarmony } from "../../types";
+import { AddressDetails, RelatedTransaction, RPCTransactionHarmony } from "../../types";
 import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
@@ -98,7 +98,7 @@ export function AddressPage() {
   const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
   const [inventoryHolders, setInventoryForHolders] = useState<
     IUserERC721Assets[]
-  >([]);
+    >([]);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
@@ -113,19 +113,11 @@ export function AddressPage() {
 
   const erc20Token = erc20Map[id] || null;
 
-  let oneAddress = id;
-
   let type = erc721Map[id]
     ? "erc721"
     : erc1155Map[id]
       ? "erc1155"
       : getType(contracts, erc20Token);
-
-  try {
-    oneAddress = getAddress(oneAddress).bech32;
-  } catch {
-    oneAddress = oneAddress;
-  }
 
   useEffect(() => {
     const getActiveIndex = () => {
@@ -149,12 +141,18 @@ export function AddressPage() {
   }, [id]);
 
   useEffect(() => {
-    // if (!!contracts) {
-    loadSourceCode(oneAddress)
-      .then((res) => setSourceCode(res))
-      .catch(() => setSourceCode(null));
-    // }
-  }, [oneAddress]);
+    // contract defined and contract address same as id
+    // note: when we toggle there is scenarios where the id are not the same
+    // @ts-ignore
+    if (!!contracts && contracts?.address === id) {
+      loadSourceCode(id)
+        .then((res) => setSourceCode(res))
+        .catch((except) => {
+          console.log(except);
+          setSourceCode(null)
+        });
+    }
+  }, [id, contracts]);
 
   useEffect(() => {
     const getContracts = async () => {
@@ -253,26 +251,20 @@ export function AddressPage() {
   }, [id]);
 
   const renderTitle = () => {
-    const erc1155 = erc1155Map[id] || {};
-    const { meta = {}, ...restErc1155 } = erc1155;
-    const data = {
-      ...contracts,
-      ...erc20Token,
-      address: id,
-      token: tokens,
-      ...meta,
-    };
+    const erc721Token = erc721Map[id] || {};
+    const erc1155Token = erc1155Map[id] || {};
 
     if (type === "erc20") {
-      return `HRC20 ${data.name}`;
+      return `HRC20 ${erc20Token.name || ''}`;
     }
 
     if (type === "erc721") {
-      return `ERC721 ${data.name}`;
+      return `ERC721 ${erc721Token.name || ''}`;
     }
 
     if (type === "erc1155") {
-      const title = `HRC1155 ${data.name || ""}`;
+      const title = `HRC1155 ${erc1155Token.name || ""}`;
+      const { meta = {}, ...restErc1155 } = erc1155Token;
       return meta.image ? (
         <Box direction={"row"} align={"center"}>
           <ERC1155Icon imageUrl={meta.image} />
@@ -300,9 +292,17 @@ export function AddressPage() {
     "erc1155",
   ];
 
-  const onTxsLoaded = (txs: RPCTransactionHarmony[]) => {
-    const inputWithText = txs.find(tx => parseHexToText(tx.input))
-    setAddressDescription(inputWithText ? 'One or more inbound transactions contains a message' : '')
+  const txsCommonProps = {
+    onTxsLoaded: (txs: RelatedTransaction[]) => {
+      let description = ''
+      if (activeIndex === 0) {
+        const inputWithText = txs.find(tx => parseHexToText(tx.input))
+        if (inputWithText) {
+          description = 'One or more inbound transactions contains a message'
+        }
+      }
+      setAddressDescription(description)
+    }
   }
 
   return (
@@ -332,23 +332,23 @@ export function AddressPage() {
           }}
         >
           <Tab title={<Text size="small">Transactions</Text>}>
-            <Transactions type={"transaction"} onTxsLoaded={onTxsLoaded} />
+            <Transactions {...txsCommonProps} type={"transaction"} />
           </Tab>
 
           <Tab title={<Text size="small">Staking</Text>}>
-            <Transactions type={"staking_transaction"} />
+            <Transactions {...txsCommonProps} type={"staking_transaction"} />
           </Tab>
 
           <Tab title={<Text size="small">Internal</Text>}>
-            <Transactions type={"internal_transaction"} />
+            <Transactions {...txsCommonProps} type={"internal_transaction"} />
           </Tab>
 
           <Tab title={<Text size="small">HRC20 Transfers</Text>}>
-            <Transactions type={"erc20"} />
+            <Transactions {...txsCommonProps} type={"erc20"} />
           </Tab>
 
           <Tab title={<Text size="small">NFT Transfers</Text>}>
-            <Transactions type={"erc721"} />
+            <Transactions {...txsCommonProps} type={"erc721"} />
           </Tab>
 
           {type === "erc721" || type === "erc1155" || type === "erc20" ? (
