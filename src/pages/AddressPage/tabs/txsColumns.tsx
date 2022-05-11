@@ -7,7 +7,6 @@ import styled, { css } from "styled-components";
 import { ABIManager, IABI } from "../../../web3/ABIManager";
 import ERC721ABI from "../../../web3/abi/ERC721ABI.json";
 import ERC1155ABI from "../../../web3/abi/ERC1155ABI.json";
-import { CopyBtn } from "../../../components/ui/CopyBtn";
 
 const erc721ABIManager = ABIManager(ERC721ABI as IABI)
 const erc1155ABIManager = ABIManager(ERC1155ABI as IABI)
