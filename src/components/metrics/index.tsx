@@ -133,9 +133,10 @@ export const Metrics = (params: {
       </Box>
       <Box
         direction={'row'}
+        justify={'between'}
         wrap={isLessLaptop}
-        pad={{ left: 'medium' }}
-        gap={'medium'}
+        pad={{ left: 'medium', top: isLessLaptop ? 'medium' : 'none' }}
+        gap={'large'}
         style={{ flexWrap: 'wrap', flexBasis: isLessLaptop ? '100%' : '50%' }}
       >
         <Box style={{flex: isLessMobileM ? 'unset' : 1}}>
