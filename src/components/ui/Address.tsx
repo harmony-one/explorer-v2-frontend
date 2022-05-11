@@ -1,6 +1,7 @@
 import React, { CSSProperties } from "react";
 import { Box, Text } from "grommet";
 import { Link, useHistory } from "react-router-dom";
+import {toChecksumAddress} from 'web3-utils';
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
@@ -82,7 +83,7 @@ export const Address = (props: IAddress) => {
 
   let outPutAddress = address;
   try {
-    outPutAddress = currency === "ONE" ? getAddress(address).bech32 : address;
+    outPutAddress = currency === "ONE" ? getAddress(address).bech32 : toChecksumAddress(address);
   } catch {
     outPutAddress = address;
   }

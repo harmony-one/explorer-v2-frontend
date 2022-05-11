@@ -15,6 +15,7 @@ import {
   setCurrency,
   currencyType,
 } from "src/hooks/ONE-ETH-SwitcherHook";
+import { GearIcon } from "../ui/icons";
 
 export function ConfigureButton() {
   const theme = useThemeMode();
@@ -23,7 +24,7 @@ export function ConfigureButton() {
 
   return (
     <DropButton
-      label={<Menu size="medium" color={'#fff'} />}
+      label={<GearIcon size="24px" color={'#fff'} />}
       dropAlign={{ top: "bottom", right: "right" }}
       style={{
         height: '32px',
