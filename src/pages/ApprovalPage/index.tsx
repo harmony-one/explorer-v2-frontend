@@ -3,7 +3,7 @@ import { Box, Heading, Tab, Tabs, Text } from "grommet";
 import { BasePage, BaseContainer } from "src/components/ui";
 import { TransactionsTable } from "../../components/tables/TransactionsTable";
 import { ApprovalDetails, Filter, RPCTransactionHarmony } from "../../types";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { getTransactions, getCount } from "src/api/client";
 import { ShardDropdown } from "src/components/ui/ShardDropdown";
 import { useParams } from "react-router-dom";

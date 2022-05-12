@@ -15,7 +15,7 @@ import { IVerifyContractData, verifyContractCode } from "src/api/explorerV1";
 import { SubtractCircle } from "grommet-icons";
 import { breakpoints } from "../../responsive/breakpoints";
 import { useMediaQuery } from "react-responsive";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { getAddress, getQueryVariable } from "../../utils";
 import { getContractsByField, getTransactionByField } from "../../api/client";
 
