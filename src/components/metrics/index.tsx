@@ -22,6 +22,8 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useThemeMode } from "../../hooks/themeSwitcherHook";
+import { palette } from "../../theme";
 
 ChartJS.register(
   CategoryScale,
@@ -32,39 +34,47 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      display: false
+const getChartOptions = (theme: 'light' | 'dark') => {
+  const axisTextColor = theme === 'light' ? palette.CoolGray : palette.LightGrey
+  return {
+    responsive: true,
+    animation: {
+      duration: 0
     },
-    tooltip: {
-      backgroundColor: 'rgb(0,0,0)'
-    },
-  },
-  scales: {
-    x: {
-      grid: {
-        display: false,
-        drawBorder: false,
+    plugins: {
+      legend: {
+        display: false
       },
-      ticks: {
-        autoSkip: true,
-        maxRotation: 0,
-        minRotation: 0
+      tooltip: {
+        backgroundColor: 'rgb(0,0,0)'
       },
     },
-    y: {
-      grid: {
-        display: false,
-        drawBorder: false,
+    scales: {
+      x: {
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+        ticks: {
+          autoSkip: true,
+          maxRotation: 0,
+          minRotation: 0,
+          color: axisTextColor
+        },
       },
-      ticks: {
-        autoSkip: true
+      y: {
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+        ticks: {
+          autoSkip: true,
+          color: axisTextColor
+        }
       }
     }
-  }
-};
+  };
+}
 
 export const Metrics = (params: {
   latency: number;
@@ -320,6 +330,7 @@ interface TxHitoryItem {
 }
 
 function BlockTransactionsHistory() {
+  const themeMode = useThemeMode();
   const [result, setResult] = useState<TxHitoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -339,7 +350,7 @@ function BlockTransactionsHistory() {
     datasets: [{
       label: "Transactions",
       data: result.map((i) => +i.count),
-      backgroundColor: 'rgba(0, 174, 233, 0.5)'
+      backgroundColor: themeMode === 'light' ? 'rgba(0, 174, 233, 0.5)' : '#69FABD'
     }]
   }
 
@@ -355,7 +366,7 @@ function BlockTransactionsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={options} data={data} height="110px" />
+          <Bar options={getChartOptions(themeMode)} data={data} height="110px" />
         )}
       </Box>
     </Box>
@@ -369,6 +380,7 @@ interface WalletHitoryItem {
 }
 
 function WalletsHistory() {
+  const themeMode = useThemeMode();
   const [result, setResult] = useState<WalletHitoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -388,7 +400,7 @@ function WalletsHistory() {
     datasets: [{
       label: "Active wallets",
       data: result.map((i) => +i.count),
-      backgroundColor: 'rgba(0, 174, 233, 0.5)'
+      backgroundColor: themeMode === 'light' ? 'rgba(0, 174, 233, 0.5)' : '#69FABD',
     }]
   }
 
@@ -423,7 +435,7 @@ function WalletsHistory() {
           </Box>
         )}
         {!isLoading && (
-          <Bar options={options} data={data} height="110px" />
+          <Bar options={getChartOptions(themeMode)} data={data} height="110px" />
         )}
       </Box>
     </Box>
