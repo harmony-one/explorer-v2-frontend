@@ -118,6 +118,7 @@ export type RPCTransactionHarmony = {
   to: AddressHarmony;
   gas: string;
   gasPrice: string;
+  gasLimit: string;
   hash: TransactionHarmonyHash;
   ethHash: TransactionHash;
   input: ByteCode;

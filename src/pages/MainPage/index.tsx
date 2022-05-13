@@ -23,6 +23,17 @@ const filter = {
   filters: [],
 };
 
+const ColumnHeader = (props: { children: JSX.Element }) => {
+  return <Box
+    height={'62px'}
+    justify={"center"}
+    pad={'16px'}
+    border={{ size: "xsmall", side: "bottom" }}
+  >
+    {props.children}
+  </Box>
+}
+
 export function MainPage() {
   const focus = useWindowFocused();
 
@@ -104,55 +115,44 @@ export function MainPage() {
     <BaseContainer pad="0">
       <Metrics latency={blockLatency} latencyPerBlock={blockLatencyMap} />
       <Box direction={isLessDesktop ? "column" : "row"} gap="medium">
-        <BasePage style={{ flex: "1 1 100%" }}>
-          <Box
-            border={{ size: "xsmall", side: "bottom" }}
-            margin={{ bottom: "small" }}
-            direction={"row"}
-            align={"baseline"}
-            justify={"between"}
-            style={{ marginTop: "-7px" }}
-          >
-            <Text size="large" weight="bold">
-              Latest Blocks
-            </Text>
-            <Box
-              style={{ maxWidth: "120px", minWidth: "120px" }}
-              align={"start"}
-            >
-              <ShardDropdown
-                allShardsAvailable={true}
-                selected={selectedShard}
-                onClick={(shardNumber) => setSelectedShard(shardNumber)}
-              />
+        <BasePage style={{ flex: "1 1 100%" }} pad={'0'}>
+          <ColumnHeader>
+            <Box direction={"row"} align={"center"} justify={"between"}>
+              <Text size="medium" weight="bold">Latest Blocks</Text>
+              <Box style={{ maxWidth: "120px", minWidth: "120px" }} align={"start"}>
+                <ShardDropdown
+                  allShardsAvailable={true}
+                  selected={selectedShard}
+                  onClick={(shardNumber) => setSelectedShard(shardNumber)}
+                />
+              </Box>
             </Box>
+          </ColumnHeader>
+          <Box pad={'medium'}>
+            <LatestBlocksTable blocks={blocks} />
+            <Button
+              margin={{ top: "medium" }}
+              onClick={() => history.push("/blocks")}
+            >
+              VIEW ALL BLOCKS
+            </Button>
           </Box>
-
-          <LatestBlocksTable blocks={blocks} />
-          <Button
-            margin={{ top: "medium" }}
-            onClick={() => history.push("/blocks")}
-          >
-            VIEW ALL BLOCKS
-          </Button>
         </BasePage>
-        <BasePage style={{ flex: "1 1 100%" }}>
-          <Box
-            border={{ size: "xsmall", side: "bottom" }}
-            pad={{ bottom: "small" }}
-            margin={{ bottom: "small" }}
-          >
-            <Text size="large" weight="bold">
-              Latest Transactions
-            </Text>
+        <BasePage style={{ flex: "1 1 100%" }} pad={'0'}>
+          <ColumnHeader>
+            <Box>
+              <Text size="medium" weight="bold">Latest Transactions</Text>
+            </Box>
+          </ColumnHeader>
+          <Box pad={'small'}>
+            <LatestTransactionsTable />
+            <Button
+              margin={{ top: "medium" }}
+              onClick={() => history.push("/transactions")}
+            >
+              VIEW ALL TRANSACTIONS
+            </Button>
           </Box>
-          <LatestTransactionsTable />
-          <Button
-            margin={{ top: "medium" }}
-            onClick={() => history.push("/transactions")}
-          >
-            VIEW ALL TRANSACTIONS
-          </Button>
         </BasePage>
       </Box>
     </BaseContainer>

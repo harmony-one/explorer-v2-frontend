@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import { IHexSignature, Log, RPCStakingTransactionHarmony } from "src/types";
+import { IHexSignature, Log, RPCStakingTransactionHarmony, RPCTransactionHarmony } from "src/types";
 import {tokenTransfersERC20} from './tokenTransfer/tokenTransfersERC20'
 // import {tokenTransfersERC721} from './tokenTransfer/tokenTransfersERC721'
 import {TokenTransfersERC1155} from './tokenTransfer/tokenTransfersERC1155'
@@ -13,8 +13,8 @@ import {
 import {
   Address,
   CalculateFee,
-  CalculateTransactionFee,
-  TipContent,
+  CalculateTransactionFee, formatNumber,
+  TipContent
 } from "src/components/ui";
 import { Anchor, Box, DataTable, Text, Tip } from "grommet";
 import { TransactionSubType } from "src/components/transaction/helpers";
@@ -61,7 +61,7 @@ const getColumns = ({ type = "" }) => [
 
 type TransactionDetailsProps = {
   internalTxs?: any[];
-  transaction: RPCStakingTransactionHarmony;
+  transaction: RPCTransactionHarmony | RPCStakingTransactionHarmony;
   inputSignature?: IHexSignature;
   type?: TransactionSubType;
   stakingData?: boolean;
@@ -84,6 +84,21 @@ const tokenTransfers = (logs: Log[]) => {
     {TokenTransfersERC1155(logs)}
   </>
   )
+}
+
+const GasUsed = (props: { tx: RPCTransactionHarmony | RPCStakingTransactionHarmony }) => {
+  const { tx: { gas, gasLimit } } = props
+  if (gas && gasLimit) {
+    const percent = ((+gas / +gasLimit) * 100).toFixed(2)
+    return <Box direction={'row'} gap={'12px'}>
+      <Text size={'small'}>{formatNumber(+gasLimit)}</Text>
+      <Text size={'small'} color={'grey'}>|</Text>
+      <Text size={'small'}>{formatNumber(+gas)} ({percent}%)</Text>
+    </Box>
+  }
+  return <>
+    {gas}
+  </>
 }
 
 
@@ -116,7 +131,9 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
       <Box justify="center">{CalculateTransactionFee(transaction)}</Box>
     ),
     gasUsed: (
-      <Box justify="center">{transaction.gas}</Box>
+      <Box justify="center">
+        <GasUsed tx={transaction} />
+      </Box>
     ),
     gasPrice: <Box justify="center">{CalculateFee(transaction)}</Box>,
   };

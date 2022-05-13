@@ -41,13 +41,19 @@ export const StakingTransactionPage = () => {
           tx = await getStakingTransactionByField([3, "hash", id]);
         }
 
-        if (tx.type === "CollectRewards" && tx.amount === null) {
-          try {
-            tx.amount = await (
-              await hmyv2_getTransactionReceipt([id], shardNumber)
-            ).result.logs[0].data;
-          } catch {}
-        }
+        try {
+          const txnReceipt = await hmyv2_getTransactionReceipt([id], shardNumber)
+          if (txnReceipt && txnReceipt.result) {
+            if (tx.type === "CollectRewards" && tx.amount === null) {
+              tx.amount = txnReceipt.result.logs[0].data
+            }
+
+            if (txnReceipt.result.gasUsed) {
+              tx.gasLimit = tx.gas
+              tx.gas = parseInt(txnReceipt.result.gasUsed).toString();
+            }
+          }
+        } catch {}
       }
       setTx(tx as RPCStakingTransactionHarmony);
     };
