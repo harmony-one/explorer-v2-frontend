@@ -1,7 +1,7 @@
 import { TransactionDetails } from "src/components/transaction/TransactionDetails";
 import { InternalTransactionList } from "src/components/transaction/InternalTransactionList";
 import { TransactionLogs } from "src/components/transaction/TransactionLogs";
-import { IHexSignature, InternalTransaction, RPCStakingTransactionHarmony } from "src/types";
+import { IHexSignature, InternalTransaction, RPCTransactionHarmony } from "src/types";
 import { BaseContainer, BasePage } from "src/components/ui";
 
 import { useHistory, useParams } from "react-router-dom";
@@ -35,9 +35,7 @@ export const TransactionPage = () => {
   const activeTab = query.get('activeTab') || '0';
 
   // hash or number
-  const [tx, setTx] = useState<RPCStakingTransactionHarmony>(
-    {} as RPCStakingTransactionHarmony
-  );
+  const [tx, setTx] = useState<RPCTransactionHarmony>({} as RPCTransactionHarmony);
   const [trxs, setTrxs] = useState<InternalTransaction[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -50,7 +48,7 @@ export const TransactionPage = () => {
     .map((t) => +t);
 
   useEffect(() => {
-    const getTxInputSignature = async (trx: RPCStakingTransactionHarmony) => {
+    const getTxInputSignature = async (trx: RPCTransactionHarmony) => {
       let signature
       try {
         const signatures = await getByteCodeSignatureByHash([trx.input.slice(0, 10)])
@@ -89,6 +87,7 @@ export const TransactionPage = () => {
       if (trx) {
         const txnReceipt = await hmyv2_getTransactionReceipt([id], shard);
         if (txnReceipt && txnReceipt.result && txnReceipt.result.gasUsed) {
+          trx.gasLimit = trx.gas
           trx.gas = parseInt(txnReceipt.result.gasUsed).toString();
         }
         if (trx.input && trx.input.length > 10) {
@@ -96,7 +95,7 @@ export const TransactionPage = () => {
         }
       }
       
-      setTx((trx || {}) as RPCStakingTransactionHarmony);
+      setTx((trx || {}) as RPCTransactionHarmony);
       setInputSignature(trxInputSignature)
     };
 

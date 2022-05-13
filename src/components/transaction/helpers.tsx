@@ -34,7 +34,7 @@ export const transactionPropertyDisplayNames: Record<string, string> = {
   blockNumber: "Block Number",
   from: "From",
   txnFee: "Txn fee",
-  gasUsed: "Gas Used",
+  gasUsed: "Gas Limit & Usage by Txn",
   gasPrice: "Gas Price",
   transactionFee: "Transaction Fee",
   input: "Input",

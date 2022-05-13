@@ -26,7 +26,7 @@ props.allShardsAvailable ? { value: "All Shards" } : undefined,
         ].filter((_) => _) as { value: string }[]
       }
       renderValue={(dataItem) => (
-        <Box justify={"center"} style={{ paddingTop: "2px" }}>
+        <Box justify={"center"} style={{ paddingTop: "2px", paddingLeft: '4px' }}>
           {dataItem.value === "All Shards"
             ? dataItem.value
             : `Shard ${dataItem.value}`}
@@ -37,7 +37,7 @@ props.allShardsAvailable ? { value: "All Shards" } : undefined,
           direction={"row"}
           align={"baseline"}
           style={{ 
-            paddingLeft: "7px",
+            paddingLeft: "8px",
             marginBottom: "5px",
             marginTop: dataItem.value === "All Shards" ? "5px" : "0px",
           }}
