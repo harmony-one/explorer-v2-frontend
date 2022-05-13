@@ -144,7 +144,7 @@ export function MainPage() {
               <Text size="medium" weight="bold">Latest Transactions</Text>
             </Box>
           </ColumnHeader>
-          <Box pad={'small'}>
+          <Box pad={'medium'}>
             <LatestTransactionsTable />
             <Button
               margin={{ top: "medium" }}
