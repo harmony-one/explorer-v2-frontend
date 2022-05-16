@@ -22,7 +22,7 @@ import {
   TRelatedTransaction,
 } from "src/api/client.interface";
 import { Inventory } from "./tabs/inventory/Inventory";
-import { getAllBalance, getBalance } from "src/api/rpc";
+import { getAllBalance, getBalance, hmy_getDelegationsByDelegator, StakingDelegation } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
 import { AddressDetails, RelatedTransaction, RPCTransactionHarmony } from "../../types";
 import { ContractDetails } from "./ContractDetails";
@@ -92,6 +92,7 @@ export function AddressPage() {
   const [contracts, setContracts] = useState<AddressDetails | null>(null);
   const [sourceCode, setSourceCode] = useState<ISourceCode | null>(null);
   const [balance, setBalance] = useState<any>([]);
+  const [delegations, setDelegations] = useState<StakingDelegation[]>([]);
   const [addressDescription, setAddressDescription] = useState('')
 
   const [tokens, setTokens] = useState<any>(null);
@@ -170,6 +171,19 @@ export function AddressPage() {
     };
     getContracts();
   }, [id]);
+
+  useEffect(() => {
+    const getStakingInfo = async () => {
+      try {
+        const data = await hmy_getDelegationsByDelegator(id)
+        setDelegations(data)
+      } catch (e) {
+        console.error('Cannot get staking info', (e as Error).message)
+      }
+    }
+
+    getStakingInfo()
+  }, [id])
 
   useEffect(() => {
     const getInventory = async () => {
@@ -317,6 +331,7 @@ export function AddressPage() {
           contracts={contracts}
           tokens={tokens}
           balance={balance}
+          delegations={delegations}
         />
       </BasePage>
       <BasePage margin={{ top: "15px" }}>

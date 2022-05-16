@@ -60,12 +60,10 @@ export const transactionPropertyDisplayNames: Record<string, string> = {
   securityContract: "Security Contract",
   details: "Details",
   slotPubKeys: "Details",
-
-    slotPubKeyToAdd: "Slot Pub Key To Add",
-    slotPubKeyToRemove: "Slot Pub Key To Remove",
-
-    delegatorAddress: "Delegator Address",
-    validatorAddress: "Validator Address"
+  slotPubKeyToAdd: "Slot Pub Key To Add",
+  slotPubKeyToRemove: "Slot Pub Key To Remove",
+  delegatorAddress: "Delegator Address",
+  validatorAddress: "Validator Address"
 };
 
 export const transactionPropertySort: Record<string, number> = {
