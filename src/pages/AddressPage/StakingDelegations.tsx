@@ -41,30 +41,32 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
   const totalAmount = totalAmountBig.div(Big(10 ** 18)).round(2).toString()
   const totalRewards = totalRewardsBig.div(Big(10 ** 18)).round(2).toString()
 
-  const items: StakingDelegation[] = delegations.map(delegation => {
-    return {
-      ...delegation,
-      amount: Big(delegation.amount).div(Big(10 ** 18)).round(2).toString(),
-      reward: Big(delegation.reward).div(Big(10 ** 18)).round(2).toString()
-    }
-  }).filter(item => (+item.amount > 0 || +item.reward > 0))
+  const items: StakingDelegation[] = delegations.filter(item => (+item.amount > 0 || +item.reward > 0))
 
   const dropdownProps = {
     keyField: 'validatorAddress',
-    itemHeight: '52px',
+    itemHeight: '70px',
     itemStyles: { marginBottom: "0px" },
     themeMode,
     items,
     renderItem: (item: StakingDelegation) => {
-      return <Box background={"backgroundBack"} direction="column" pad={'4px'}>
+      return <Box
+        background={"backgroundBack"}
+        direction="column"
+        pad={'4px'}
+        gap={'4px'}
+        margin={{bottom: '8px'}}
+      >
         <Box>
           <Address address={item.validatorAddress} />
         </Box>
-        <Box direction={'row'} gap={'32px'}>
-          <Text size={'small'} weight={'bold'}>{item.amount} ONE</Text>
-          {item.reward &&
-            <Text size={'small'}>reward: {item.reward} ONE</Text>
-          }
+        <Box direction={'row'} gap={'8px'}>
+          <Text size={'small'}>Stake</Text>
+          {+item.amount > 0 ? <ONEValue value={item.amount} /> : '0 ONE'}
+        </Box>
+        <Box direction={'row'} gap={'8px'}>
+          <Text size={'small'}>Reward</Text>
+          {+item.reward > 0 ? <ONEValue value={item.reward} />: '0 ONE'}
         </Box>
       </Box>
     },
