@@ -69,7 +69,7 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
       </Box>
     },
     renderValue: () => {
-      return <Box direction={'row'}>
+      return <Box direction={'row'} pad={{ top: '2px' }}>
         <ONEValue value={totalAmountBig.toString()} />
         {items.length > 0 &&
           <DelegationsCount count={items.length} />
