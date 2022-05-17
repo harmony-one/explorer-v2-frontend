@@ -151,7 +151,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   });
   const sortedKeys = keys
     .sort((a, b) => transactionPropertySort[b] - transactionPropertySort[a])
-    .filter((k) => showDetails || ["r", "s", "v"].indexOf(k) === -1);
+    .filter((k) => showDetails || ["r", "s", "v", "gasLimit"].indexOf(k) === -1);
 
   const txData = sortedKeys.reduce((arr, key) => {
     // @ts-ignore

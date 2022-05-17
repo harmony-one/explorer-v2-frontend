@@ -17,6 +17,8 @@ import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { CircleQuestion, Share } from "grommet-icons";
 import styled from "styled-components";
 import { useERC721Pool } from "../../hooks/ERC721_Pool";
+import { StakingDelegation } from "../../api/rpc";
+import StakingDelegations from "./StakingDelegations";
 
 export const StyledBox = styled(Box)`
   transition: all 0.2s linear;
@@ -34,10 +36,11 @@ interface AddressDetailsProps {
   contracts: AddressDetails | null;
   tokens: any[];
   balance?: string;
+  delegations: StakingDelegation[]
 }
 
 export function AddressDetailsDisplay(props: AddressDetailsProps) {
-  const { address, addressDescription, contracts, tokens, balance } = props;
+  const { address, addressDescription, contracts, tokens, balance, delegations } = props;
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
@@ -69,7 +72,8 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
     ...restErc1151data,
     ...meta,
     address,
-    addressDescription
+    addressDescription,
+    delegations
   };
 
   if (!data) {
@@ -159,6 +163,7 @@ const addressPropertyDisplayNames: Record<
   // solidityVersion: () => "Solidity version",
   meta: () => "Meta",
   balance: () => "Balance",
+  delegations: () => "Staked",
   // bytecode: () => "Bytecode",
   token: () => "Token",
   name: () => "Name",
@@ -238,6 +243,11 @@ const addressPropertyDisplayValues: Record<
       <ONEValueDropdown value={value} />
     </Box>
   ),
+  delegations: (delegations: StakingDelegation[]) => {
+    return <Box>
+      <StakingDelegations delegations={delegations} />
+    </Box>
+  },
   token: (value) => <TokensInfo value={value} />,
   name: (value) => value,
   symbol: (value) => value,
@@ -326,9 +336,10 @@ const addressPropertyOrder: Record<string, number> = {
   address: 9,
   value: 10,
   balance: 11,
-  token: 12,
+  delegations: 12,
+  token: 13,
   transactionHash: 10,
-  creatorAddress: 13,
+  creatorAddress: 14,
 
   name: 20,
   symbol: 21,

@@ -308,3 +308,11 @@ export interface ApprovalDetails {
   type: TokenType;
   isFullApproval?: boolean;
 }
+
+export interface StakingDelegationResponse {
+  Undelegations: Array<{ Amount: string, Epoch: string }>,
+  amount: string,
+  delegator_address: string,
+  reward: string,
+  validator_address: string
+}

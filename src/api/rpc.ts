@@ -1,9 +1,18 @@
+import JSONBig from 'json-bigint'
 import { ERC1155_Pool } from "src/hooks/ERC1155_Pool";
 import { ERC20_Pool } from "src/hooks/ERC20_Pool";
 import { ERC721_Pool } from "src/hooks/ERC721_Pool";
 import { HarmonyAddress } from "src/utils";
 import { convertTxnToObj, filterTransactions, hasAllowance, matchesApprovalMethod } from "src/utils/approvals";
-import { ApprovalDetails, IGetTxsHistoryParams, RequestOrder, RequestTxType, RPCTransactionHarmony, TokenType } from "../types";
+import {
+  ApprovalDetails,
+  IGetTxsHistoryParams,
+  RequestOrder,
+  RequestTxType,
+  RPCTransactionHarmony,
+  StakingDelegationResponse,
+  TokenType
+} from "../types";
 
 export type TRPCResponse<T> = { id: number; jsonrpc: "2.0"; result: T, error?: { code: number, message: string } };
 
@@ -17,6 +26,16 @@ export const rpcAdapter = <T = any>(...args: Parameters<typeof fetch>) => {
   return fetch
     .apply(window, args)
     .then((res) => res.json()) as unknown as Promise<T>;
+};
+
+/**
+ * BigInt values will be stored as strings
+ */
+export const rpcBigIntAdapter = <T = any>(...args: Parameters<typeof fetch>) => {
+  return fetch
+    .apply(window, args)
+    .then((res) => res.text())
+    .then((res) => JSONBig({ storeAsString: true }).parse(res)) as unknown as Promise<T>;
 };
 
 export const getBalance = (params: [string, "latest"]) => {
@@ -186,6 +205,47 @@ export const hmyv2_getStakingTransactionsCount = (address: string, txType: Reque
       throw new Error(data.error.message)
     }
     return data.result
+  });
+};
+
+export interface StakingDelegation {
+  undelegations: Array<{amount: string, epoch: string}>,
+  amount: string,
+  delegatorAddress: string,
+  reward: string,
+  validatorAddress: string
+}
+
+const mapStakingDelegation = (delegation: StakingDelegationResponse): StakingDelegation => {
+  return {
+    undelegations: delegation.Undelegations.map((undelegation) => {
+      return {
+        amount: undelegation.Amount,
+        epoch: undelegation.Epoch
+      }
+    }),
+    amount: delegation.amount,
+    delegatorAddress: delegation.delegator_address,
+    reward: delegation.reward,
+    validatorAddress: delegation.validator_address
+  }
+}
+
+export const hmy_getDelegationsByDelegator = (address: string): Promise<StakingDelegation[]> => {
+  return rpcBigIntAdapter<TRPCResponse<StakingDelegationResponse[]>>(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "hmy_getDelegationsByDelegator",
+      id: 1,
+      params: [address],
+    }),
+  }).then(data => {
+    if (data.error) {
+      throw new Error(data.error.message)
+    }
+    return data.result.map(mapStakingDelegation)
   });
 };
 
