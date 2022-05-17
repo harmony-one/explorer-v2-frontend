@@ -1,10 +1,12 @@
 import React from 'react'
 import { StakingDelegation } from "../../api/rpc";
 import Big from "big.js";
-import { Box } from "grommet";
+import { Box, Text } from "grommet";
 import { Dropdown } from "../../components/dropdown/Dropdown";
 import { useThemeMode } from "../../hooks/themeSwitcherHook";
 import { Address, ONEValue } from "../../components/ui";
+
+Big.PE = 30
 
 function DelegationsCount (props: { count: number }) {
   return <Box style={{ marginRight: "10px" }} direction={"row"}>
@@ -45,27 +47,30 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
       amount: Big(delegation.amount).div(Big(10 ** 18)).round(2).toString(),
       reward: Big(delegation.reward).div(Big(10 ** 18)).round(2).toString()
     }
-  })
+  }).filter(item => (+item.amount > 0 || +item.reward > 0))
 
   const dropdownProps = {
     keyField: 'validatorAddress',
-    itemHeight: '55px',
-    itemStyles: { padding: "5px", marginBottom: "10px" },
+    itemHeight: '52px',
+    itemStyles: { marginBottom: "0px" },
     themeMode,
     items,
     renderItem: (item: StakingDelegation) => {
-      return <Box>
+      return <Box background={"backgroundBack"} direction="column" pad={'4px'}>
         <Box>
           <Address address={item.validatorAddress} />
         </Box>
-        <Box>
-          {item.amount} ONE, reward: {item.reward} ONE
+        <Box direction={'row'} gap={'32px'}>
+          <Text size={'small'} weight={'bold'}>{item.amount} ONE</Text>
+          {item.reward &&
+            <Text size={'small'}>reward: {item.reward} ONE</Text>
+          }
         </Box>
       </Box>
     },
     renderValue: () => {
       return <Box direction={'row'}>
-        {totalAmount} ONE, rewards: {totalRewards} ONE
+        <ONEValue value={totalAmountBig.toString()} />
         {items.length > 0 &&
           <DelegationsCount count={items.length} />
         }
@@ -74,7 +79,10 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
   }
 
   return <Box style={{ width: "550px" }}>
-    <Dropdown<any> {...dropdownProps} />
+    {(+totalAmount > 0 || +totalRewards > 0)
+      ? <Dropdown<any> {...dropdownProps} />
+      : <Text size={'small'}>0 ONE</Text>
+    }
   </Box>
 }
 
