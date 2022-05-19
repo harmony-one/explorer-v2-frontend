@@ -11,6 +11,7 @@ import { breakpoints } from "src/responsive/breakpoints";
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
 import { getTransactionCountLast14Days, getWalletsCountLast14Days } from "src/api/client";
 import { Bar } from 'react-chartjs-2';
+import { config } from 'src/config'
 
 import { getCount } from "src/api/client";
 import {
@@ -197,16 +198,12 @@ function ONEPrice() {
 function TransactionsCount() {
   const [count, setCount] = useState<string>("");
 
-  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
-    .split(",")
-    .map((t) => +t);
-
   useEffect(() => {
     let tId = 0;
     const getRes = async () => {
       try {
         let res = await Promise.all(
-          availableShards.map((shardNumber) =>
+          config.availableShards.map((shardNumber) =>
             getCount([shardNumber, "transactions"])
           )
         );
@@ -252,7 +249,8 @@ function TransactionsCount() {
 }
 
 function ShardCount() {
-  const count = process.env.REACT_APP_AVAILABLE_SHARDS?.split(",").length || 0;
+  const { availableShards } = config
+  const count = availableShards.length || 0;
 
   return (
     <Box direction="row" align="stretch">

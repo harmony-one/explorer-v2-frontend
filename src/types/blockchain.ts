@@ -278,12 +278,15 @@ export type RelatedTransactionType =
   | "stacking_transaction";
 
 export interface AddressDetails {
-  creator_address: string;
-  solidityVersion: string;
-  ipfs_hash?: string;
-  meta?: { name?: string; image?: string };
-  bytecode: string;
   IPFSHash?: string
+  address: Address
+  blockHash: BlockHash
+  blockNumber: BlockNumber
+  bytecode: ByteCode
+  creatorAddress: Address
+  meta?: { name?: string; image?: string };
+  solidityVersion: string
+  transactionHash: TransactionHash
 }
 
 export interface IHexSignature {

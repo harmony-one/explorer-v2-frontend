@@ -2,6 +2,7 @@ import { Box } from "grommet";
 import React from "react";
 import { useThemeMode } from "src/hooks/themeSwitcherHook";
 import { Dropdown } from "../dropdown/Dropdown";
+import { config } from "../../config";
 
 export function ShardDropdown(props: {
   allShardsAvailable?: boolean;
@@ -9,6 +10,7 @@ export function ShardDropdown(props: {
   onClick: (selected: string) => void;
 }) {
   const themeMode = useThemeMode();
+  const { availableShards } = config
 
   return (
     <Dropdown
@@ -16,13 +18,10 @@ export function ShardDropdown(props: {
       itemHeight={"0px"}
       padDataList={"none"}
       items={
-        [
-props.allShardsAvailable ? { value: "All Shards" } : undefined,
-          ...(process.env.REACT_APP_AVAILABLE_SHARDS?.split(",").map(
-            (item) => ({
-              value: item,
-            })
-          ) || []),
+        [props.allShardsAvailable
+          ? { value: "All Shards" }
+          : undefined,
+          ...(availableShards.map((item) => ({ value: item, })) || []),
         ].filter((_) => _) as { value: string }[]
       }
       renderValue={(dataItem) => (

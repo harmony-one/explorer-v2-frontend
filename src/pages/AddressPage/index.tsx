@@ -24,7 +24,7 @@ import {
 import { Inventory } from "./tabs/inventory/Inventory";
 import { getAllBalance, getBalance, hmy_getDelegationsByDelegator, StakingDelegation } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
-import { AddressDetails, RelatedTransaction, RPCTransactionHarmony } from "../../types";
+import { AddressDetails, RelatedTransaction, RPCTransactionHarmony, ShardID } from "../../types";
 import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";
@@ -33,6 +33,7 @@ import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
 import { ToolsTab } from "./tabs/tools";
+import { config } from "../../config";
 
 export function AddressPage() {
   const history = useHistory();
@@ -90,6 +91,7 @@ export function AddressPage() {
   }
 
   const [contracts, setContracts] = useState<AddressDetails | null>(null);
+  const [contractShardId, setContractShardId] = useState<ShardID | null>(null);
   const [sourceCode, setSourceCode] = useState<ISourceCode | null>(null);
   const [balance, setBalance] = useState<any>([]);
   const [delegations, setDelegations] = useState<StakingDelegation[]>([]);
@@ -155,16 +157,42 @@ export function AddressPage() {
     }
   }, [id, contracts]);
 
+  const getContractInAllShards = async (contractId: string) => {
+    const { availableShards } = config
+
+    let contract = null
+    let shardId = null
+
+    for(let i = 0; i < availableShards.length; i++) {
+      try {
+        const sId = availableShards[i]
+        contract = await getContractsByField([sId, "address", contractId]);
+        if (contract) {
+          shardId = sId
+          break
+        }
+      } catch (_) {
+      }
+    }
+
+    return {
+      contract,
+      shardId
+    }
+  }
+
   useEffect(() => {
     const getContracts = async () => {
       try {
-        let contracts: any = await getContractsByField([0, "address", id]);
+        let { contract, shardId } = await getContractInAllShards(id);
+        if (contract) {
+          const mergedContracts: any = erc721Map[contract.address]
+            ? { ...contracts, ...erc721Map[contract.address] }
+            : contract;
+          setContracts(mergedContracts);
+          setContractShardId(shardId)
+        }
 
-        const mergedContracts: AddressDetails = erc721Map[contracts.address]
-          ? { ...contracts, ...erc721Map[contracts.address] }
-          : contracts;
-
-        setContracts(mergedContracts);
       } catch (err) {
         setContracts(null);
       }
@@ -329,6 +357,7 @@ export function AddressPage() {
           address={id}
           addressDescription={addressDescription}
           contracts={contracts}
+          contractShardId={contractShardId}
           tokens={tokens}
           balance={balance}
           delegations={delegations}

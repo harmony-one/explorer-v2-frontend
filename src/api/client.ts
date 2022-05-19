@@ -5,7 +5,7 @@ import {
   RPCStakingTransactionHarmony,
   RPCTransactionHarmony,
   RelatedTransaction,
-  Log, LogDetailed
+  Log, LogDetailed, AddressDetails
 } from "src/types";
 import {
   IHoldersInfo,
@@ -111,7 +111,7 @@ export function getWalletsCountLast14Days() {
 }
 
 export function getContractsByField(params: any[]) {
-  return transport("getContractsByField", params) as Promise<any[]>;
+  return transport("getContractsByField", params) as Promise<AddressDetails>;
 }
 
 export function getAllERC20() {

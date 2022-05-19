@@ -13,6 +13,7 @@ import { getBlocks } from "src/api/client";
 import { calculateSecondPerBlocks, calculateSecondsPerBlock } from "./helpers";
 import { ShardDropdown } from "src/components/ui/ShardDropdown";
 import { getTabHidden, useWindowFocused } from "src/hooks/useWindowFocusHook";
+import { config } from "../../config";
 
 const filter = {
   offset: 0,
@@ -45,9 +46,7 @@ export function MainPage() {
   const [blockLatency, setBlockLatency] = useState<number>(2.01);
 
   const [blockLatencyMap, setBlockLatencyMap] = useState<number[]>([2.01]);
-  const availableShards = (
-    process.env.REACT_APP_AVAILABLE_SHARDS as string
-  ).split(",");
+  const { availableShards } = config
 
   useEffect(() => {
     let tId = 0 as any;
