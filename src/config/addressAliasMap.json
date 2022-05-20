@@ -135,5 +135,10 @@
     "0x51f6290510be3c802471e27f0843a3a54a8226df": {
         "name": "DaVinci Books",
         "link": "https://davinci.gallery"
+    },
+    "0x00000000000000000000000000000000000000fc": {
+	"name": "Staking precompile",
+	"link": "https://staking.harmony.one",
+	"description": "This address is used for Metamask staking and smart contract staking. Use the staking website to stake ONE tokens. Please do not directly send tokens to this contract."
     }
 }
