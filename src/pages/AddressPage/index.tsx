@@ -171,8 +171,12 @@ export function AddressPage() {
           shardId = sId
           break
         }
-      } catch (_) {
-      }
+
+        // Temp optimization to reduce number of requests
+        if(sId === 1) {
+          break
+        }
+      } catch (_) {}
     }
 
     return {
