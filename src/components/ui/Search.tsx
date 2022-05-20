@@ -16,6 +16,7 @@ import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Address } from "./Address";
+import { config } from "../../config";
 
 let timeoutID: any | null = null;
 
@@ -58,9 +59,7 @@ export const SearchInput = () => {
     })),
   ];
 
-  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
-    .split(",")
-    .map((t) => +t);
+  const { availableShards } = config
 
   const history = useHistory();
   const onChange = useCallback((event) => {

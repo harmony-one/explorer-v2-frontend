@@ -16,6 +16,7 @@ import {
 import { revertErrorMessage } from "src/web3/parseByteCode";
 import { hmyv2_getTransactionReceipt } from "src/api/rpc";
 import useQuery from "../../hooks/useQuery";
+import { config } from "../../config";
 
 const extractError = (err: any) => {
   const errorMessages = err!.split(":");
@@ -43,9 +44,7 @@ export const TransactionPage = () => {
   const [activeIndex, setActiveIndex] = useState(+activeTab);
   const [inputSignature, setInputSignature] = useState<IHexSignature>()
 
-  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
-    .split(",")
-    .map((t) => +t);
+  const { availableShards } = config
 
   useEffect(() => {
     const getTxInputSignature = async (trx: RPCTransactionHarmony) => {

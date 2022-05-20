@@ -6,6 +6,7 @@ import { getBlockByNumber, getBlockByHash } from "src/api/client";
 
 import React, { useEffect, useState } from "react";
 import { Heading } from "grommet";
+import { config } from "../config";
 
 export const BlockPage = () => {
   // hash or number
@@ -14,9 +15,7 @@ export const BlockPage = () => {
   const [block, setBlock] = useState<Block | null>(null);
   const [blockNumber, setBlockNumber] = useState<number>(0);
 
-  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
-    .split(",")
-    .map((t) => +t);
+  const { availableShards } = config
 
   useEffect(() => {
     let cleanupFunction = false;

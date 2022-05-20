@@ -8,6 +8,7 @@ import { getTransactions } from "src/api/client";
 import { FormNextLink } from "grommet-icons";
 import { DateTime } from "../../components/ui";
 import { getTabHidden, useWindowFocused } from "src/hooks/useWindowFocusHook";
+import { config } from "../../config";
 
 function getColumns(props: any) {
   const { history } = props;
@@ -102,9 +103,7 @@ export function LatestTransactionsTable() {
 
   const history = useHistory();
   const [transactions, setTransactions] = useState<RPCTransactionHarmony[]>([]);
-  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
-    .split(",")
-    .map((t) => +t);
+  const { availableShards } = config
 
   useEffect(() => {
     let tId = 0 as any;

@@ -9,15 +9,14 @@ import { TransactionDetails } from "src/components/transaction/TransactionDetail
 import { StakingTransactionType } from "src/types";
 import { TransactionSubType } from "src/components/transaction/helpers";
 import { hmyv2_getTransactionReceipt } from "src/api/rpc";
+import { config } from "../../config";
 
 export const StakingTransactionPage = () => {
   // @ts-ignore
   const { id } = useParams();
   const [tx, setTx] = useState<RPCStakingTransactionHarmony | null>(null);
 
-  const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS as string)
-    .split(",")
-    .map((t) => +t);
+  const { availableShards } = config
 
   useEffect(() => {
     const exec = async () => {

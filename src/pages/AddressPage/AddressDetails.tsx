@@ -8,7 +8,7 @@ import {
   TipContent,
   TokenValue,
 } from "src/components/ui";
-import { AddressDetails } from "src/types";
+import { AddressDetails, ShardID } from "src/types";
 import { TokensInfo } from "./TokenInfo";
 import { Erc20, useERC20Pool } from "src/hooks/ERC20_Pool";
 import { ONEValueDropdown } from "src/components/ui/OneValueDropdown";
@@ -34,13 +34,14 @@ interface AddressDetailsProps {
   address: string;
   addressDescription: string;
   contracts: AddressDetails | null;
+  contractShardId: ShardID | null;
   tokens: any[];
   balance?: string;
   delegations: StakingDelegation[]
 }
 
 export function AddressDetailsDisplay(props: AddressDetailsProps) {
-  const { address, addressDescription, contracts, tokens, balance, delegations } = props;
+  const { address, addressDescription, contracts, contractShardId, tokens, balance, delegations } = props;
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
@@ -73,7 +74,8 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
     ...meta,
     address,
     addressDescription,
-    delegations
+    delegations,
+    contractShardId
   };
 
   if (!data) {
@@ -155,9 +157,7 @@ const addressPropertyDisplayNames: Record<
   string,
   (data: any, options: { type: TAddressType }) => React.ReactNode
 > = {
-  address: () => {
-    return "Address";
-  },
+  address: () => "Address",
   value: () => "Value",
   creatorAddress: () => "Creator",
   // solidityVersion: () => "Solidity version",
@@ -174,6 +174,7 @@ const addressPropertyDisplayNames: Record<
   description: () => "Description",
   transactionHash: () => "Transaction Hash",
   circulatingSupply: () => "Circulating Supply",
+  contractShardId: () => "Shard ID",
 };
 
 const AddressPostfix = (props: { value: string }) => {
@@ -300,6 +301,7 @@ const addressPropertyDisplayValues: Record<
     );
   },
   description: (value) => <>{value}</>,
+  contractShardId: (value) => value,
   transactionHash: (value) => <Address address={value} type={"tx"} />,
   circulatingSupply: (value, data) => (
     <Box direction={"row"}>
@@ -333,13 +335,14 @@ function sortByOrder(a: string, b: string) {
 }
 
 const addressPropertyOrder: Record<string, number> = {
-  address: 9,
-  value: 10,
-  balance: 11,
-  delegations: 12,
-  token: 13,
+  address: 8,
+  contractShardId: 9,
   transactionHash: 10,
-  creatorAddress: 14,
+  value: 11,
+  balance: 12,
+  delegations: 13,
+  token: 14,
+  creatorAddress: 15,
 
   name: 20,
   symbol: 21,
