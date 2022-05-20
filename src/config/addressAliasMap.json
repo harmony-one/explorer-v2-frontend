@@ -139,6 +139,6 @@
     "0x00000000000000000000000000000000000000fc": {
 	"name": "Staking precompile",
 	"link": "https://staking.harmony.one",
-	"description": "This address is used for Metamask staking and smart contract staking."
+	"description": "This address is used for Metamask staking and smart contract staking. Use the staking website to stake ONE tokens. Please do not directly send tokens to this contract."
     }
 }
