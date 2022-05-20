@@ -396,7 +396,7 @@ export const VerifiedContractDetails = (props: {
         <Box style={{ padding: "10px" }}>
           <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>
           <AbiMethods
-            abi={props.sourceCode.proxy.abi.filter(
+            abi={props.sourceCode.proxy.result.abi.filter(
               (a: { stateMutability: string; type: string; }) => a.stateMutability === "view" && a.type === "function"
             )}
             address={props.address || ""}
@@ -410,7 +410,7 @@ export const VerifiedContractDetails = (props: {
           <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
           <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>
           <AbiMethods
-            abi={props.sourceCode.proxy.abi.filter(
+            abi={props.sourceCode.proxy.result.abi.filter(
               (a: { stateMutability: string; name: any; type: string; }) =>
                 a.stateMutability !== "view" &&
                 !!a.name &&
