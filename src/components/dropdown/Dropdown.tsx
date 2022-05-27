@@ -131,7 +131,7 @@ export class Dropdown<T = {}> extends React.Component<
         );
 
       return items.length ? (
-        <Fragment key={`${groupItem.groupBy}`}>
+        <Fragment key={String(groupItem.groupBy)}>
           <Fragment>{groupItem.renderGroupItem()}</Fragment>
           {items.map((item, index) => (
             <DataItem
