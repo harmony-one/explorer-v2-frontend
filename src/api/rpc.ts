@@ -126,7 +126,7 @@ export const getAllBalance = (params: [string, "latest"]) => {
       }
     ),
   ]).then((arr) => {
-    return Promise.resolve(arr.map((item) => item.result));
+    return Promise.resolve(arr.map((item) => item.result || '0x0'));
   });
 };
 
