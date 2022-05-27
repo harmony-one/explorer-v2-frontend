@@ -192,32 +192,43 @@ export function TransactionsTable(props: TransactionTableProps) {
   return (
     <>
       <Box
-        direction="row"
-        justify={hidePagination ? "start" : "between"}
+        direction={'row'}
+        justify={totalElements > 0 ? 'between' : 'end'}
+        align={'center'}
+        border={{ size: "xsmall", side: "bottom", color: "border" }}
         pad={{ bottom: "small" }}
         margin={{ bottom: "small" }}
-        border={{ size: "xsmall", side: "bottom", color: "border" }}
       >
-        {!hideCounter ? (
-          <Text style={{ flex: "1 1 100%" }}>
-            <b>{Math.min(limit, data.length)}</b> {textType}
-            {data.length !== 1 ? "s" : ""} shown
-          </Text>
-        ) : (
-          <Box />
-        )}
-        {!hidePagination && (
-          <PaginationNavigator
-            onChange={setFilter}
-            isLoading={isLoading}
-            filter={filter}
-            totalElements={totalElements}
-            elements={data}
-            noScrollTop={noScrollTop}
-            property="block_number"
-            showPages={showPages}
-          />
-        )}
+        {(!hidePagination && totalElements > 0) &&
+          <Box>
+            <Text size={'small'} color={'minorText'}>Total count: {totalElements}</Text>
+          </Box>
+        }
+        <Box
+          direction="row"
+          justify={hidePagination ? "start" : "between"}
+        >
+          {!hideCounter ? (
+            <Text style={{ flex: "1 1 100%" }}>
+              <b>{Math.min(limit, data.length)}</b> {textType}
+              {data.length !== 1 ? "s" : ""} shown
+            </Text>
+          ) : (
+            <Box />
+          )}
+          {!hidePagination && (
+            <PaginationNavigator
+              onChange={setFilter}
+              isLoading={isLoading}
+              filter={filter}
+              totalElements={totalElements}
+              elements={data}
+              noScrollTop={noScrollTop}
+              property="block_number"
+              showPages={showPages}
+            />
+          )}
+        </Box>
       </Box>
       <Box
         style={{
