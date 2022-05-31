@@ -7,6 +7,7 @@ import {AbiItem} from 'web3-utils';
 import {convertInputs} from './helpers';
 import {uniqid} from 'src/pages/VerifyContract/VerifyContract';
 import detectEthereumProvider from '@metamask/detect-provider';
+import {AbiParam} from 'src/components/ui/AbiParam';
 
 const Field = styled(Box)``;
 
@@ -83,8 +84,8 @@ export const AbiMethodsView = (props: {
       const web3URL = props.isRead
         ? process.env.REACT_APP_RPC_URL_SHARD0
         : web3
-        ? web3
-        : process.env.REACT_APP_RPC_URL_SHARD0;
+          ? web3
+          : process.env.REACT_APP_RPC_URL_SHARD0;
 
       const hmyWeb3 = new Web3(web3URL);
 
@@ -102,7 +103,7 @@ export const AbiMethodsView = (props: {
           const accounts = await ethereum.enable();
 
           const account = accounts[0] || undefined; // if function is not a view method it will require a signer
-          
+
           console.log("account is", account);
 
           res = await contract.methods[abiMethod.name]
@@ -119,8 +120,8 @@ export const AbiMethodsView = (props: {
           Array.isArray(res)
             ? res
             : typeof res === 'object'
-            ? Object.values(res)
-            : [res.toString()]
+              ? Object.values(res)
+              : [res.toString()]
         );
       }
     } catch (e) {
@@ -147,7 +148,7 @@ export const AbiMethodsView = (props: {
   };
 
   return (
-    <ViewWrapper direction='column' margin={{bottom: 'medium'}}>
+    <ViewWrapper className='abi-view-wrapper' direction='column' margin={{bottom: 'medium'}}>
       <NameWrapper background={'backgroundBack'}>
         <Text size='small'>
           {index + 1}. {abiMethod.name}
@@ -293,30 +294,14 @@ export const AbiMethodsView = (props: {
         ) : null}
 
         {abiMethod.outputs
-          ? abiMethod.outputs.map((input) => {
-              return (
-                <Box>
-                  {result.length ? (
-                    <Text size='small'>
-                      <GreySpan>
-                        {input.name}
-                        {` (${input.type})`}
-                      </GreySpan>{' '}
-                      {'-> '}
-                      {result.length === 1 ? [result] : result.toString()}
-                    </Text>
-                  ) : (
-                    <Text size='small'>
-                      <GreySpan>
-                        {input.name}
-                        {` (${input.type})`}
-                      </GreySpan>{' '}
-                      {'-> '}
-                    </Text>
-                  )}
-                </Box>
-              );
-            })
+          ? abiMethod.outputs.map((input, idx) => {
+            return (<AbiParam
+              readonly={true}
+              type={input.type}
+              name={input.name}
+              value={result[idx]}
+            />)
+          })
           : null}
 
         {error && (
