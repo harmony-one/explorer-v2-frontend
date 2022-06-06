@@ -147,15 +147,15 @@ export function AddressPage() {
     // contract defined and contract address same as id
     // note: when we toggle there is scenarios where the id are not the same
     // @ts-ignore
-    if (!!contracts && contracts?.address === id) {
-      loadSourceCode(id)
+    if (!!contracts && contracts?.address === id && contractShardId !== null) {
+      loadSourceCode(id, contractShardId)
         .then((res) => setSourceCode(res))
         .catch((except) => {
           console.log(except);
           setSourceCode(null)
         });
     }
-  }, [id, contracts]);
+  }, [id, contracts, contractShardId]);
 
   const getContractInAllShards = async (contractId: string) => {
     const { availableShards } = config
@@ -425,6 +425,7 @@ export function AddressPage() {
                 address={id}
                 contracts={contracts}
                 sourceCode={sourceCode}
+                shard={contractShardId || 0}
               />
             </Tab>
           ) : null}
