@@ -19,7 +19,7 @@ export const ContractDetails = (props: {
   address: string;
   contracts?: AddressDetails | null;
   sourceCode?: ISourceCode | null;
-  shard?: ShardID | 0;
+  shard?: ShardID;
 }) => {
   // console.log(111, appendABI(abi, props.address));
 
