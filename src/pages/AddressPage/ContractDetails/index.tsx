@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Text, TextArea } from "grommet";
-import { AddressDetails } from "src/types";
+import { AddressDetails, ShardID } from "src/types";
 import { Item } from "../AddressDetails";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -19,6 +19,7 @@ export const ContractDetails = (props: {
   address: string;
   contracts?: AddressDetails | null;
   sourceCode?: ISourceCode | null;
+  shard?: ShardID | 0;
 }) => {
   // console.log(111, appendABI(abi, props.address));
 
@@ -28,6 +29,7 @@ export const ContractDetails = (props: {
         sourceCode={props.sourceCode}
         contracts={props.contracts}
         address={props.address}
+        shard={props.shard || 0}
       />
     );
   }
@@ -37,6 +39,7 @@ export const ContractDetails = (props: {
       <NoVerifiedContractDetails
         contracts={props.contracts}
         address={props.address}
+        shard={props.shard || 0}
       />
     );
   }
@@ -71,6 +74,7 @@ export const AbiMethods = (props: {
 
 export const VerifiedButMissingImplementation = (props: {
   address: string;
+  shard: number;
 }) => {
   const history = useHistory();
 
@@ -94,7 +98,7 @@ export const VerifiedButMissingImplementation = (props: {
             size="small"
             style={{ cursor: "pointer" }}
             onClick={() =>
-              history.push(`/verifycontract?address=${props.address}`)
+              history.push(`/verifycontract?address=${props.address}&shard=${props.shard}`)
             }
             color="brand"
           >
@@ -152,6 +156,7 @@ export const ProxyContractDetails = (props: {
 export const NoVerifiedContractDetails = (props: {
   contracts: AddressDetails;
   address: string;
+  shard: number;
 }) => {
   const history = useHistory();
 
@@ -164,7 +169,7 @@ export const NoVerifiedContractDetails = (props: {
             size="small"
             style={{ cursor: "pointer" }}
             onClick={() =>
-              history.push(`/verifycontract?address=${props.address}`)
+              history.push(`/verifycontract?address=${props.address}&shard=${props.shard}`)
             }
             color="brand"
           >
@@ -230,6 +235,7 @@ export const VerifiedContractDetails = (props: {
   sourceCode: ISourceCode;
   address: string;
   contracts?: AddressDetails | null;
+  shard: number;
 }) => {
   const [tab, setTab] = useState<V_TABS>(V_TABS.CODE);
   const [metamaskAddress, setMetamask] = useState("");
@@ -250,7 +256,7 @@ export const VerifiedContractDetails = (props: {
 
   return (
     <Box direction="column">
-      {props.sourceCode?.proxyAddress && !props.sourceCode?.proxy && <VerifiedButMissingImplementation address={props.sourceCode.proxyAddress}/>}
+      {props.sourceCode?.proxyAddress && !props.sourceCode?.proxy && <VerifiedButMissingImplementation address={props.sourceCode.proxyAddress} shard={props.shard}/>}
       <Box direction="row" align="center" margin={{ top: props.sourceCode?.proxyAddress && !props.sourceCode?.proxy ? "" : "medium" }}>
         <TabButton
           text={V_TABS.CODE}

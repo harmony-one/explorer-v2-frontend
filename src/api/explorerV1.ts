@@ -1,3 +1,4 @@
+import { ShardID } from "src/types";
 import { AbiItem } from "web3-utils";
 import { getContractsByField } from "./client";
 
@@ -18,6 +19,7 @@ export interface IVerifyContractData {
   tab: string;
   fileList?: File[];
   language: number;
+  shard?: 0;
 }
 
 export interface IVerifyContractDataSendData {
@@ -32,6 +34,7 @@ export interface IVerifyContractDataSendData {
   contractName: string;
   fileList?: File[],
   tab: string,
+  shard?: number
 
 }
 
@@ -108,9 +111,9 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
   }
 };
 
-export const loadSourceCode = async (address: string): Promise<ISourceCode> => {
+export const loadSourceCode = async (address: string, shard: ShardID): Promise<ISourceCode> => {
   const response = await fetch(
-    `${process.env.REACT_APP_EXPLORER_V1_API_URL}fetchContractCode?contractAddress=${address}`,
+    `${process.env.REACT_APP_EXPLORER_V1_API_URL}fetchContractCode?contractAddress=${address}&shard=${shard}`,
     {
       mode: "cors",
       cache: "no-cache",

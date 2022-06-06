@@ -68,6 +68,7 @@ class VerifyContractBase extends React.Component<
   {
     isLessTablet: boolean;
     address?: string;
+    shard?: number;
   },
   IVerifyContractData
 > {
@@ -86,10 +87,11 @@ class VerifyContractBase extends React.Component<
     statusText: "",
     error: "",
     tab: V_TABS.SINGLE,
-    language: 0
+    language: 0,
+    shard: 0
   };
 
-  getBytecode = async () => {
+  getBytecode = async (shard: number) => {
     this.setState({ ...this.state, argsLoading: true });
 
     try {
@@ -97,14 +99,14 @@ class VerifyContractBase extends React.Component<
         const address = getAddress(this.state.contractAddress).basicHex;
 
         const contracts: any = await getContractsByField([
-          0,
+          shard,
           "address",
           address,
         ]);
 
         if (contracts?.transactionHash) {
           const trx = await getTransactionByField([
-            0,
+            shard,
             "hash",
             contracts.transactionHash,
           ]);
@@ -141,6 +143,7 @@ class VerifyContractBase extends React.Component<
       const res = await verifyContractCode({
         ...state,
         libraries: this.state.libraries.map((i) => i.value),
+        shard: this.props.shard || 0
       });
 
       if (res.success === true) {
@@ -161,7 +164,7 @@ class VerifyContractBase extends React.Component<
   };
 
   render() {
-    const { isLessTablet } = this.props;
+    const { isLessTablet, shard } = this.props;
     const { isLoading } = this.state;
 
     return (
@@ -331,7 +334,7 @@ class VerifyContractBase extends React.Component<
                     <Spinner size={"xsmall"} />
                   </Box>
                 ) : (
-                  <Box onClick={() => this.getBytecode()}>
+                  <Box onClick={() => this.getBytecode(shard || 0)}>
                     <Text color="#00AEE9">paste arguments from tx input</Text>
                   </Box>
                 )}
@@ -465,5 +468,10 @@ export const VerifyContract = () => {
     history.location.search.substring(1)
   );
 
-  return <VerifyContractBase isLessTablet={isLessTablet} address={address} />;
+  const shard = getQueryVariable(
+    "shard",
+    history.location.search.substring(1)
+  );
+
+  return <VerifyContractBase isLessTablet={isLessTablet} address={address} shard={+(shard || 0)} />;
 };
