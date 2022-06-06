@@ -147,7 +147,7 @@ export function AddressPage() {
     // contract defined and contract address same as id
     // note: when we toggle there is scenarios where the id are not the same
     // @ts-ignore
-    if (!!contracts && contracts?.address === id && !!contractShardId) {
+    if (!!contracts && contracts?.address === id && contractShardId !== null) {
       loadSourceCode(id, contractShardId)
         .then((res) => setSourceCode(res))
         .catch((except) => {
