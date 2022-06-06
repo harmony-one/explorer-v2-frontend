@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box } from "grommet";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import {
   getByteCodeSignatureByHash,
   getRelatedTransactionsByType,
@@ -26,6 +26,7 @@ import {
   hmyv2_getTransactionsHistory
 } from "../../../api/rpc";
 import { getColumns, getERC20Columns, getNFTColumns, getStackingColumns } from "./txsColumns";
+import useQuery from "../../../hooks/useQuery";
 
 const internalTxsBlocksFrom = 23000000
 
@@ -49,11 +50,13 @@ export function Transactions(props: {
   rowDetails?: (row: any) => JSX.Element;
   onTxsLoaded?: (txs: RelatedTransaction[]) => void;
 }) {
-  const limitValue = localStorage.getItem("tableLimitValue");
+  const history = useHistory()
+  const queryParams = useQuery();
+  const limitValue = queryParams.get('limit') || localStorage.getItem("tableLimitValue");
 
   const initFilter: Filter = {
-    offset: 0,
-    limit: limitValue ? +limitValue : 10,
+    offset: +(queryParams.get('offset') || 0),
+    limit: +(limitValue || 10),
     orderBy: "block_number",
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
@@ -250,6 +253,15 @@ export function Transactions(props: {
     }
   }
 
+  const onFilterChanged = (value: Filter) => {
+    const { offset, limit } = value
+    if (limit !== filter[props.type].limit) {
+      localStorage.setItem("tableLimitValue", `${limit}`);
+    }
+    setFilter({ ...filter, [props.type]: value });
+    history.push(`?offset=${offset}&limit=${limit}`)
+  }
+
   return (
     <Box style={{ padding: "10px" }}>
       <TransactionsTable
@@ -259,12 +271,7 @@ export function Transactions(props: {
         limit={+limit}
         filter={filter[props.type]}
         isLoading={isLoading}
-        setFilter={(value) => {
-          if (value.limit !== filter[props.type].limit) {
-            localStorage.setItem("tableLimitValue", `${value.limit}`);
-          }
-          setFilter({ ...filter, [props.type]: value });
-        }}
+        setFilter={onFilterChanged}
         noScrollTop
         minWidth="1266px"
         hideCounter

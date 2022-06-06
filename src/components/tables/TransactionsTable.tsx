@@ -184,10 +184,10 @@ export function TransactionsTable(props: TransactionTableProps) {
 
   const _IsLoading = isLoading;
 
-  useEffect(() => {
-    filter.offset = 0;
-    setFilter(filter);
-  }, [filter.limit]);
+  // useEffect(() => {
+  //   filter.offset = 0;
+  //   setFilter(filter);
+  // }, [filter.limit]);
 
   return (
     <>
