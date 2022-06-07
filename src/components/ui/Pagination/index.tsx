@@ -14,7 +14,8 @@ const NavigationItem = styled(Box)<{ disabled?: boolean }>`
   text-align: center;
   background: ${(props) => props.theme.global.colors.backgroundBack};
   cursor: ${(props) => props.disabled ? 'default': 'pointer'};
-  opacity: ${(props) => props.disabled ? 0.7: 1};
+  opacity: ${(props) => props.disabled ? 0.6: 1};
+  border: 1px solid ${(props) => props.theme.global.colors.border};
 `
 
 export type TPaginationAction = "nextPage" | "prevPage" | "firstPage" | "lastPage";
@@ -74,7 +75,7 @@ export function PaginationNavigator(props: PaginationNavigator) {
   const onLastPageClick = () => {
     const newFilter = JSON.parse(JSON.stringify(filter)) as Filter;
     const limit = filter.limit || 10
-    newFilter.offset = limit * +Math.ceil(Number(totalElements) / limit).toFixed(0)
+    newFilter.offset = limit * +Math.ceil(Number(totalElements) / limit).toFixed(0) - limit
     if (!isLoading) {
       onChange(newFilter, "lastPage");
     }
@@ -126,15 +127,17 @@ function Pagination(props: PaginationProps) {
     <Box direction="row" gap="xsmall" align={'center'}>
       {showPages &&
         <NavigationItem disabled={disablePrevBtn} onClick={disablePrevBtn ? undefined : onFirstPageClick}>
-          First
+          <Text size={'xsmall'}>First</Text>
         </NavigationItem>
       }
       <NavigationItem disabled={disablePrevBtn} onClick={disablePrevBtn ? undefined : onPrevPageClick}>
         <FormPrevious size={'20px'} style={{ userSelect: "none"}} />
       </NavigationItem>
       {showPages &&
-        <NavigationItem>
-          <Text size={'small'}>Page {formatNumber(+currentPage)} of {formatNumber(+totalPages)}</Text>
+        <NavigationItem disabled={true}>
+          <Text size={'xsmall'} style={{ cursor: 'default' }}>
+            Page {formatNumber(+currentPage)} of {formatNumber(+totalPages)}
+          </Text>
         </NavigationItem>
       }
       <NavigationItem disabled={disableNextBtn} onClick={disableNextBtn ? undefined : onNextPageClick}>
@@ -142,7 +145,7 @@ function Pagination(props: PaginationProps) {
       </NavigationItem>
       {showPages &&
         <NavigationItem disabled={disableNextBtn} onClick={disableNextBtn ? undefined : onLastPageClick}>
-          Last
+          <Text size={'xsmall'}>Last</Text>
         </NavigationItem>
       }
     </Box>

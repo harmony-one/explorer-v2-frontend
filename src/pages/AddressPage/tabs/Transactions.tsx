@@ -114,18 +114,18 @@ export function Transactions(props: {
   const loadTransactions = async () => {
     setIsLoading(true)
     try {
-      let txs = await getTransactionsFromRPC()
-      // let txs = []
-      // const txsFilter = {...filter[props.type]}
-      // if (props.type === 'internal_transaction') {
-      //   txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
-      // }
-      // txs = await getRelatedTransactionsByType([
-      //   0,
-      //   id,
-      //   props.type,
-      //   txsFilter,
-      // ]);
+      // let txs = await getTransactionsFromRPC()
+      let txs = []
+      const txsFilter = {...filter[props.type]}
+      if (props.type === 'internal_transaction') {
+        txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
+      }
+      txs = await getRelatedTransactionsByType([
+        0,
+        id,
+        props.type,
+        txsFilter,
+      ]);
 
       // for transactions we display call method if any
       if (props.type === "transaction") {
@@ -212,7 +212,8 @@ export function Transactions(props: {
     if (cachedValue && id === prevId) {
       setTotalElements(cachedValue)
     } else {
-      getTxsCountFromRPC()
+      // getTxsCountFromRPC()
+      getTxsCount()
     }
   }, [props.type, id])
 
@@ -259,7 +260,8 @@ export function Transactions(props: {
       localStorage.setItem("tableLimitValue", `${limit}`);
     }
     setFilter({ ...filter, [props.type]: value });
-    history.push(`?offset=${offset}&limit=${limit}`)
+    const activeTab = queryParams.get('activeTab') || 0
+    history.push(`?activeTab=${activeTab}&offset=${offset}&limit=${limit}`)
   }
 
   return (

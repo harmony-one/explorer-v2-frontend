@@ -17,7 +17,9 @@ const transferSingleSignature = erc1155ABIManager.getEntryByName('TransferSingle
 const erc20TransferTopic =
   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 
-const Marker = styled.div<{ out: boolean }>`
+type TxDirection = 'in' | 'out' | 'self'
+
+const Marker = styled.div<{ direction: TxDirection }>`
   border-radius: 2px;
   padding: 5px;
 
@@ -25,12 +27,16 @@ const Marker = styled.div<{ out: boolean }>`
   font-weight: bold;
 
   ${(props) =>
-  props.out
+  props.direction === 'self'
     ? css`
+          background: ${(props) => props.theme.global.colors.backgroundBack};
+    `
+    : props.direction === 'out'
+        ? css`
           background: rgb(239 145 62);
           color: #fff;
         `
-    : css`
+        : css`
           background: rgba(105, 250, 189, 0.8);
           color: #1b295e;
         `};
@@ -41,7 +47,6 @@ const NeutralMarker = styled(Box)`
   padding: 5px;
 
   text-align: center;
-  font-weight: bold;
 `
 
 const TxMethod = styled(Text)`
@@ -135,6 +140,19 @@ const extractTokenId = memo((data: any) => {
   return ''
 })
 
+const TransferDirectionMarker = (props: { id: string, data: RelatedTransaction }) => {
+  const { id, data: { from, to } } = props
+
+  let direction: TxDirection = from === id ? 'out' : 'in'
+  if (from === to) {
+    direction = 'self'
+  }
+
+  return <Text size="12px">
+    <Marker direction={direction}>{direction.toUpperCase()}</Marker>
+  </Text>
+}
+
 export function getERC20Columns(id: string): ColumnConfig<any>[] {
   return [
     {
@@ -193,16 +211,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
     {
       property: 'marker',
       header: <></>,
-      render: (data: RelatedTransaction) => {
-        const { from } = data
-        return (
-          <Text size="10px">
-            <Marker out={from === id}>
-              {from === id ? 'OUT' : 'IN'}
-            </Marker>
-          </Text>
-        )
-      }
+      render: (data: RelatedTransaction) => <TransferDirectionMarker id={id} data={data} />
     },
     {
       property: 'to',
@@ -416,13 +425,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
     {
       property: "marker",
       header: <></>,
-      render: (data: RelatedTransaction) => (
-        <Text size="12px">
-          <Marker out={data.from === id}>
-            {data.from === id ? "OUT" : "IN"}
-          </Marker>
-        </Text>
-      ),
+      render: (data: RelatedTransaction) => <TransferDirectionMarker id={id} data={data} />,
     },
     {
       property: "to",
@@ -542,13 +545,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
     {
       property: "marker",
       header: <></>,
-      render: (data: RelatedTransaction) => (
-        <Text size="10px">
-          <Marker out={data.from === id}>
-            {data.from === id ? "OUT" : "IN"}
-          </Marker>
-        </Text>
-      ),
+      render: (data: RelatedTransaction) => <TransferDirectionMarker id={id} data={data} />,
     },
     {
       property: "to",
@@ -714,13 +711,7 @@ export const getStackingColumns = (id: string): ColumnConfig<any>[] => {
     {
       property: "marker",
       header: <></>,
-      render: (data: RelatedTransaction) => (
-        <Text size="12px">
-          <Marker out={data.from === id}>
-            {data.from === id ? "OUT" : "IN"}
-          </Marker>
-        </Text>
-      ),
+      render: (data: RelatedTransaction) => <TransferDirectionMarker id={id} data={data} />,
     },
     {
       property: "delegator",
