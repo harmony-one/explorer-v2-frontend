@@ -81,19 +81,22 @@ export function PaginationNavigator(props: PaginationNavigator) {
     }
   };
 
+  const currentPage = +(+offset / limit).toFixed(0) + 1
+  const totalPages = +Math.ceil(Number(totalElements) / limit).toFixed(0)
+
   return (
     <Box style={{ flex: "0 0 auto" }}>
       <Pagination
         //@ts-ignore
-        currentPage={+(+offset / limit).toFixed(0) + 1}
-        totalPages={+Math.ceil(Number(totalElements) / limit).toFixed(0)}
+        currentPage={currentPage}
+        totalPages={totalPages}
         onFirstPageClick={onFirstPageClick}
         onPrevPageClick={onPrevClick}
         onNextPageClick={onNextClick}
         onLastPageClick={onLastPageClick}
         showPages={showPages}
-        disableNextBtn={elements.length < limit}
         disablePrevBtn={filter.offset === 0}
+        disableNextBtn={currentPage >= totalPages}
       />
     </Box>
   );
