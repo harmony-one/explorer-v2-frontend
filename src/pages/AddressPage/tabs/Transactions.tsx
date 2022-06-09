@@ -8,11 +8,6 @@ import {
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
-  Address,
-  ONEValue,
-  DateTime, ONEValueWithInternal, TipContent
-} from "src/components/ui";
-import {
   Filter,
   RelatedTransaction,
   RelatedTransactionType, RPCTransactionHarmony
@@ -29,6 +24,7 @@ import { getColumns, getERC20Columns, getNFTColumns, getStackingColumns } from "
 import useQuery from "../../../hooks/useQuery";
 
 const internalTxsBlocksFrom = 23000000
+const allowedLimits = [10, 25, 50, 100]
 
 const relatedTxMap: Record<RelatedTransactionType, string> = {
   transaction: "Transaction",
@@ -52,11 +48,16 @@ export function Transactions(props: {
 }) {
   const history = useHistory()
   const queryParams = useQuery();
-  const limitValue = queryParams.get('limit') || localStorage.getItem("tableLimitValue");
+  let limitParam = +(queryParams.get('limit') || localStorage.getItem("tableLimitValue") || allowedLimits[0]);
+  const offsetParam = +(queryParams.get('offset') || 0)
+
+  if (!allowedLimits.includes(limitParam)) {
+    limitParam = allowedLimits[0]
+  }
 
   const initFilter: Filter = {
-    offset: +(queryParams.get('offset') || 0),
-    limit: +(limitValue || 10),
+    offset: offsetParam,
+    limit: limitParam,
     orderBy: "block_number",
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
