@@ -34,61 +34,12 @@ import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
 import { ToolsTab } from "./tabs/tools";
 import { config } from "../../config";
+import useQuery from "../../hooks/useQuery";
 
 export function AddressPage() {
   const history = useHistory();
-  const tabParamName = "activeTab=";
-  const oldTabParamName = "txType=";
-  let activeTab = 0;
-
-  try {
-    const newValue = +history.location.search.slice(
-      history.location.search.indexOf("activeTab=") + tabParamName.length
-    );
-
-    const oldTxType = history.location.search.slice(
-      history.location.search.indexOf(oldTabParamName) + oldTabParamName.length
-    );
-
-    activeTab = isNaN(newValue) ? 0 : newValue;
-
-    switch (oldTxType) {
-      case "regular": {
-        activeTab = 0;
-        break;
-      }
-
-      case "staking": {
-        activeTab = 1;
-        break;
-      }
-
-      case "hrc20": {
-        activeTab = 3;
-        break;
-      }
-
-      case "hrc721": {
-        activeTab = 4;
-
-        break;
-      }
-
-      case "hrc721Assets": {
-        activeTab = 5;
-        break;
-      }
-
-      default: {
-      }
-    }
-
-    if (activeTab === 0 && history.location.hash === "#code") {
-      activeTab = 7; // note how do i derive this active tab? its a bit hard coded atm
-    }
-  } catch {
-    activeTab = 0;
-  }
+  const queryParams = useQuery();
+  const activeTab = +(queryParams.get('activeTab') || 0);
 
   const [contracts, setContracts] = useState<AddressDetails | null>(null);
   const [contractShardId, setContractShardId] = useState<ShardID | null>(null);
@@ -102,7 +53,7 @@ export function AddressPage() {
   const [inventoryHolders, setInventoryForHolders] = useState<
     IUserERC721Assets[]
     >([]);
-  const [activeIndex, setActiveIndex] = useState(+activeTab);
+  const [activeIndex, setActiveIndex] = useState(activeTab);
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();

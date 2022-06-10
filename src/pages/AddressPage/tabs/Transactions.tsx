@@ -218,19 +218,31 @@ export function Transactions(props: {
     }
   }, [props.type, id])
 
+  // Change active tab
   useEffect(() => {
-    if (prevType === props.type) {
-      loadTransactions()
+    // If tab changed (and not initially loaded), drop offset to zero
+    if (prevType) {
+      setFilter({
+        ...initFilterState,
+        [props.type]: {
+          ...initFilter,
+          offset: 0
+        }
+      })
     }
-  }, [filter[props.type], id]);
-
-  useEffect(() => {
     if (cachedTxs[props.type]) {
       setRelatedTrxs(cachedTxs[props.type]);
     } else {
       loadTransactions()
     }
   }, [props.type])
+
+  // Change params: offset, limit
+  useEffect(() => {
+    if (prevType === props.type) {
+      loadTransactions()
+    }
+  }, [filter[props.type], id]);
 
   let columns = [];
 
