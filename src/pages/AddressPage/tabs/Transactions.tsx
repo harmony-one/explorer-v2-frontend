@@ -1,17 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box } from "grommet";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import {
   getByteCodeSignatureByHash,
   getRelatedTransactionsByType,
   getRelatedTransactionsCountByType
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
-import {
-  Address,
-  ONEValue,
-  DateTime, ONEValueWithInternal, TipContent
-} from "src/components/ui";
 import {
   Filter,
   RelatedTransaction,
@@ -26,8 +21,10 @@ import {
   hmyv2_getTransactionsHistory
 } from "../../../api/rpc";
 import { getColumns, getERC20Columns, getNFTColumns, getStackingColumns } from "./txsColumns";
+import useQuery from "../../../hooks/useQuery";
 
 const internalTxsBlocksFrom = 23000000
+const allowedLimits = [10, 25, 50, 100]
 
 const relatedTxMap: Record<RelatedTransactionType, string> = {
   transaction: "Transaction",
@@ -49,11 +46,18 @@ export function Transactions(props: {
   rowDetails?: (row: any) => JSX.Element;
   onTxsLoaded?: (txs: RelatedTransaction[]) => void;
 }) {
-  const limitValue = localStorage.getItem("tableLimitValue");
+  const history = useHistory()
+  const queryParams = useQuery();
+  let limitParam = +(queryParams.get('limit') || localStorage.getItem("tableLimitValue") || allowedLimits[0]);
+  const offsetParam = +(queryParams.get('offset') || 0)
+
+  if (!allowedLimits.includes(limitParam)) {
+    limitParam = allowedLimits[0]
+  }
 
   const initFilter: Filter = {
-    offset: 0,
-    limit: limitValue ? +limitValue : 10,
+    offset: offsetParam,
+    limit: limitParam,
     orderBy: "block_number",
     orderDirection: "desc",
     filters: [{ type: "gte", property: "block_number", value: 0 }],
@@ -111,18 +115,18 @@ export function Transactions(props: {
   const loadTransactions = async () => {
     setIsLoading(true)
     try {
-      let txs = await getTransactionsFromRPC()
-      // let txs = []
-      // const txsFilter = {...filter[props.type]}
-      // if (props.type === 'internal_transaction') {
-      //   txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
-      // }
-      // txs = await getRelatedTransactionsByType([
-      //   0,
-      //   id,
-      //   props.type,
-      //   txsFilter,
-      // ]);
+      // let txs = await getTransactionsFromRPC()
+      let txs = []
+      const txsFilter = {...filter[props.type]}
+      if (props.type === 'internal_transaction') {
+        txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
+      }
+      txs = await getRelatedTransactionsByType([
+        0,
+        id,
+        props.type,
+        txsFilter,
+      ]);
 
       // for transactions we display call method if any
       if (props.type === "transaction") {
@@ -209,23 +213,36 @@ export function Transactions(props: {
     if (cachedValue && id === prevId) {
       setTotalElements(cachedValue)
     } else {
-      getTxsCountFromRPC()
+      // getTxsCountFromRPC()
+      getTxsCount()
     }
   }, [props.type, id])
 
+  // Change active tab
   useEffect(() => {
-    if (prevType === props.type) {
-      loadTransactions()
+    // If tab changed (and not initially loaded), drop offset to zero
+    if (prevType) {
+      setFilter({
+        ...initFilterState,
+        [props.type]: {
+          ...initFilter,
+          offset: 0
+        }
+      })
     }
-  }, [filter[props.type], id]);
-
-  useEffect(() => {
     if (cachedTxs[props.type]) {
       setRelatedTrxs(cachedTxs[props.type]);
     } else {
       loadTransactions()
     }
   }, [props.type])
+
+  // Change params: offset, limit
+  useEffect(() => {
+    if (prevType === props.type) {
+      loadTransactions()
+    }
+  }, [filter[props.type], id]);
 
   let columns = [];
 
@@ -250,6 +267,16 @@ export function Transactions(props: {
     }
   }
 
+  const onFilterChanged = (value: Filter) => {
+    const { offset, limit } = value
+    if (limit !== filter[props.type].limit) {
+      localStorage.setItem("tableLimitValue", `${limit}`);
+    }
+    setFilter({ ...filter, [props.type]: value });
+    const activeTab = queryParams.get('activeTab') || 0
+    history.push(`?activeTab=${activeTab}&offset=${offset}&limit=${limit}`)
+  }
+
   return (
     <Box style={{ padding: "10px" }}>
       <TransactionsTable
@@ -259,12 +286,7 @@ export function Transactions(props: {
         limit={+limit}
         filter={filter[props.type]}
         isLoading={isLoading}
-        setFilter={(value) => {
-          if (value.limit !== filter[props.type].limit) {
-            localStorage.setItem("tableLimitValue", `${value.limit}`);
-          }
-          setFilter({ ...filter, [props.type]: value });
-        }}
+        setFilter={onFilterChanged}
         noScrollTop
         minWidth="1266px"
         hideCounter

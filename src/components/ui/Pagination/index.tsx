@@ -3,8 +3,22 @@ import { Box, Text, Select } from "grommet";
 import { Filter } from "src/types";
 import { FormPrevious, FormNext } from "grommet-icons";
 import { formatNumber } from "src/components/ui/utils";
+import styled from "styled-components";
 
-export type TPaginationAction = "nextPage" | "prevPage";
+const NavigationItem = styled(Box)<{ disabled?: boolean }>`
+  border-radius: 4px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  text-align: center;
+  background: ${(props) => props.theme.global.colors.backgroundBack};
+  cursor: ${(props) => props.disabled ? 'default': 'pointer'};
+  opacity: ${(props) => props.disabled ? 0.6: 1};
+  border: 1px solid ${(props) => props.theme.global.colors.border};
+`
+
+export type TPaginationAction = "nextPage" | "prevPage" | "firstPage" | "lastPage";
 
 interface PaginationNavigator {
   filter: Filter;
@@ -32,6 +46,15 @@ export function PaginationNavigator(props: PaginationNavigator) {
 
   const { offset = 0, limit = 10 } = filter;
 
+  const onFirstPageClick = () => {
+    const newFilter = JSON.parse(JSON.stringify(filter)) as Filter;
+    newFilter.offset = 0;
+
+    if (!isLoading) {
+      onChange(newFilter, "firstPage");
+    }
+  };
+
   const onPrevClick = () => {
     const newFilter = JSON.parse(JSON.stringify(filter)) as Filter;
     newFilter.offset = newFilter.offset - (filter.limit || 10);
@@ -49,17 +72,31 @@ export function PaginationNavigator(props: PaginationNavigator) {
     }
   };
 
+  const onLastPageClick = () => {
+    const newFilter = JSON.parse(JSON.stringify(filter)) as Filter;
+    const limit = filter.limit || 10
+    newFilter.offset = limit * +Math.ceil(Number(totalElements) / limit).toFixed(0) - limit
+    if (!isLoading) {
+      onChange(newFilter, "lastPage");
+    }
+  };
+
+  const currentPage = +(+offset / limit).toFixed(0) + 1
+  const totalPages = +Math.ceil(Number(totalElements) / limit).toFixed(0)
+
   return (
     <Box style={{ flex: "0 0 auto" }}>
       <Pagination
         //@ts-ignore
-        currentPage={+(+offset / limit).toFixed(0) + 1}
-        totalPages={+Math.ceil(Number(totalElements) / limit).toFixed(0)}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onFirstPageClick={onFirstPageClick}
         onPrevPageClick={onPrevClick}
         onNextPageClick={onNextClick}
+        onLastPageClick={onLastPageClick}
         showPages={showPages}
-        disableNextBtn={elements.length < limit}
         disablePrevBtn={filter.offset === 0}
+        disableNextBtn={currentPage >= totalPages}
       />
     </Box>
   );
@@ -68,8 +105,10 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   showPages?: boolean;
+  onFirstPageClick: () => void;
   onPrevPageClick: () => void;
   onNextPageClick: () => void;
+  onLastPageClick: () => void;
   disableNextBtn: boolean;
   disablePrevBtn: boolean;
 }
@@ -78,38 +117,40 @@ function Pagination(props: PaginationProps) {
   const {
     currentPage,
     totalPages,
+    onFirstPageClick,
     onPrevPageClick,
     onNextPageClick,
+    onLastPageClick,
     showPages,
     disableNextBtn,
     disablePrevBtn,
   } = props;
 
   return (
-    <Box direction="row" gap="small">
-      <FormPrevious
-        onClick={disablePrevBtn ? undefined : onPrevPageClick}
-        style={{
-          cursor: "pointer",
-          userSelect: "none",
-          opacity: disablePrevBtn ? 0.5 : 1,
-        }}
-      />
-      {showPages && (
-        <Text style={{ fontWeight: "bold" }}>{formatNumber(+currentPage)}</Text>
-      )}
-      {showPages && <Text style={{ fontWeight: 300 }}>/</Text>}
-      {showPages && (
-        <Text style={{ fontWeight: 300 }}>{formatNumber(+totalPages)}</Text>
-      )}
-      <FormNext
-        onClick={disableNextBtn ? undefined : onNextPageClick}
-        style={{
-          cursor: "pointer",
-          userSelect: "none",
-          opacity: disableNextBtn ? 0.5 : 1,
-        }}
-      />
+    <Box direction="row" gap="xsmall" align={'center'}>
+      {showPages &&
+        <NavigationItem disabled={disablePrevBtn} onClick={disablePrevBtn ? undefined : onFirstPageClick}>
+          <Text size={'xsmall'}>First</Text>
+        </NavigationItem>
+      }
+      <NavigationItem disabled={disablePrevBtn} onClick={disablePrevBtn ? undefined : onPrevPageClick}>
+        <FormPrevious size={'20px'} style={{ userSelect: "none"}} />
+      </NavigationItem>
+      {showPages &&
+        <NavigationItem disabled={true}>
+          <Text size={'xsmall'} style={{ cursor: 'default' }}>
+            Page {formatNumber(+currentPage)} of {formatNumber(+totalPages)}
+          </Text>
+        </NavigationItem>
+      }
+      <NavigationItem disabled={disableNextBtn} onClick={disableNextBtn ? undefined : onNextPageClick}>
+        <FormNext size={'20px'} style={{ userSelect: "none" }} />
+      </NavigationItem>
+      {showPages &&
+        <NavigationItem disabled={disableNextBtn} onClick={disableNextBtn ? undefined : onLastPageClick}>
+          <Text size={'xsmall'}>Last</Text>
+        </NavigationItem>
+      }
     </Box>
   );
 }
@@ -134,7 +175,7 @@ export function PaginationRecordsPerPage(props: ElementsPerPage) {
 
   return (
     <Box direction="row" gap="small" align="center">
-      <Box style={{ width: "95px" }}>
+      <Box style={{ width: "105px" }}>
         <Select
           options={options}
           value={limit.toString()}
