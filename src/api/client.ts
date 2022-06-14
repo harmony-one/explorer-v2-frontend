@@ -15,6 +15,7 @@ import {
 } from "./client.interface";
 import { ApiCache } from "./ApiCache";
 import { get4byteSignatureByHex } from "./3rdPartyApi";
+import { mapHrcTokenValuesToObject } from "../utils";
 // import { ClientCache } from "./clientCache";
 
 // const clientCache = new ClientCache({
@@ -114,16 +115,28 @@ export function getContractsByField(params: any[]) {
   return transport("getContractsByField", params) as Promise<AddressDetails>;
 }
 
-export function getAllERC20() {
-  return transport("getAllERC20", []) as Promise<any[]>;
+export async function getAllERC20(fullJson  = false): Promise<any> {
+  const items = await transport("getAllERC20", [fullJson]);
+  if (fullJson) {
+    return items
+  }
+  return items.map(mapHrcTokenValuesToObject)
 }
 
-export function getAllERC721() {
-  return transport("getAllERC721", []) as Promise<any[]>;
+export async function getAllERC721(fullJson = false) {
+  const items = await transport("getAllERC721", [fullJson]);
+  if (fullJson) {
+    return items
+  }
+  return items.map(mapHrcTokenValuesToObject)
 }
 
-export function getAllERC1155() {
-  return transport("getAllERC1155", []) as Promise<any[]>;
+export async function getAllERC1155(fullJson = false) {
+  const items = await transport("getAllERC1155", [fullJson]);
+  if (fullJson) {
+    return items
+  }
+  return items.map(mapHrcTokenValuesToObject)
 }
 
 export function getUserERC20Balances(params: any[]) {
