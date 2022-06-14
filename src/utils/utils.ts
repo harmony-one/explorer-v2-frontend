@@ -54,3 +54,22 @@ export const mapBlockchainTxToRelated = (
   }
   return resultedTx
 }
+
+export const mapHrcTokenValuesToObject = (values: Array<string | number | null>) => {
+  const [address, symbol, name, totalSupply, holders, transactionCount, lastUpdateBlockNumber, decimals, circulatingSupply, meta, contracturi] = values
+  const token = {
+    address,
+    symbol,
+    name,
+    totalSupply,
+    holders,
+    transactionCount,
+    lastUpdateBlockNumber,
+    meta,
+    contracturi,
+    decimals,
+    circulatingSupply
+  }
+  // Remove null values
+  return Object.fromEntries(Object.entries(token).filter(([_, v]) => v != null));
+}
