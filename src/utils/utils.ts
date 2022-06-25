@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Big from "big.js";
 import { RelatedTransaction, RelatedTransactionType, RPCTransactionHarmony, TransactionExtraMark } from "../types";
 import { getAddress } from "./getAddress/GetAddress";
 import { bridgeTokensMap } from "src/config";
@@ -50,7 +51,7 @@ export const mapBlockchainTxToRelated = (
     resultedTx.to = getAddress(tx.to).basicHex
   }
   if (typeof tx.value !== 'undefined') {
-    resultedTx.value = BigInt(tx.value).toString()
+    resultedTx.value = Big(tx.value).toString()
   }
   return resultedTx
 }
