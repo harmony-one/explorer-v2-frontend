@@ -115,12 +115,13 @@ export const Address = (props: IAddress) => {
             style={{
               marginLeft: hideCopyBtn ? "0px" : "7px",
               cursor: "pointer",
-              textDecoration:
-                address === EMPTY_ADDRESS
-                  ? "none"
-                  : !!parsedName
-                  ? "underline"
-                  : "none",
+              textDecoration: 'none',
+              // textDecoration:
+              //   address === EMPTY_ADDRESS
+              //     ? "none"
+              //     : !!parsedName
+              //     ? "underline"
+              //     : "none",
               ...style,
             }}
             isShortEllipsis={isShortEllipsis}
