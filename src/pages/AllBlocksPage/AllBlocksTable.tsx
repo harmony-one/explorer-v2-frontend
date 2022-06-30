@@ -167,14 +167,21 @@ export function AllBlocksTable() {
       </Box>
       <Box style={{ overflow: "auto" }}>
         <DataTable
-          className={"g-table-header"}
+          className={"g-table-transactions"}
           style={{ width: "100%", minWidth: "1110px" }}
           columns={getColumns({ history, shardNumber })}
           data={blocks}
           step={10}
+          background={{
+            header: {
+              color: 'tableRowHover'
+            }
+          }}
           border={{
             header: {
-              color: "brand",
+              color: "border",
+              side: 'top',
+              size: '1px'
             },
             body: {
               color: "border",

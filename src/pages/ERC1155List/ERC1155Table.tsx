@@ -87,15 +87,14 @@ export function ERC1155Table(props: TransactionTableProps) {
           columns={getColumns({ history })}
           data={data}
           border={{
-            header: {
-              color: "brand",
-            },
+            header: false,
             body: {
               color: "border",
-              side: "top",
+              side: "bottom",
               size: "1px",
             },
           }}
+          background={{header: 'unset'}}
         />
       </Box>
       <Box

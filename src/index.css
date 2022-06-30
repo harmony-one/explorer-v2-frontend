@@ -31,8 +31,6 @@ a {
 
 /* Tooltip override */
 body.light > div > div[aria-hidden=false] > div > div {
-    /*background: #fff  !important;*/
-    /*border: 1px solid #f3f3f3;*/
     box-shadow: none;
     background: unset;
 }
@@ -40,15 +38,13 @@ body.light > div > div[aria-hidden=false] > div > div {
 body.dark > div > div[aria-hidden=false] > div > div {
     box-shadow: none;
     background: unset;
-    /*background: #1b2a5e  !important;*/
-    /*border: 1px solid #3a54b3;*/
 }
 
 table:not(.g-table-transactions) tr:hover {
     background: none;
 }
 
-table:not(.g-table-transactions) tr:first-child th, table:not(.g-table-transactions) tr:first-child td {
+table:not(.g-table-transactions) thead tr:first-child th, table:not(.g-table-transactions) thead tr:first-child td {
     border: none;
 }
 

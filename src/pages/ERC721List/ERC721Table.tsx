@@ -86,15 +86,14 @@ export function ERC721Table(props: TransactionTableProps) {
           data={data}
           primaryKey={'address'}
           border={{
-            header: {
-              color: "brand",
-            },
+            header: false,
             body: {
               color: "border",
-              side: "top",
+              side: "bottom",
               size: "1px",
             },
           }}
+          background={{header: 'unset'}}
         />
       </Box>
       <Box
