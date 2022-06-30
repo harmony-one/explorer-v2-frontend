@@ -146,7 +146,7 @@ function getColumns(props: any) {
       render: (data: Erc20) => <Box direction={'row'} style={{ display: 'flex', alignItems: 'center' }}>
         <Text size={'small'}>{data.name}</Text>
         {data.isBridged && <div style={{ marginLeft: "4px", height: '14px', cursor: 'pointer' }}>
-          <Tip content={'Token is available on Harmony Bridge'}>
+          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Token is available on Harmony Bridge'} />}>
             <StatusGood size={'14px'} color={'successText'} />
           </Tip>
         </div>}
