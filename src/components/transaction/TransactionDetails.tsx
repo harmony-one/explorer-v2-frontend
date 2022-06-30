@@ -188,12 +188,10 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
           data={txData}
           step={10}
           border={{
-            header: {
-              color: "none",
-            },
+            header: false,
             body: {
               color: "border",
-              side: "top",
+              side: "bottom",
               size: "1px",
             },
           }}

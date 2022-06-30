@@ -100,12 +100,10 @@ export const BlockDetails: FunctionComponent<BlockDetailsProps> = ({
           data={blockData}
           step={10}
           border={{
-            header: {
-              color: "none",
-            },
+            header: false,
             body: {
               color: "border",
-              side: "top",
+              side: "bottom",
               size: "1px",
             },
           }}

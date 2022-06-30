@@ -91,6 +91,7 @@ export const transactionPropertySort: Record<string, number> = {
 };
 
 export const transactionPropertyDescriptions: Record<string, string> = {
+    Status: "The status of the transaction",
     shardID: "The shard number where the transaction belongs.",
     blockNumber: "The number of the block in which the transaction was recorded.",
     hash: "A TxHash or transaction hash is a unique 66 characters identifier that is generated whenever a transaction is executed.",
