@@ -10,6 +10,7 @@ const ArrowDown = styled(Box)`
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 8px solid ${(props) => props.theme.global.colors.backgroundTip};
+  border-bottom: 0 solid transparent;
 `
 
 export const TipContent = (props: { message: string | JSX.Element, showArrow?: boolean }) => {

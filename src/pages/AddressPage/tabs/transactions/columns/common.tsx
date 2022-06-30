@@ -53,8 +53,7 @@ export const TxMethod = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  // background: ${(props) => props.theme.global.colors.backgroundTip};
-  background-color: #EFF8FF;
+  background: ${(props) => props.theme.global.colors.backgroundMark};
   font-size: 12px;
 `
 
@@ -63,7 +62,6 @@ export const TextEllipsis = styled(Text)`
   overflow: hidden;
   text-overflow: ellipsis;
 `
-
 
 export const memo = (f: Function) => {
   const cache = new Map()
