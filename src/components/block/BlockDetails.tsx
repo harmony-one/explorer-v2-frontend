@@ -20,7 +20,6 @@ const columns = [
         <Tip
           dropProps={{ align: { left: "right" } }}
           content={<TipContent message={blockPropertyDescriptions[e.key]} />}
-          plain
         >
           <span>
             <CircleQuestion size="small" />

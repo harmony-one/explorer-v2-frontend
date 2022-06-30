@@ -33,12 +33,13 @@ const getColumns = ({ type = "" }) => [
           content={
             <TipContent
               message={
-                transactionPropertyDescriptions[e.key + type] ||
-                transactionPropertyDescriptions[e.key]
+                <Text size={'small'}>
+                  {transactionPropertyDescriptions[e.key + type] ||
+                    transactionPropertyDescriptions[e.key]}
+                </Text>
               }
             />
           }
-          // plain
         >
           <span>
             <CircleQuestion size="small" />

@@ -58,6 +58,7 @@ export const blockPropertyDisplayNames: Record<string, string> = {
 };
 
 export const blockPropertyDescriptions: Record<string, string> = {
+  shard: 'Shard Number',
   number:
     "Also known as Block Number. The block height, which indicates the length of the blockchain, increases after the addition of the new block.",
   hash: "The hash of the block header of the current block.",

@@ -180,12 +180,11 @@ function getColumns(props: any) {
               dropProps={{ align: { left: "right" } }}
               content={
                 <TipContent
-                  message={`last update block height ${formatNumber(
+                  message={`Last update block height: ${formatNumber(
                     +data.lastUpdateBlockNumber
                   )}`}
                 />
               }
-              plain
             >
               <span style={{ marginLeft: "5px" }}>
                 <CircleQuestion size="small" />
@@ -217,12 +216,11 @@ function getColumns(props: any) {
               dropProps={{ align: { right: "left" } }}
               content={
                 <TipContent
-                  message={`last update block height ${formatNumber(
+                  message={`Last update block height: ${formatNumber(
                     +data.lastUpdateBlockNumber
                   )}`}
                 />
               }
-              plain
             >
               <span style={{ marginLeft: "5px" }}>
                 <CircleQuestion size="small" />
@@ -250,12 +248,11 @@ function getColumns(props: any) {
             dropProps={{ align: { right: "left" } }}
             content={
               <TipContent
-                message={`last update block height ${formatNumber(
+                message={`Last update block height: ${formatNumber(
                   +data.lastUpdateBlockNumber
                 )}`}
               />
             }
-            plain
           >
             <span style={{ marginLeft: "5px" }}>
               <CircleQuestion size="small" />

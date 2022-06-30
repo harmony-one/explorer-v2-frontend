@@ -262,15 +262,15 @@ const addressPropertyDisplayValues: Record<
         formatNumber
       />
       <Tip
-        dropProps={{ align: { left: "right" } }}
+        dropProps={{ align: { bottom: "top" }}}
         content={
           <TipContent
-            message={`last update block height ${formatNumber(
+            showArrow={true}
+            message={`Last update block height: ${formatNumber(
               +data.lastUpdateBlockNumber
             )}`}
           />
         }
-        plain
       >
         <span style={{ marginLeft: "5px" }}>
           <CircleQuestion size="small" />
@@ -283,15 +283,15 @@ const addressPropertyDisplayValues: Record<
       <Box direction={"row"}>
         <>{formatNumber(+value)}</>
         <Tip
-          dropProps={{ align: { left: "right" } }}
+          dropProps={{ align: { bottom: "top" }}}
           content={
             <TipContent
-              message={`last update block height ${formatNumber(
+              showArrow={true}
+              message={`Last update block height: ${formatNumber(
                 +data.lastUpdateBlockNumber
               )}`}
             />
           }
-          plain
         >
           <span style={{ marginLeft: "5px" }}>
             <CircleQuestion size="small" />
@@ -312,15 +312,15 @@ const addressPropertyDisplayValues: Record<
         formatNumber
       />
       <Tip
-        dropProps={{ align: { left: "right" } }}
+        dropProps={{ align: { bottom: "top" }}}
         content={
           <TipContent
-            message={`last update block height ${formatNumber(
+            showArrow={true}
+            message={`Last update block height: ${formatNumber(
               +data.lastUpdateBlockNumber
             )}`}
           />
         }
-        plain
       >
         <span style={{ marginLeft: "5px" }}>
           <CircleQuestion size="small" />

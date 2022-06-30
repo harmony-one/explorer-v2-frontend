@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from 'grommet'
+import { Box, Text } from 'grommet'
 import styled from "styled-components";
 
 const ArrowDown = styled(Box)`
@@ -12,8 +12,12 @@ const ArrowDown = styled(Box)`
   border-top: 8px solid ${(props) => props.theme.global.colors.backgroundTip};
 `
 
-export const TipContent = (props: { message: string | JSX.Element }) => (
-  <Box
+export const TipContent = (props: { message: string | JSX.Element, showArrow?: boolean }) => {
+  let message = props.message
+  if (typeof message === 'string') {
+    message = <Text size={'small'}>{message}</Text>
+  }
+  return <Box
     direction="column"
     align="center"
     background="backgroundTip"
@@ -21,7 +25,9 @@ export const TipContent = (props: { message: string | JSX.Element }) => (
     round={{ size: 'xsmall' }}
     style={{ position: 'relative', color: 'white', width: 'fit-content' }}
   >
-    <Box>{props.message}</Box>
-    <ArrowDown border={{ color: '#EFF8FF' }} />
+    <Box>{message}</Box>
+    {props.showArrow &&
+      <ArrowDown border={{ color: '#EFF8FF' }} />
+    }
   </Box>
-)
+}

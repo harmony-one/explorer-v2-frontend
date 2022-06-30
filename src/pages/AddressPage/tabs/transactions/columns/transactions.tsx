@@ -74,6 +74,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         }
 
         const tipContent = <TipContent
+            showArrow={true}
             message={<Text size={'small'} textAlign={'center'}>{signature}</Text>}
         />
 
