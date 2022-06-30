@@ -2,7 +2,7 @@ import { Box, ColumnConfig, Text } from "grommet";
 import { Address, DateTime, TokenValue } from "../../../../../components/ui";
 import { RelatedTransaction } from "../../../../../types";
 import React from "react";
-import { NeutralMarker, TransactionAddress, TransferDirectionMarker, TxMethod } from "./common";
+import { TransactionAddress, TransferDirectionMarker, TxMethod } from "./common";
 
 export function getERC20Columns(id: string): ColumnConfig<any>[] {
   return [
@@ -12,7 +12,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '95px' }}
+          style={{ width: '95px' }}
         >
           Hash
         </Text>
@@ -24,19 +24,14 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
     {
       property: 'event',
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           Event
         </Text>
       ),
       render: (data: any) => {
         const eventType = data.eventType || '-'
-
         return (
-          <TxMethod size="10px">
-            <NeutralMarker background={'backgroundBack'}>
-              {eventType}
-            </NeutralMarker>
-          </TxMethod>
+          <TxMethod>{eventType}</TxMethod>
         )
       }
     },
@@ -46,7 +41,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '120px' }}
+          style={{ width: '120px' }}
         >
           From
         </Text>
@@ -64,7 +59,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '120px' }}
+          style={{ width: '120px' }}
         >
           To
         </Text>
@@ -77,7 +72,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '320px' }}
+          style={{ width: '320px' }}
         >
           Value
         </Text>
@@ -108,7 +103,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '120px' }}
+          style={{ width: '120px' }}
         >
           Token
         </Text>
@@ -129,7 +124,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '140px' }}
+          style={{ width: '140px' }}
         >
           Timestamp
         </Text>

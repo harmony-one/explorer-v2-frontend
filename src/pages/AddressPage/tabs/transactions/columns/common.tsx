@@ -20,44 +20,42 @@ export const erc20TransferTopic =
 export type TxDirection = 'in' | 'out' | 'self'
 
 export const Marker = styled.div<{ direction: TxDirection }>`
-  border-radius: 2px;
-  padding: 5px;
+  border-radius: 4px;
+  padding: 6px 3px;
+  width: 32px;
 
   text-align: center;
   font-weight: bold;
+  font-size: 90%;
 
   ${(props) =>
   props.direction === 'self'
     ? css`
-          background: ${(props) => props.theme.global.colors.backgroundBack};
+            background: ${(props) => props.theme.global.colors.backgroundBack};
     `
     : props.direction === 'out'
       ? css`
-          background: rgb(239 145 62);
-          color: #fff;
-        `
+            color: ${(props) => props.theme.global.colors.warning};
+            background: ${(props) => props.theme.global.colors.warningBackground};
+          `
       : css`
-          background: rgba(105, 250, 189, 0.8);
-          color: #1b295e;
+            color: ${(props) => props.theme.global.colors.success};
+            background: ${(props) => props.theme.global.colors.successBackground}
         `};
-`
-
-export const NeutralMarker = styled(Box)`
-  border-radius: 2px;
-  padding: 5px;
-
-  text-align: center;
 `
 
 export const TxMethod = styled(Text)`
   width: 100px;
-
-  > div {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  display: block;
+  border-radius: 4px;
+  padding: 2px 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // background: ${(props) => props.theme.global.colors.backgroundTip};
+  background-color: #EFF8FF;
+  font-size: 12px;
 `
 
 export const TextEllipsis = styled(Text)`
@@ -148,7 +146,8 @@ export const TransactionAddress = (props: { id: string, address: string, width?:
       isShortEllipsis={true}
       address={props.address}
       color={isRootAddress ? 'text' : 'brand'}
-      style={{ width, cursor: isRootAddress ? 'default' : 'pointer' }}
+      showLink={!isRootAddress}
+      style={{ width }}
     />
   </Text>
 }

@@ -38,7 +38,7 @@ const getColumns = ({ type = "" }) => [
               }
             />
           }
-          plain
+          // plain
         >
           <span>
             <CircleQuestion size="small" />

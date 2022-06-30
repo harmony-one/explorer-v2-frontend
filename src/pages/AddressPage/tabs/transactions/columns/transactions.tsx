@@ -1,8 +1,8 @@
 import { Box, ColumnConfig, Text, Tip } from "grommet";
 import React from "react";
 import { RelatedTransaction } from "../../../../../types";
-import { Address, DateTime, ONEValue } from "../../../../../components/ui";
-import { NeutralMarker, TransactionAddress, TransferDirectionMarker, TxMethod } from "./common";
+import { Address, DateTime, ONEValue, TipContent } from "../../../../../components/ui";
+import { TransactionAddress, TransferDirectionMarker, TxMethod } from "./common";
 
 export function getColumns(id: string): ColumnConfig<any>[] {
   return [
@@ -13,7 +13,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
     //     <Text
     //       color="minorText"
     //       size="small"
-    //       style={{ fontWeight: 300, width: "140px" }}
+    //       style={{ width: "140px" }}
     //     >
     //       Type
     //     </Text>
@@ -30,7 +30,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "95px" }}
+          style={{ width: "95px" }}
         >
           Hash
         </Text>
@@ -47,7 +47,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
     {
       property: "method",
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           Method
         </Text>
       ),
@@ -73,13 +73,16 @@ export function getColumns(id: string): ColumnConfig<any>[] {
           return <Text size="small">{"—"}</Text>;
         }
 
+        const tipContent = <TipContent
+            message={<Text size={'small'} textAlign={'center'}>{signature}</Text>}
+        />
+
         return (
-          <Tip content={<span>{signature}</span>}>
-            <TxMethod size="10px">
-              <NeutralMarker background={"backgroundBack"}>
-                {signature}
-              </NeutralMarker>
-            </TxMethod>
+          <Tip
+            dropProps={{ align: { bottom: "top" }}}
+            content={tipContent}
+          >
+            <TxMethod>{signature}</TxMethod>
           </Tip>
         );
       },
@@ -87,7 +90,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
     // {
     //   property: "shard",
     //   header: (
-    //     <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+    //     <Text color="minorText" size="small">
     //       Shard
     //     </Text>
     //   ),
@@ -109,7 +112,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "180px" }}
+          style={{ width: "180px" }}
         >
           From
         </Text>
@@ -127,7 +130,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "180px" }}
+          style={{ width: "180px" }}
         >
           To
         </Text>
@@ -140,7 +143,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "120px" }}
+          style={{ width: "120px" }}
         >
           Value
         </Text>
@@ -158,7 +161,7 @@ export function getColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "140px" }}
+          style={{ width: "140px" }}
         >
           Timestamp
         </Text>

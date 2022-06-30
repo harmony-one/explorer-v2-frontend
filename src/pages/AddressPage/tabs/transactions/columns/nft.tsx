@@ -4,7 +4,6 @@ import { RelatedTransaction } from "../../../../../types";
 import { Address, DateTime } from "../../../../../components/ui";
 import {
   extractTokenId,
-  NeutralMarker,
   TextEllipsis,
   TransactionAddress,
   TransferDirectionMarker,
@@ -19,7 +18,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "95px" }}
+          style={{ width: "95px" }}
         >
           Hash
         </Text>
@@ -36,19 +35,14 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
     {
       property: 'event',
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           Event
         </Text>
       ),
       render: (data: any) => {
         const eventType = data.eventType || '-'
-
         return (
-          <TxMethod size="10px">
-            <NeutralMarker background={'backgroundBack'}>
-              {eventType}
-            </NeutralMarker>
-          </TxMethod>
+          <TxMethod>{eventType}</TxMethod>
         )
       }
     },
@@ -58,7 +52,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "180px" }}
+          style={{ width: "180px" }}
         >
           From
         </Text>
@@ -76,7 +70,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "180px" }}
+          style={{ width: "180px" }}
         >
           To
         </Text>
@@ -89,7 +83,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
     //     <Text
     //       color="minorText"
     //       size="small"
-    //       style={{ fontWeight: 300, width: "120px" }}
+    //       style={{ width: "120px" }}
     //     >
     //       Value
     //     </Text>
@@ -106,7 +100,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '120px' }}
+          style={{ width: '120px' }}
         >
           TokenId
         </Text>
@@ -128,7 +122,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: '120px' }}
+          style={{ width: '120px' }}
         >
           Token
         </Text>
@@ -149,7 +143,7 @@ export function getNFTColumns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "140px" }}
+          style={{ width: "140px" }}
         >
           Timestamp
         </Text>

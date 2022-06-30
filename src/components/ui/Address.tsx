@@ -27,6 +27,7 @@ interface IAddress {
   displayHash?: boolean;
   noHistoryPush?: boolean;
   hideCopyBtn?: boolean;
+  showLink?: boolean;
 }
 
 const AddressText = styled(Text)<{ isShortEllipsis?: boolean }>`
@@ -48,6 +49,7 @@ export const Address = (props: IAddress) => {
     color = "brand",
     displayHash,
     hideCopyBtn = false,
+    showLink = true
   } = props;
   const history = useHistory();
   const ERC20Map = useERC20Pool();
@@ -81,12 +83,38 @@ export const Address = (props: IAddress) => {
 
   parsedName = address === EMPTY_ADDRESS ? "0x0" : parsedName;
 
-  let outPutAddress = address;
+  let outPutAddress: string;
   try {
     outPutAddress = currency === "ONE" ? getAddress(address).bech32 : toChecksumAddress(address);
   } catch {
     outPutAddress = address;
   }
+
+  const addressContent = <AddressText
+    size="small"
+    color={color}
+    style={{
+      marginLeft: hideCopyBtn ? "0px" : "7px",
+      cursor: showLink ? 'pointer' : 'default',
+      ...style,
+    }}
+    isShortEllipsis={isShortEllipsis}
+    onClick={
+      address === EMPTY_ADDRESS
+        ? undefined
+        : props.noHistoryPush
+          ? undefined
+          : (e) => {
+            e.preventDefault();
+            history.push(`/${type}/${address}`);
+          }
+    }
+  >
+    {parsedName ||
+      (isShort
+        ? `${outPutAddress.substr(0, 4)}...${outPutAddress.substr(-4)}`
+        : outPutAddress)}
+  </AddressText>
 
   return (
     <div style={{ display: "inline-block" }}>
@@ -108,40 +136,14 @@ export const Address = (props: IAddress) => {
             }}
           />
         )}
-        <Link to={address === EMPTY_ADDRESS ? "" : `/${type}/${address}`}>
-          <AddressText
-            size="small"
-            color={color}
-            style={{
-              marginLeft: hideCopyBtn ? "0px" : "7px",
-              cursor: "pointer",
-              textDecoration: 'none',
-              // textDecoration:
-              //   address === EMPTY_ADDRESS
-              //     ? "none"
-              //     : !!parsedName
-              //     ? "underline"
-              //     : "none",
-              ...style,
-            }}
-            isShortEllipsis={isShortEllipsis}
-            onClick={
-              address === EMPTY_ADDRESS
-                ? undefined
-                : props.noHistoryPush
-                ? undefined
-                : (e) => {
-                    e.preventDefault();
-                    history.push(`/${type}/${address}`);
-                  }
-            }
-          >
-            {parsedName ||
-              (isShort
-                ? `${outPutAddress.substr(0, 4)}...${outPutAddress.substr(-4)}`
-                : outPutAddress)}
-          </AddressText>
-        </Link>
+        {showLink &&
+          <Link to={address === EMPTY_ADDRESS ? "" : `/${type}/${address}`}>
+            {addressContent}
+          </Link>
+        }
+        {!showLink &&
+          addressContent
+        }
       </Box>
     </div>
   );

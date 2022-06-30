@@ -173,6 +173,8 @@ export function PaginationRecordsPerPage(props: ElementsPerPage) {
     onChange(newFilter);
   };
 
+  const renderOption = (option: string) => <Box pad={'small'}><Text size={'small'}>{option}</Text></Box>
+
   return (
     <Box direction="row" gap="small" align="center">
       <Box style={{ width: "105px" }}>
@@ -180,7 +182,7 @@ export function PaginationRecordsPerPage(props: ElementsPerPage) {
           options={options}
           value={limit.toString()}
           onChange={onChangeLimit}
-        />
+        >{renderOption}</Select>
       </Box>
       <Text size="small">records per page</Text>
     </Box>

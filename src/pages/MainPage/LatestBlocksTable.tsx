@@ -97,15 +97,14 @@ export const LatestBlocksTable = (params: { blocks: Block[] }) => {
         data={params.blocks}
         step={10}
         border={{
-          header: {
-            color: "brand",
-          },
+          header: false,
           body: {
             color: "border",
-            side: "top",
+            side: "bottom",
             size: "1px",
           },
         }}
+        background={{header: 'unset'}}
       />
     </Box>
   );

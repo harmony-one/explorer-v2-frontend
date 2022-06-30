@@ -12,7 +12,7 @@ export const getStakingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "95px" }}
+          style={{ width: "95px" }}
         >
           Hash
         </Text>
@@ -32,7 +32,7 @@ export const getStakingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "140px" }}
+          style={{ width: "140px" }}
         >
           Type
         </Text>
@@ -49,7 +49,7 @@ export const getStakingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "170px" }}
+          style={{ width: "170px" }}
         >
           Validator
         </Text>
@@ -69,7 +69,7 @@ export const getStakingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "170px" }}
+          style={{ width: "170px" }}
         >
           Delegator
         </Text>
@@ -84,7 +84,7 @@ export const getStakingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "220px" }}
+          style={{ width: "220px" }}
         >
           Value
         </Text>
@@ -107,7 +107,7 @@ export const getStakingColumns = (id: string): ColumnConfig<any>[] => {
         <Text
           color="minorText"
           size="small"
-          style={{ fontWeight: 300, width: "140px" }}
+          style={{ width: "140px" }}
         >
           Timestamp
         </Text>
