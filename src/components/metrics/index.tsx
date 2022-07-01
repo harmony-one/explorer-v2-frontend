@@ -311,7 +311,6 @@ function BlockLatency(params: { latency: number; latencyPerBlock: number[] }) {
               }
             />
           }
-          plain
         >
           <Text size="small" weight="bold">
             {params.latency.toFixed(2)}s

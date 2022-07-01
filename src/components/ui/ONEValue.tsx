@@ -56,25 +56,25 @@ export const ONEValue = (props: ONEValueProps) => {
       </Text>
       {USDValue && +price > 0 && !isTodayTransaction && !hideTip && (
         <Tip
-          dropProps={{ align: { left: "right" }, margin: { left: "small" } }}
+          dropProps={{ align: { bottom: "top" }}}
           content={
             <TipContent
+              showArrow={true}
               message={
-                <span>
+                <Text size={'small'}>
                   {`Displaying value on ${dayjs(timestamp).format(
                     "YYYY-MM-DD"
-                  )}. Current value`}{" "}
+                  )}. Current value:`}{" "}
                   <b>
                     $
                     {formatNumber(v * +lastPrice, {
                       maximumFractionDigits: 2,
                     })}
                   </b>
-                </span>
+                </Text>
               }
             />
           }
-          plain
         >
           <Text size="small">(${USDValue})</Text>
         </Tip>

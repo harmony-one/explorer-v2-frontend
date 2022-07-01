@@ -154,21 +154,20 @@ export function LatestTransactionsTable() {
   return (
     <Box style={{ overflow: "auto" }}>
       <DataTable
-        className={"g-table-header"}
+        className={"g-table-header g-table-header-plain"}
         style={{ width: "100%", minWidth: "620px" }}
         columns={getColumns({ history })}
         data={transactions}
         step={10}
         border={{
-          header: {
-            color: "brand",
-          },
+          header: false,
           body: {
             color: "border",
-            side: "top",
+            side: "bottom",
             size: "1px",
           },
         }}
+        background={{header: 'unset'}}
       />
     </Box>
   );

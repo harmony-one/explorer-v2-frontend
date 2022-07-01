@@ -1,13 +1,34 @@
 import React from 'react'
+import { Box, Text } from 'grommet'
+import styled from "styled-components";
 
-import { grommet, Box, Button, Grommet, Heading, Text, Tip } from 'grommet'
-import { Trash } from 'grommet-icons'
+const ArrowDown = styled(Box)`
+  position: absolute;
+  top: 100%;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid ${(props) => props.theme.global.colors.backgroundTip};
+  border-bottom: 0 solid transparent;
+`
 
-// @ts-ignore
-export const TipContent = ({ message }) => (
-  <Box direction="row" align="center">
-    <Box background="background" direction="row" pad="small" border={{color: 'border', size: '0px' }}>
-      <div>{message}</div>
-    </Box>
+export const TipContent = (props: { message: string | JSX.Element, showArrow?: boolean }) => {
+  let message = props.message
+  if (typeof message === 'string') {
+    message = <Text size={'small'}>{message}</Text>
+  }
+  return <Box
+    direction="column"
+    align="center"
+    background="backgroundTip"
+    pad={{ top: 'xxsmall', left: 'small', right: 'small', bottom: 'xxsmall' }}
+    round={{ size: 'xsmall' }}
+    style={{ position: 'relative', color: 'white', width: 'fit-content' }}
+  >
+    <Box>{message}</Box>
+    {props.showArrow &&
+      <ArrowDown border={{ color: '#EFF8FF' }} />
+    }
   </Box>
-)
+}

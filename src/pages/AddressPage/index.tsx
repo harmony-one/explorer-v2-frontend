@@ -16,7 +16,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
-import { Transactions } from "./tabs/Transactions";
+import { Transactions } from "./tabs/transactions/Transactions";
 import {
   IUserERC721Assets,
   TRelatedTransaction,

@@ -14,14 +14,14 @@ import {
 } from "src/types";
 import { TRelatedTransaction } from "src/api/client.interface";
 import { getAddress, mapBlockchainTxToRelated } from "src/utils";
-import { ExportToCsvButton } from "../../../components/ui/ExportToCsvButton";
+import { ExportToCsvButton } from "../../../../components/ui/ExportToCsvButton";
 import {
   hmyv2_getStakingTransactionsCount, hmyv2_getStakingTransactionsHistory,
   hmyv2_getTransactionsCount,
   hmyv2_getTransactionsHistory
-} from "../../../api/rpc";
-import { getColumns, getERC20Columns, getNFTColumns, getStackingColumns } from "./txsColumns";
-import useQuery from "../../../hooks/useQuery";
+} from "../../../../api/rpc";
+import { getColumns, getERC20Columns, getNFTColumns, getStakingColumns } from "./columns";
+import useQuery from "../../../../hooks/useQuery";
 
 const internalTxsBlocksFrom = 23000000
 const allowedLimits = [10, 25, 50, 100]
@@ -217,7 +217,7 @@ export function Transactions(props: {
 
   switch (props.type) {
     case "staking_transaction": {
-      columns = getStackingColumns(id);
+      columns = getStakingColumns(id);
       break;
     }
     case "erc20": {

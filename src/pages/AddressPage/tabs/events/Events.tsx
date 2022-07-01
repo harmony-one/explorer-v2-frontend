@@ -10,6 +10,7 @@ import {
 } from "../../../../api/client";
 import styled from "styled-components";
 import { DisplaySignature, parseSuggestedEvent } from "../../../../web3/parseByteCode";
+import { TipContent } from "../../../../components/ui";
 
 const TopicsContainer = styled.div`
   text-align: left;
@@ -66,12 +67,15 @@ const CenteredContainer = styled.div`
 function TxsHashColumn (props: { log: LogWithSignature }) {
   const { log } = props
   return <div style={{ width: '140px' }}>
-    <Tip content={'Txn Hash'}>
+    <Tip
+      dropProps={{ align: { bottom: "top" }}}
+      content={<TipContent showArrow={true} message={'Txn Hash'} />}
+    >
       <Link to={`/tx/${log.transactionHash}`}>
         <LinkText>{log.transactionHash}</LinkText>
       </Link>
     </Tip>
-    <Tip content={'Block number'}>
+    <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Block number'} />}>
       <div style={{ display: 'flex', marginTop: '4px' }}>
         #&nbsp;
         <Link to={`/block/${log.blockNumber}`} style={{ display: 'inline-block' }}>
@@ -80,7 +84,10 @@ function TxsHashColumn (props: { log: LogWithSignature }) {
       </div>
     </Tip>
     {log.timestamp &&
-      <Tip content={dayjs(log.timestamp).format('MMM-DD-YYYY hh:mm:ss a') }>
+      <Tip
+        dropProps={{ align: { bottom: "top" }}}
+        content={<TipContent showArrow={true} message={dayjs(log.timestamp).format('MMM-DD-YYYY hh:mm:ss a')} />}
+      >
         <div style={{ marginTop: '4px' }}>{dayjs(log.timestamp).fromNow()}</div>
       </Tip>
     }
@@ -92,7 +99,7 @@ function TxMethod (props: { log: LogWithSignature }) {
 
   return <div style={{ width: '140px' }}>
     <Text size="12px">
-      <Tip content={'MethodID'}>
+      <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'MethodID'} />}>
         <NeutralMarker background={"backgroundBack"} width={'100px'}>
           <TextEllipsis>{props.log.input.slice(0, 10)}</TextEllipsis>
         </NeutralMarker>

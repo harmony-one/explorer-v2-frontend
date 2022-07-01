@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StatusCritical } from "grommet-icons";
-import { Address, BaseContainer, BasePage, Button } from "src/components/ui";
+import { Address, BaseContainer, BasePage, Button, TipContent } from "src/components/ui";
 import { Heading, DateInput, Box, Spinner, Tip, Text } from "grommet";
 import styled from "styled-components";
 import useQuery from "../../hooks/useQuery";
@@ -118,7 +118,7 @@ export const ExportData = () => {
       </Box>
       <FlexWrapper>
         <InputContainer>
-          <Tip content={<span>Select start date</span>}>
+          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
           <DateInput
             {...dateInputProps}
             value={dayjs(dateFrom).toISOString()}
@@ -128,7 +128,7 @@ export const ExportData = () => {
         </InputContainer>
         <div>to</div>
         <InputContainer>
-          <Tip content={<span>Select end date</span>}>
+          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
             <DateInput
               {...dateInputProps}
               value={dayjs(dateTo).toISOString()}

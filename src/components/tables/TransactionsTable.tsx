@@ -22,7 +22,7 @@ function getColumns(props: any) {
       size: "xxsmall",
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           Shard
         </Text>
       ),
@@ -43,7 +43,7 @@ function getColumns(props: any) {
       size: "xsmall",
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           Hash
         </Text>
       ),
@@ -65,7 +65,7 @@ function getColumns(props: any) {
       size: "260px",
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           Block number
         </Text>
       ),
@@ -89,7 +89,7 @@ function getColumns(props: any) {
       size: "large",
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           From
         </Text>
       ),
@@ -100,7 +100,7 @@ function getColumns(props: any) {
       size: "large",
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           To
         </Text>
       ),
@@ -111,7 +111,7 @@ function getColumns(props: any) {
       size: "380px",
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300 }}>
+        <Text color="minorText" size="small">
           ONEValue
         </Text>
       ),
@@ -125,7 +125,7 @@ function getColumns(props: any) {
       property: "timestamp", 
       resizeable: false,
       header: (
-        <Text color="minorText" size="small" style={{ fontWeight: 300, width: '180px' }}>
+        <Text color="minorText" size="small" style={{ width: '180px' }}>
           Timestamp
         </Text>
       ),
@@ -195,8 +195,7 @@ export function TransactionsTable(props: TransactionTableProps) {
         direction="row"
         justify={hidePagination ? "start" : "between"}
         pad={{ bottom: "small" }}
-        margin={{ bottom: "small" }}
-        border={{ size: "xsmall", side: "bottom", color: "border" }}
+        margin={{ bottom: "0" }}
       >
         {!hideCounter ? (
           <Text style={{ flex: "1 1 100%" }}>
@@ -239,15 +238,22 @@ export function TransactionsTable(props: TransactionTableProps) {
           <TableComponent
             alwaysOpenedRowDetails={props.rowDetails ? true : false}
             tableProps={{
-              className: "g-table-header",
+              className: "g-table-transactions",
               style: { width: "100%", minWidth, tableLayout: 'auto' },
               columns: columns ? columns : getColumns({ history }),
               data: data,
               step,
               primaryKey: props.primaryKey ? props.primaryKey : undefined,
+              background: {
+                header: {
+                  color: 'tableRowHover'
+                }
+              },
               border: {
                 header: {
-                  color: "brand",
+                  color: "border",
+                  side: 'top',
+                  size: '1px'
                 },
                 body: {
                   color: "border",

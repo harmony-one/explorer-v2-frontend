@@ -33,12 +33,13 @@ const getColumns = ({ type = "" }) => [
           content={
             <TipContent
               message={
-                transactionPropertyDescriptions[e.key + type] ||
-                transactionPropertyDescriptions[e.key]
+                <Text size={'small'}>
+                  {transactionPropertyDescriptions[e.key + type] ||
+                    transactionPropertyDescriptions[e.key]}
+                </Text>
               }
             />
           }
-          plain
         >
           <span>
             <CircleQuestion size="small" />
@@ -187,12 +188,10 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
           data={txData}
           step={10}
           border={{
-            header: {
-              color: "none",
-            },
+            header: false,
             body: {
               color: "border",
-              side: "top",
+              side: "bottom",
               size: "1px",
             },
           }}

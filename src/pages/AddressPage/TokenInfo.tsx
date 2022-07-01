@@ -179,7 +179,6 @@ export function TokensInfo(props: { value: Token[] }) {
                     <Tip
                       dropProps={{ align: { left: "right" } }}
                       content={<TipContent message={"Outdated"} />}
-                      plain
                     >
                       <span>
                         <Alert size="small" />
