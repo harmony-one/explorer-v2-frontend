@@ -24,7 +24,8 @@ export const TipContent = (props: { message: string | JSX.Element, showArrow?: b
     background="backgroundTip"
     pad={{ top: 'xxsmall', left: 'small', right: 'small', bottom: 'xxsmall' }}
     round={{ size: 'xsmall' }}
-    style={{ position: 'relative', color: 'white', width: 'fit-content', maxWidth: '260px' }}
+    animation={[{ type: 'fadeIn', duration: 350 }]}
+    style={{ position: 'relative', color: 'white', width: 'fit-content', maxWidth: '400px' }}
   >
     <Box>{message}</Box>
     {props.showArrow &&

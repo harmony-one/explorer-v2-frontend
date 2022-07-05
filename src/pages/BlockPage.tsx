@@ -63,8 +63,7 @@ export const BlockPage = () => {
     return (
         <>
           <Heading size="xsmall" margin={{ top: "0" }}>
-            Block <b>#{id}
-            {!isBlockLoading && ' not found'}</b>
+            Block <b>#{id}</b>
           </Heading>
           <BasePage>
             <BlockDetails

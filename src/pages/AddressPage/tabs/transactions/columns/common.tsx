@@ -1,6 +1,6 @@
-import { Box, ColumnConfig, Text, Tip } from "grommet";
+import { Text, Tip } from "grommet";
 import React from "react";
-import { Address, DateTime, ONEValue, TokenValue } from "src/components/ui";
+import {Address, TipContent} from "src/components/ui";
 import { Log, RelatedTransaction, Topic } from "src/types";
 import { parseSuggestedEvent } from "src/web3/parseByteCode";
 import styled, { css } from "styled-components";
@@ -139,15 +139,30 @@ export const extractTokenId = memo((data: any) => {
 export const TransactionAddress = (props: { id: string, address: string, width?: string }) => {
   const { id: rootAddress, address, width = '120px' } = props
   const isRootAddress = rootAddress === address
-  return <Text size="12px">
-    <Address
-      isShortEllipsis={true}
-      address={props.address}
-      color={isRootAddress ? 'text' : 'brand'}
-      showLink={!isRootAddress}
-      style={{ width }}
-    />
-  </Text>
+
+  const tipContent = <TipContent
+      showArrow={true}
+      message={<Address
+          address={address}
+          displayHash={true}
+          showLink={false}
+          hideCopyBtn={true}
+          color={'white'}
+          style={{ fontSize: 'small' }}
+      />}
+  />
+
+  return <Tip dropProps={{ align: { bottom: "top" }}} content={tipContent}>
+      <Text size="12px">
+        <Address
+            isShortEllipsis={true}
+            address={address}
+            color={isRootAddress ? 'text' : 'brand'}
+            showLink={!isRootAddress}
+            style={{ width }}
+        />
+      </Text>
+    </Tip>
 }
 
 export const TransferDirectionMarker = (props: { id: string, data: RelatedTransaction }) => {
