@@ -73,6 +73,9 @@ function AppWithHistory() {
         style={{ margin: "auto", minHeight: "100%" }}
       >
         <AppHeader style={{ flex: "0 0 auto" }} />
+        <Box align="center" style={{ flex: "1 1 100%", borderRadius: "2px", backgroundColor: "tomato", color: "white" }}>
+          <h1>Explorer is currently down for maintenance</h1>
+        </Box>
         <Box align="center" style={{ flex: "1 1 100%" }}>
           <BaseContainer>
             <SearchInput />
