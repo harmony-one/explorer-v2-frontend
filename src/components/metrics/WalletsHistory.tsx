@@ -52,7 +52,7 @@ export default function WalletsHistory() {
     }, []);
 
     const data = {
-        labels: result.map((i) => dayjs(i.date).format("dddd, MMMM DD")),
+        labels: result.map((i) => dayjs(i.date).format("dddd, MMMM DD YYYY")),
         datasets: [{
             label: "Active wallets",
             data: result.map((i) => +i.count),

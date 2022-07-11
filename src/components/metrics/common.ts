@@ -36,7 +36,7 @@ export const getChartOptions = (theme: 'light' | 'dark', points: any) => {
                 caretSize: 8,
                 cornerRadius: 4,
                 titleSpacing: 4,
-                titleFont: { weight: 400 },
+                titleFont: { weight: 400, size: 10 },
                 bodyFont: { weight: 'bold' }
             }
         },

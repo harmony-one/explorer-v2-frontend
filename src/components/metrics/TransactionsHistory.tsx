@@ -93,7 +93,7 @@ export default function BlockTransactionsHistory() {
     }, []);
 
     const dataTest = {
-        labels: result.map((i) => dayjs(i.timestamp).format("dddd, MMMM DD")),
+        labels: result.map((i) => dayjs(i.timestamp).format("dddd, MMMM DD YYYY")),
         datasets: [
             {
                 label: 'Transactions',
