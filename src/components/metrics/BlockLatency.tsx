@@ -21,6 +21,8 @@ export default function BlockLatency(params: { latency: number; latencyPerBlock:
                     // dropProps={{ align: { left: "right" }, margin: { left: "small" } }}
                     content={
                         <TipContent
+                            background={'background'}
+                            border={{ color: 'border' }}
                             message={
                                 <Box direction={"row"}>
                                     {params.latencyPerBlock.map((item, index) => (
@@ -31,8 +33,8 @@ export default function BlockLatency(params: { latency: number; latencyPerBlock:
                                             justify={"center"}
                                             margin={"small"}
                                         >
-                                            <Text size={"small"}>Shard {index}</Text>
-                                            <Text size="small" weight="bold">
+                                            <Text size={"small"} color={'text'}>Shard {index}</Text>
+                                            <Text size="small" weight="bold" color={'text'}>
                                                 {item.toFixed(2)}s
                                             </Text>
                                         </Box>
