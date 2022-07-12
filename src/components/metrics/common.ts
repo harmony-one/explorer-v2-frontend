@@ -1,13 +1,19 @@
 import dayjs from "dayjs";
+import {palette} from "../../theme";
 
-export const getChartOptions = (theme: 'light' | 'dark', points: any) => {
+export const getChartOptions = (themeMode: 'light' | 'dark', points: any) => {
     const [minPoint] = [...points]
         .sort((a: { count: number; }, b: { count: number; }) => a.count - b.count)
     let minY = minPoint ? minPoint.count : 0
     const minPointLog = Math.floor(Math.log10(minY))
     minY = minY - (minY % Math.pow(10, minPointLog))
 
-    const options = {
+    const ticksColor = themeMode === 'light' ? palette.DarkGray : palette.WhiteGrey
+    const tooltipColor = themeMode === 'light' ? '#3f4850' : palette.WhiteGrey
+    const tooltipBorderColor = themeMode === 'light' ? '#3f4850' : palette.DarkBlue
+    const tooltipBackground = themeMode === 'light' ? 'rgba(244, 247, 249, 0.85)' : 'rgba(27, 41, 94, 0.85)'
+
+    return {
         responsive: true,
         animation: false,
         animations: {
@@ -37,7 +43,12 @@ export const getChartOptions = (theme: 'light' | 'dark', points: any) => {
                 cornerRadius: 4,
                 titleSpacing: 4,
                 titleFont: { weight: 400, size: 10 },
-                bodyFont: { weight: 'bold' }
+                bodyFont: { weight: 'bold' },
+                backgroundColor: tooltipBackground,
+                borderColor: tooltipBorderColor,
+                borderWidth: 1,
+                titleColor: tooltipColor,
+                bodyColor: tooltipColor
             }
         },
         scales: {
@@ -47,7 +58,7 @@ export const getChartOptions = (theme: 'light' | 'dark', points: any) => {
                     drawBorder: false,
                 },
                 ticks: {
-                    // color: '#55626d',
+                    color: ticksColor,
                     maxRotation: 0,
                     minRotation: 0,
                     align: 'start',
@@ -67,13 +78,12 @@ export const getChartOptions = (theme: 'light' | 'dark', points: any) => {
             },
             y: {
                 min: minY,
-                // max: 2300000,
                 grid: {
                     display: false,
                     drawBorder: false,
                 },
                 ticks: {
-                    color: '#55626d',
+                    color: ticksColor,
                     callback: function(value: string, index: any, ticks: any) {
                         if (index === 0 || index === ticks.length - 1) {
                             return Intl.NumberFormat('en-US', {
@@ -89,5 +99,4 @@ export const getChartOptions = (theme: 'light' | 'dark', points: any) => {
         tension: 0.4, // Curve line
         borderWidth: 1,
     };
-    return options
 }

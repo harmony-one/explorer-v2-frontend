@@ -18,6 +18,7 @@ import {
     Tooltip
 } from "chart.js";
 import {getChartOptions} from "./common";
+import {palette} from "../../theme";
 
 ChartJS.register(
     CategoryScale,
@@ -56,12 +57,14 @@ export default function WalletsHistory() {
         datasets: [{
             label: "Active wallets",
             data: result.map((i) => +i.count),
-            borderColor: 'rgb(43, 45, 66)',
+            borderColor: themeMode === 'light' ? palette.DarkGray : palette.MintGreen,
             borderWidth: 1,
-            backgroundColor: 'rgba(43, 45, 66, 0.5)',
+            backgroundColor: 'white',
             pointRadius: 0,
             pointHoverRadius: 8,
-            pointHoverBackgroundColor: 'rgba(43, 45, 66, 0.5)',
+            pointBorderWidth: 0,
+            pointBorderColor: 'transparent',
+            pointHoverBackgroundColor: themeMode === 'light' ? 'rgba(85, 98, 109, 0.4)' : 'rgba(85, 98, 109, 0.3)',
         }]
     }
 

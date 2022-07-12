@@ -1,4 +1,3 @@
-import {palette} from "../../theme";
 import dayjs from "dayjs";
 import {useThemeMode} from "../../hooks/themeSwitcherHook";
 import React, {useEffect, useState} from "react";
@@ -17,6 +16,7 @@ import {
     Tooltip
 } from "chart.js";
 import {getChartOptions} from "./common";
+import {palette} from "../../theme";
 
 ChartJS.register(
     CategoryScale,
@@ -33,48 +33,6 @@ interface TxHitoryItem {
     timestamp: string;
     count: string;
 }
-
-// const getChartOptions = (theme: 'light' | 'dark') => {
-//     const axisTextColor = theme === 'light' ? palette.CoolGray : palette.LightGrey
-//     return {
-//         responsive: true,
-//         animation: {
-//             duration: 0
-//         },
-//         plugins: {
-//             legend: {
-//                 display: false
-//             },
-//             tooltip: {
-//                 backgroundColor: 'rgb(0,0,0)'
-//             },
-//         },
-//         scales: {
-//             x: {
-//                 grid: {
-//                     display: false,
-//                     drawBorder: false,
-//                 },
-//                 ticks: {
-//                     autoSkip: true,
-//                     maxRotation: 0,
-//                     minRotation: 0,
-//                     color: axisTextColor
-//                 },
-//             },
-//             y: {
-//                 grid: {
-//                     display: false,
-//                     drawBorder: false,
-//                 },
-//                 ticks: {
-//                     autoSkip: true,
-//                     color: axisTextColor
-//                 }
-//             }
-//         }
-//     };
-// }
 
 export default function BlockTransactionsHistory() {
     const themeMode = useThemeMode();
@@ -98,12 +56,14 @@ export default function BlockTransactionsHistory() {
             {
                 label: 'Transactions',
                 data: result.map((i) => +i.count),
-                borderColor: 'rgb(43, 45, 66)',
+                borderColor: themeMode === 'light' ? palette.DarkGray : palette.MintGreen,
                 borderWidth: 1,
-                backgroundColor: 'rgba(43, 45, 66, 0.5)',
+                backgroundColor: 'white',
                 pointRadius: 0,
                 pointHoverRadius: 8,
-                pointHoverBackgroundColor: 'rgba(43, 45, 66, 0.5)',
+                pointBorderWidth: 0,
+                pointBorderColor: 'transparent',
+                pointHoverBackgroundColor: themeMode === 'light' ? 'rgba(85, 98, 109, 0.4)' : 'rgba(85, 98, 109, 0.3)',
             }
         ],
     };
