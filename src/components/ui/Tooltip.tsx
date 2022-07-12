@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Text } from 'grommet'
+import { Box, Text, BoxExtendedProps } from 'grommet'
 import styled from "styled-components";
 
 const ArrowDown = styled(Box)`
@@ -13,7 +13,12 @@ const ArrowDown = styled(Box)`
   border-bottom: 0 solid transparent;
 `
 
-export const TipContent = (props: { message: string | JSX.Element, showArrow?: boolean }) => {
+export interface TipContentProps extends BoxExtendedProps{
+  message: string | JSX.Element,
+  showArrow?: boolean
+}
+
+export const TipContent = (props: TipContentProps) => {
   let message = props.message
   if (typeof message === 'string') {
     message = <Text size={'small'}>{message}</Text>
@@ -26,6 +31,7 @@ export const TipContent = (props: { message: string | JSX.Element, showArrow?: b
     round={{ size: 'xsmall' }}
     animation={[{ type: 'fadeIn', duration: 350 }]}
     style={{ position: 'relative', color: 'white', width: 'fit-content', maxWidth: '400px' }}
+    {...props}
   >
     <Box>{message}</Box>
     {props.showArrow &&
