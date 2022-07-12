@@ -63,7 +63,7 @@ export default function BlockTransactionsHistory() {
                 pointHoverRadius: 8,
                 pointBorderWidth: 0,
                 pointBorderColor: 'transparent',
-                pointHoverBackgroundColor: themeMode === 'light' ? 'rgba(85, 98, 109, 0.4)' : 'rgba(85, 98, 109, 0.3)',
+                pointHoverBackgroundColor: themeMode === 'light' ? 'rgba(85, 98, 109, 0.4)' : 'rgba(105, 250, 189, 0.4)',
             }
         ],
     };

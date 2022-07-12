@@ -11,7 +11,7 @@ export const getChartOptions = (themeMode: 'light' | 'dark', points: any) => {
     const ticksColor = themeMode === 'light' ? palette.DarkGray : palette.WhiteGrey
     const tooltipColor = themeMode === 'light' ? '#3f4850' : palette.WhiteGrey
     const tooltipBorderColor = themeMode === 'light' ? '#3f4850' : palette.DarkBlue
-    const tooltipBackground = themeMode === 'light' ? 'rgba(244, 247, 249, 0.85)' : 'rgba(27, 41, 94, 0.85)'
+    const tooltipBackground = themeMode === 'light' ? 'rgba(244, 247, 249, 0.85)' : 'rgba(27, 41, 94, 0.95)'
 
     return {
         responsive: true,
