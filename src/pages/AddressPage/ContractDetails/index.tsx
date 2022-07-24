@@ -328,9 +328,23 @@ export const VerifiedContractDetails = (props: {
                 Object.keys(props.sourceCode.supporting?.sources).map((source: string, i: number) => {
                   return <Item
                     key={i}
-                    label={`Verified ${source}`}
+                    label={`Verified ${source.substring(source.lastIndexOf('/') + 1)}`}
                     value={
                       <StyledTextArea readOnly={true} rows={15} cols={100} value={props.sourceCode.supporting.sources[source].source || ""}>
+
+                      </StyledTextArea>
+                    }
+                  />
+                })}
+              {props.sourceCode.supporting
+                && !props.sourceCode.supporting?.sources
+                &&
+                Object.keys(props.sourceCode.supporting).map((source: string, i: number) => {
+                  return <Item
+                    key={i}
+                    label={`Verified ${source.substring(source.lastIndexOf('/') + 1)}`}
+                    value={
+                      <StyledTextArea readOnly={true} rows={15} cols={100} value={props.sourceCode.supporting[source].source || ""}>
 
                       </StyledTextArea>
                     }
