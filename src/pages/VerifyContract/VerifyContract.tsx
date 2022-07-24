@@ -221,7 +221,7 @@ class VerifyContractBase extends React.Component<
               <Field margin={"small"} width={isLessTablet ? "100%" : "30%"}>
                 <Text>Chain Type</Text>
                 <Select
-                  options={["mainnet", "testnet"]}
+                  options={["mainnet", "testnet", "devnet"]}
                   value={this.state.chainType}
                   onChange={({ option }) =>
                     this.setState({ ...this.state, chainType: option })
