@@ -1,5 +1,29 @@
 @import-normalize;
 
+@font-face {
+    font-family: 'Nunito';
+    src: local('Nunito'), url(./assets/fonts/nunito-300.woff) format('woff'),
+    url(./assets/fonts/nunito-300.woff2) format('woff2');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nunito';
+    src: local('Nunito'), url(./assets/fonts/nunito-regular.woff) format('woff'),
+    url(./assets/fonts/nunito-regular.woff2) format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nunito';
+    src: local('Nunito'), url(./assets/fonts/nunito-700.woff) format('woff'),
+    url(./assets/fonts/nunito-700.woff2) format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
 a {
     text-decoration: none;
     outline: 0;
@@ -51,3 +75,5 @@ table:not(.g-table-transactions) thead tr:first-child th, table:not(.g-table-tra
 .g-table-transactions thead tr th {
     font-weight: 700;
 }
+
+
