@@ -82,7 +82,7 @@ export const VerifiedButMissingImplementation = (props: {
     <Box style={{ padding: "10px" }}>
       <Box direction="column" gap="30px">
         <Box direction="row" gap="5px">
-          Proxy Implementation contract 
+          Proxy Implementation contract
           <Text
             size="small"
             style={{ cursor: "pointer" }}
@@ -121,7 +121,7 @@ export const ProxyContractDetails = (props: {
     <Box style={{ padding: "10px" }}>
       <Box direction="column">
         <Box direction="row" gap="5px">
-          ABI for the implementation contract at 
+          ABI for the implementation contract at
           <Text
             size="small"
             style={{ cursor: "pointer" }}
@@ -135,7 +135,7 @@ export const ProxyContractDetails = (props: {
         </Box>
         {
           props.proxy?.isBeacon && <Box direction="row" gap="5px">
-          Upgradeable Beacon contract at 
+          Upgradeable Beacon contract at
           <Text
             size="small"
             style={{ cursor: "pointer" }}
@@ -248,7 +248,7 @@ export const VerifiedContractDetails = (props: {
 
   const validChainId = isMainNet
     ? chainId === 1666600000
-    : chainId === 1666700000;
+    : (chainId === 1666700000 || chainId === 1666900000);
 
   try {
     abiString = JSON.stringify(props.sourceCode.abi, null, 4);
@@ -291,7 +291,7 @@ export const VerifiedContractDetails = (props: {
             />
           </>
         ) : null}
-        
+
       </Box>
       {tab === V_TABS.CODE ? (
         <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
@@ -315,7 +315,7 @@ export const VerifiedContractDetails = (props: {
                     : "")
                 }
               />
-              {props.sourceCode.sourceCode && (!props.sourceCode.supporting || props.sourceCode.supporting.length === 0) && 
+              {props.sourceCode.sourceCode && (!props.sourceCode.supporting || props.sourceCode.supporting.length === 0) &&
                 <Item
                   label="Contract Source Code Verified"
                   value={
@@ -394,7 +394,7 @@ export const VerifiedContractDetails = (props: {
           />
         </Box>
       ) : null}
-      
+
       {tab === V_TABS.WRITE && props.sourceCode.abi ? (
         <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
           <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
