@@ -67,7 +67,6 @@ export function ApprovalPage() {
           erc1155Pool,
           erc721Pool
         );
-        console.log('result', result)
         // update the page index and the txn history on each refresh
         if (result.dataObj.length > 0) {
           ApprovalCache.set(key + "-index", pageIndex);
