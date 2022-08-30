@@ -126,7 +126,7 @@ export const ExportData = () => {
   }
 
   const getTxTextType = (type: TRelatedTransaction) => {
-    return type === 'transaction' ? 'transactions' : type + 'transactions'
+    return type === 'transaction' ? 'transactions' : type + ' transactions'
   }
 
   return <BaseContainer pad={{ horizontal: "0" }} style={{ maxWidth: '700px', alignSelf: 'center' }}>
@@ -135,29 +135,33 @@ export const ExportData = () => {
     </Heading>
     <BasePage pad={"medium"} style={{ overflow: "inherit" }}>
       <Box pad={{ top: 'medium', bottom: 'medium' }} style={{ display: 'inline-block' }}>
-        Export the last {filter.limit} {getTxTextType(type)} for <Address address={address} /> starting from
+        Export the last {filter.limit} {getTxTextType(type)} for <Address address={address} />
+        {type === 'transaction' && 'starting from'}
       </Box>
-      <FlexWrapper>
-        <InputContainer>
-          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
-          <DateInput
-            {...dateInputProps}
-            value={dayjs(dateFrom).toISOString()}
-            onChange={({ value }) => onChangeDateFrom(value)}
-          />
-          </Tip>
-        </InputContainer>
-        <div>to</div>
-        <InputContainer>
-          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
-            <DateInput
-              {...dateInputProps}
-              value={dayjs(dateTo).toISOString()}
-              onChange={({ value }) => onChangeDateTo(value)}
-            />
-          </Tip>
-        </InputContainer>
-      </FlexWrapper>
+      {/* TODO: support timestamp filter on backend side */}
+      {type === 'transaction' &&
+          <FlexWrapper>
+            <InputContainer>
+              <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
+                <DateInput
+                    {...dateInputProps}
+                    value={dayjs(dateFrom).toISOString()}
+                    onChange={({ value }) => onChangeDateFrom(value)}
+                />
+              </Tip>
+            </InputContainer>
+            <div>to</div>
+            <InputContainer>
+              <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
+                <DateInput
+                    {...dateInputProps}
+                    value={dayjs(dateTo).toISOString()}
+                    onChange={({ value }) => onChangeDateTo(value)}
+                />
+              </Tip>
+            </InputContainer>
+          </FlexWrapper>
+      }
       <Box style={{ justifyContent: 'center', alignItems: 'center' }} pad={{ top: 'large', bottom: 'medium' }}>
         <Box width={'small'}>
           <DownloadButton
