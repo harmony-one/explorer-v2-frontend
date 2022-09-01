@@ -262,9 +262,9 @@ export function Transactions(props: {
         rowDetails={props.rowDetails}
         showPages={totalElements > 0}
       />
-      {props.type === 'transaction' &&
+      {['transaction', 'erc20', 'erc721', 'erc1155'].includes(props.type) &&
         <Box style={{ alignItems: 'flex-end' }}>
-          <ExportToCsvButton address={id} type={'transactions'} />
+          <ExportToCsvButton address={id} type={props.type} />
         </Box>
       }
     </Box>

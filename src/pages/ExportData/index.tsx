@@ -9,6 +9,10 @@ import { downloadCSV } from "./export-utils";
 import dayjs from "dayjs";
 import { toaster } from "../../App";
 import { useONEExchangeRate } from "../../hooks/useONEExchangeRate";
+import {TRelatedTransaction} from "../../api/client.interface";
+import {useERC20Pool} from "../../hooks/ERC20_Pool";
+import {useERC721Pool} from "../../hooks/ERC721_Pool";
+import {useERC1155Pool} from "../../hooks/ERC1155_Pool";
 
 const IconError = styled(StatusCritical)`
   margin-right: 5px;
@@ -34,13 +38,17 @@ const DownloadButton = styled(Button)`
 export const ExportData = () => {
   const query = useQuery();
   const address = query.get('address') || '';
-  const type = query.get('type') || '';
+  const type = (query.get('type') || 'transaction') as TRelatedTransaction;
 
   const dateFormat = 'YYYY-MM-DD'
   const initialDateFrom = dayjs().startOf('month').format(dateFormat)
   const initialDateTo = dayjs().format(dateFormat)
 
-  const { lastPrice } = useONEExchangeRate();
+  const { lastPrice: onePrice } = useONEExchangeRate();
+  const erc20Map = useERC20Pool();
+  const erc721Map = useERC721Pool();
+  const erc1155Map = useERC1155Pool();
+
   const [isDownloading, setIsDownloading] = useState(false)
   const [dateFrom, setDateFrom] = useState(initialDateFrom)
   const [dateTo, setDateTo] = useState(initialDateTo)
@@ -88,10 +96,19 @@ export const ExportData = () => {
       const txs = await getRelatedTransactionsByType([
         0,
         address,
-        'transaction',
+        type,
         filter,
       ]);
-      downloadCSV({ address, txs, onePrice: lastPrice }, `export_${address}.csv`)
+      const downloadParams = {
+        type,
+        address,
+        txs,
+        onePrice,
+        erc20Map,
+        erc721Map,
+        erc1155Map
+      }
+      downloadCSV(downloadParams, `export_${type}_${address}.csv`)
     } catch (e) {
       console.error('Error on download:', (e as Error).message)
       showErrorNotification()
@@ -108,35 +125,43 @@ export const ExportData = () => {
     setDateTo(dayjs(value).format(dateFormat))
   }
 
+  const getTxTextType = (type: TRelatedTransaction) => {
+    return type === 'transaction' ? 'transactions' : type + ' transactions'
+  }
+
   return <BaseContainer pad={{ horizontal: "0" }} style={{ maxWidth: '700px', alignSelf: 'center' }}>
     <Heading size="xsmall" margin={{ bottom: "medium", top: "0" }}>
       Export transactions
     </Heading>
     <BasePage pad={"medium"} style={{ overflow: "inherit" }}>
       <Box pad={{ top: 'medium', bottom: 'medium' }} style={{ display: 'inline-block' }}>
-        Export the last {filter.limit} transactions for <Address address={address} /> starting from
+        Export the last {filter.limit} {getTxTextType(type)} for <Address address={address} />
+        {type === 'transaction' && 'starting from'}
       </Box>
-      <FlexWrapper>
-        <InputContainer>
-          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
-          <DateInput
-            {...dateInputProps}
-            value={dayjs(dateFrom).toISOString()}
-            onChange={({ value }) => onChangeDateFrom(value)}
-          />
-          </Tip>
-        </InputContainer>
-        <div>to</div>
-        <InputContainer>
-          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
-            <DateInput
-              {...dateInputProps}
-              value={dayjs(dateTo).toISOString()}
-              onChange={({ value }) => onChangeDateTo(value)}
-            />
-          </Tip>
-        </InputContainer>
-      </FlexWrapper>
+      {/* TODO: support timestamp filter on backend side */}
+      {type === 'transaction' &&
+          <FlexWrapper>
+            <InputContainer>
+              <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
+                <DateInput
+                    {...dateInputProps}
+                    value={dayjs(dateFrom).toISOString()}
+                    onChange={({ value }) => onChangeDateFrom(value)}
+                />
+              </Tip>
+            </InputContainer>
+            <div>to</div>
+            <InputContainer>
+              <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
+                <DateInput
+                    {...dateInputProps}
+                    value={dayjs(dateTo).toISOString()}
+                    onChange={({ value }) => onChangeDateTo(value)}
+                />
+              </Tip>
+            </InputContainer>
+          </FlexWrapper>
+      }
       <Box style={{ justifyContent: 'center', alignItems: 'center' }} pad={{ top: 'large', bottom: 'medium' }}>
         <Box width={'small'}>
           <DownloadButton

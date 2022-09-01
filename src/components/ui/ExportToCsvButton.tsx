@@ -2,10 +2,11 @@ import React from "react";
 import { Box } from "grommet";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import {TRelatedTransaction} from "../../api/client.interface";
 
 export interface IExportButtonProps {
   address: string
-  type: 'transactions'
+  type: TRelatedTransaction
 }
 
 const LinkText = styled.div`
