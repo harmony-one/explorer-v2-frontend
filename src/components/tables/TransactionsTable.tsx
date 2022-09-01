@@ -122,7 +122,7 @@ function getColumns(props: any) {
       ),
     },
     {
-      property: "timestamp", 
+      property: "timestamp",
       resizeable: false,
       header: (
         <Text color="minorText" size="small" style={{ width: '180px' }}>
@@ -223,20 +223,16 @@ export function TransactionsTable(props: TransactionTableProps) {
           overflow: "auto",
           opacity: _IsLoading ? "0.4" : "1",
           transition: "0.1s all",
-          minHeight: "600px",
+          minHeight: _IsLoading || data.length > 0 ? "600px" : 'unset',
         }}
       >
         {_IsLoading ? (
           <Box align={"center"} justify={"center"} flex>
             <Spinner size={"large"} />
           </Box>
-        ) : !data.length && !_IsLoading ? (
-          <Box style={{ height: "120px" }} justify="center" align="center">
-            <Text size="small">{emptyText}</Text>
-          </Box>
         ) : (
           <TableComponent
-            alwaysOpenedRowDetails={props.rowDetails ? true : false}
+            alwaysOpenedRowDetails={!!props.rowDetails}
             tableProps={{
               className: "g-table-transactions",
               style: { width: "100%", minWidth, tableLayout: 'auto' },
@@ -272,6 +268,11 @@ export function TransactionsTable(props: TransactionTableProps) {
           />
         )}
       </Box>
+      {!_IsLoading && data.length === 0 &&
+          <Box style={{ height: "120px" }} justify="center" align="center">
+            <Text size="small">{emptyText}</Text>
+          </Box>
+      }
       {!hidePagination && (
         <Box
           direction="row"
