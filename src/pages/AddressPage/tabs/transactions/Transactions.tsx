@@ -12,7 +12,7 @@ import {
   RelatedTransaction,
 } from "src/types";
 import { TRelatedTransaction } from "src/api/client.interface";
-import { getAddress } from "src/utils";
+import {getAddress} from "src/utils";
 import { ExportToCsvButton } from "../../../../components/ui/ExportToCsvButton";
 import { getColumns, getERC20Columns, getNFTColumns, getStakingColumns } from "./columns";
 import useQuery from "../../../../hooks/useQuery";
@@ -31,9 +31,16 @@ const prepareFilter = (type: TRelatedTransaction, filter: Filter) => {
     ...filter,
     filters: filter.filters.map(item => {
       if(item.property === 'to') {
+        const value = item.value as string
+        let address = value
+        if(value.startsWith('one1')) { // convert one1 to 0x before send request to backend
+          try {
+            address = getAddress(value as string).basicHex
+          } catch (e) {}
+        }
         return {
           ...item,
-          value: `'${item.value}'`
+          value: `'${address}'`
         }
       }
       return item

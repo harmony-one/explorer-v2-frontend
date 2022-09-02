@@ -73,8 +73,16 @@ export const theme = {
   },
   button: {
     // backgroundColor: "transparent",
-    color: "brand",
-    borderColor: "brand",
+    primary: {
+      color: 'backgroundDropdownItem', // Bug in grommet library, it should be background-color
+    },
+    color: "text",
+    borderColor: "border",
+    border: {
+      radius: '4px',
+      width: '1px',
+      color: 'border'
+    }
   },
   dataTable: {
     border: {
