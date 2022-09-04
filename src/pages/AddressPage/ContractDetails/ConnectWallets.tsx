@@ -75,7 +75,7 @@ export const Wallet = (params: {
 
   const validChainId = isMainNet
     ? chainId === 1666600000
-    : chainId === 1666700000;
+    : (chainId === 1666700000 || chainId === 1666900000); // testnet or devnet
 
   return (
     <Box margin={{ bottom: "medium" }}>

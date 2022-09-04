@@ -12,7 +12,7 @@ import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
 
-const ApprovalCache = new ApiCache({ key: "approvalsCache" }); // cache of approvals data mapped 
+const ApprovalCache = new ApiCache({ key: "approvalsCache" }); // cache of approvals data mapped
 
 export function TokenApprovals(props: { contractAddress?: string }) {
     const [metamaskAddress, setMetamask] = useState("");
@@ -31,7 +31,7 @@ export function TokenApprovals(props: { contractAddress?: string }) {
 
     const validChainId = isMainNet
         ? chainId === 1666600000
-        : chainId === 1666700000;
+        : (chainId === 1666700000 || chainId === 1666900000);
 
     const loadTransactions = async ({ account = "", contractAddress = "" }) => {
 
@@ -50,13 +50,13 @@ export function TokenApprovals(props: { contractAddress?: string }) {
         let result: { txnHistory: ApprovalDetails[], dataObj: RPCTransactionHarmony[] } = { txnHistory: ApprovalCache.get(account + "-" + key + "-txnHistory") || [], dataObj: [] };
         try {
             do {
-                result = await getAllApprovalsForTokens(harmonyAddress.basicHex, 
-                    contractHarmonyAddr?.basicHex || "", 
-                    pageIndex, 
-                    pageSize, 
-                    result.txnHistory, 
-                    erc20Map, 
-                    erc1155Map, 
+                result = await getAllApprovalsForTokens(harmonyAddress.basicHex,
+                    contractHarmonyAddr?.basicHex || "",
+                    pageIndex,
+                    pageSize,
+                    result.txnHistory,
+                    erc20Map,
+                    erc1155Map,
                     erc721Map
                 );
                 // update the page index and the txn history on each refresh

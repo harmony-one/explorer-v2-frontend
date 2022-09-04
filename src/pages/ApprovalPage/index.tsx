@@ -19,7 +19,7 @@ import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
 
-const ApprovalCache = new ApiCache({ key: "approvalsCache" }); // cache of approvals data mapped 
+const ApprovalCache = new ApiCache({ key: "approvalsCache" }); // cache of approvals data mapped
 
 
 export function ApprovalPage() {
@@ -41,7 +41,7 @@ export function ApprovalPage() {
 
   const validChainId = isMainNet
     ? chainId === 1666600000
-    : chainId === 1666700000;
+    : (chainId === 1666700000 || chainId === 1666900000);
 
   const loadTransactions = async ({ account = "" }) => {
 
@@ -58,13 +58,13 @@ export function ApprovalPage() {
     let result: { txnHistory: ApprovalDetails[], dataObj: RPCTransactionHarmony[] } = { txnHistory: ApprovalCache.get(key + "-txnHistory") || [], dataObj: [] };
     try {
       do {
-        result = await getAllApprovalsForTokens(harmonyAddress.basicHex, 
-          "", 
-          pageIndex, 
-          pageSize, 
-          result.txnHistory, 
-          erc20Pool, 
-          erc1155Pool, 
+        result = await getAllApprovalsForTokens(harmonyAddress.basicHex,
+          "",
+          pageIndex,
+          pageSize,
+          result.txnHistory,
+          erc20Pool,
+          erc1155Pool,
           erc721Pool
         );
         // update the page index and the txn history on each refresh
