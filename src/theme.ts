@@ -45,7 +45,7 @@ export const theme = {
       backgroundError: "rgba(230, 0, 0, 0.4)",
       backgroundSuccess: "rgb(106 250 188 / 44%)",
       backgroundToaster: "rgba(0, 174, 233, 0.7)",
-      backgroundTip: palette.MidnightBlue,
+      backgroundTip: '#005ca7',
       backgroundMark: palette.WhiteBlue,
       warning: palette.GoldenBrown,
       warningBackground: palette.WhiteBrown,

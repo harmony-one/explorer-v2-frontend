@@ -10,15 +10,13 @@ interface ColumnFilterProps {
 }
 
 const FilterDropButton = styled(DropButton)`
-  border: none;
-  background-color: rgba(119,131,143,.1);
-  transition: background-color 0.2s;
   padding: 4px;
   border-radius: 4px;
-
+  border: 1px solid #e7ecf7;
+  font-weight: normal;
+  
   &:hover, &:active {
-    background-color: #77838f;
-    box-shadow: 0 4px 11px rgb(119 131 143 / 35%);
+    box-shadow: 0 2px 6px rgb(119 131 143 / 35%);
   }
 `
 
