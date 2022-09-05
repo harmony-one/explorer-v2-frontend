@@ -160,6 +160,26 @@ export function Transactions(props: {
     }
   }
 
+  const loadTransactionsCount = async () => {
+    try {
+      const countFilter = prepareFilter(props.type, filter[props.type])
+      const txsCount = await getRelatedTransactionsCountByType([
+        0,
+        id,
+        props.type,
+        countFilter,
+      ])
+      setTotalElements(txsCount)
+      setCachedTotalElements({
+        ...cachedTotalElements,
+        [props.type]: txsCount
+      })
+    } catch (e) {
+      console.error('Cannot get txs count', (e as Error).message)
+      setTotalElements(initTotalElements)
+    }
+  }
+
   useEffect(() => {
     setCachedTxs({})
     setCachedTotalElements({})
@@ -167,34 +187,13 @@ export function Transactions(props: {
   }, [id])
 
   useEffect(() => {
-    const getTxsCount = async () => {
-      try {
-        const countFilter = prepareFilter(props.type, filter[props.type])
-        const txsCount = await getRelatedTransactionsCountByType([
-          0,
-          id,
-          props.type,
-          countFilter,
-        ])
-        setTotalElements(txsCount)
-        setCachedTotalElements({
-          ...cachedTotalElements,
-          [props.type]: txsCount
-        })
-      } catch (e) {
-        console.error('Cannot get txs count', (e as Error).message)
-        setTotalElements(initTotalElements)
-      }
-    }
-
     const cachedValue = cachedTotalElements[props.type]
-
     if (cachedValue && id === prevId) {
       setTotalElements(cachedValue)
     } else {
-      getTxsCount()
+      loadTransactionsCount()
     }
-  }, [props.type, id])
+  }, [props.type, id, filter[props.type]])
 
   // Change active tab
   useEffect(() => {
@@ -221,6 +220,13 @@ export function Transactions(props: {
       loadTransactions()
     }
   }, [filter[props.type], id]);
+
+  // change filter by "to" field
+  useEffect(() => {
+    if (prevType === props.type) {
+      loadTransactionsCount()
+    }
+  }, [filter[props.type].filters.length]);
 
   let columns = [];
   const filterTo = filter[props.type].filters.find(item => item.property === 'to')
