@@ -1,10 +1,21 @@
-import { Box, ColumnConfig, Text, Tip } from "grommet";
+import {Box, ColumnConfig, Text, Tip} from "grommet";
 import React from "react";
 import { RelatedTransaction } from "../../../../../types";
 import { Address, DateTime, ONEValue, TipContent } from "../../../../../components/ui";
 import { TransactionAddress, TransferDirectionMarker, TxMethod } from "./common";
+import {ColumnFilter} from "../ColumnFilter";
 
-export function getColumns(id: string): ColumnConfig<any>[] {
+interface ColumnFilters {
+  [property: string]: {
+    value: string
+    onApply: (value: string) => void
+  }
+}
+
+export function getColumns(
+    id: string,
+    columnFilters?: ColumnFilters
+): ColumnConfig<any>[] {
   return [
     // {
     //   property: "type",
@@ -128,13 +139,19 @@ export function getColumns(id: string): ColumnConfig<any>[] {
     {
       property: "to",
       header: (
-        <Text
-          color="minorText"
-          size="small"
-          style={{ width: "180px" }}
-        >
-          To
-        </Text>
+        <Box direction={'row'} justify={'start'} gap={'8px'} align={'center'} style={{ width: "180px" }}>
+          <Text
+              color="minorText"
+              size="small"
+          >
+            To
+          </Text>
+          {columnFilters && columnFilters['to'] &&
+              <ColumnFilter
+                  initialValue={columnFilters['to'].value}
+                  onApply={columnFilters['to'].onApply}
+              />}
+        </Box>
       ),
       render: (data: RelatedTransaction) => <TransactionAddress id={id} address={data.to} width={'180px'} />,
     },

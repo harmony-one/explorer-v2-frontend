@@ -8,29 +8,45 @@ import {
 } from "src/api/client";
 import { TransactionsTable } from "src/components/tables/TransactionsTable";
 import {
-  Filter,
+  Filter, FilterProperty, FilterType,
   RelatedTransaction,
-  RelatedTransactionType, RPCTransactionHarmony
 } from "src/types";
 import { TRelatedTransaction } from "src/api/client.interface";
-import { getAddress, mapBlockchainTxToRelated } from "src/utils";
+import {getAddress} from "src/utils";
 import { ExportToCsvButton } from "../../../../components/ui/ExportToCsvButton";
-import {
-  hmyv2_getStakingTransactionsCount, hmyv2_getStakingTransactionsHistory,
-  hmyv2_getTransactionsCount,
-  hmyv2_getTransactionsHistory
-} from "../../../../api/rpc";
 import { getColumns, getERC20Columns, getNFTColumns, getStakingColumns } from "./columns";
 import useQuery from "../../../../hooks/useQuery";
 
 const internalTxsBlocksFrom = 23000000
 const allowedLimits = [10, 25, 50, 100]
 
-const relatedTxMap: Record<RelatedTransactionType, string> = {
-  transaction: "Transaction",
-  internal_transaction: "Internal Transaction",
-  stacking_transaction: "Staking Transaction",
-};
+const prepareFilter = (type: TRelatedTransaction, filter: Filter) => {
+  if (type === 'internal_transaction') {
+    filter.filters = [...filter.filters, {
+      type: "gte", property: "block_number", value: internalTxsBlocksFrom
+    }]
+  }
+
+  return {
+    ...filter,
+    filters: filter.filters.map(item => {
+      if(item.property === 'to') {
+        const value = item.value as string
+        let address = value
+        if(value.startsWith('one1')) { // convert one1 to 0x before send request to backend
+          try {
+            address = getAddress(value as string).basicHex
+          } catch (e) {}
+        }
+        return {
+          ...item,
+          value: `'${address}'`
+        }
+      }
+      return item
+    })
+  }
+}
 
 const usePrevious = (value: TRelatedTransaction) => {
   const ref = useRef();
@@ -50,6 +66,7 @@ export function Transactions(props: {
   const queryParams = useQuery();
   let limitParam = +(queryParams.get('limit') || localStorage.getItem("tableLimitValue") || allowedLimits[0]);
   const offsetParam = +(queryParams.get('offset') || 0)
+  const toParam = queryParams.get('to') || ''
 
   if (!allowedLimits.includes(limitParam)) {
     limitParam = allowedLimits[0]
@@ -60,8 +77,9 @@ export function Transactions(props: {
     limit: limitParam,
     orderBy: "block_number",
     orderDirection: "desc",
-    filters: [{ type: "gte", property: "block_number", value: 0 }],
+    filters: [],
   };
+
   const initFilterState = {
     transaction: { ...initFilter },
     staking_transaction: { ...initFilter },
@@ -70,12 +88,23 @@ export function Transactions(props: {
     erc721: { ...initFilter },
     erc1155: { ...initFilter },
   }
+
+  const filterOnLoad = {...initFilterState}
+
+  if(toParam) {
+    filterOnLoad[props.type].filters.push({
+      type: 'eq' as FilterType,
+      property: 'to' as FilterProperty,
+      value: toParam.toLowerCase()
+    })
+  }
+
   const initTotalElements = 100
   const [cachedTxs, setCachedTxs] = useState<{ [name: string]: RelatedTransaction[]}>({})
   const [relatedTrxs, setRelatedTrxs] = useState<RelatedTransaction[]>([]);
   const [totalElements, setTotalElements] = useState<number>(initTotalElements)
   const [cachedTotalElements, setCachedTotalElements] = useState<{ [name: string]: number}>({})
-  const [filter, setFilter] = useState<{ [name: string]: Filter }>(initFilterState);
+  const [filter, setFilter] = useState<{ [name: string]: Filter }>(filterOnLoad);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const prevType = usePrevious(props.type);
 
@@ -91,24 +120,13 @@ export function Transactions(props: {
     setIsLoading(true)
     try {
       let txs = []
-      const txsFilter = {...filter[props.type]}
-      if (props.type === 'internal_transaction') {
-        txsFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
-      }
-      if (props.type === 'transaction') {
-        const pageSize = limit
-        const pageIndex = Math.floor(offset / limit)
-        const params = [{ address: id, pageIndex, pageSize }]
-        txs = await hmyv2_getTransactionsHistory(params)
-        txs = txs.map(tx => mapBlockchainTxToRelated(tx))
-      } else {
-        txs = await getRelatedTransactionsByType([
-          0,
-          id,
-          props.type,
-          txsFilter,
-        ]);
-      }
+      const txsFilter = prepareFilter(props.type, filter[props.type])
+      txs = await getRelatedTransactionsByType([
+        0,
+        id,
+        props.type,
+        txsFilter,
+      ]);
 
       // for transactions we display call method if any
       if (props.type === "transaction") {
@@ -142,6 +160,26 @@ export function Transactions(props: {
     }
   }
 
+  const loadTransactionsCount = async () => {
+    try {
+      const countFilter = prepareFilter(props.type, filter[props.type])
+      const txsCount = await getRelatedTransactionsCountByType([
+        0,
+        id,
+        props.type,
+        countFilter,
+      ])
+      setTotalElements(txsCount)
+      setCachedTotalElements({
+        ...cachedTotalElements,
+        [props.type]: txsCount
+      })
+    } catch (e) {
+      console.error('Cannot get txs count', (e as Error).message)
+      setTotalElements(initTotalElements)
+    }
+  }
+
   useEffect(() => {
     setCachedTxs({})
     setCachedTotalElements({})
@@ -149,43 +187,13 @@ export function Transactions(props: {
   }, [id])
 
   useEffect(() => {
-    const getTxsCount = async () => {
-      try {
-        const countFilter = {...filter[props.type]}
-        // Note: internal_transactions index from & to supported only for block_number >= internalTxsBlocksFrom
-        if (props.type === 'internal_transaction') {
-          countFilter.filters = [{ type: "gte", property: "block_number", value: internalTxsBlocksFrom }]
-        }
-        let txsCount
-        if (props.type ==='transaction') {
-          txsCount = await hmyv2_getTransactionsCount(id)
-        } else {
-          txsCount = await getRelatedTransactionsCountByType([
-            0,
-            id,
-            props.type,
-            countFilter,
-          ])
-        }
-        setTotalElements(txsCount)
-        setCachedTotalElements({
-          ...cachedTotalElements,
-          [props.type]: txsCount
-        })
-      } catch (e) {
-        console.error('Cannot get txs count', (e as Error).message)
-        setTotalElements(initTotalElements)
-      }
-    }
-
     const cachedValue = cachedTotalElements[props.type]
-
     if (cachedValue && id === prevId) {
       setTotalElements(cachedValue)
     } else {
-      getTxsCount()
+      loadTransactionsCount()
     }
-  }, [props.type, id])
+  }, [props.type, id, filter[props.type]])
 
   // Change active tab
   useEffect(() => {
@@ -213,7 +221,15 @@ export function Transactions(props: {
     }
   }, [filter[props.type], id]);
 
+  // change filter by "to" field
+  useEffect(() => {
+    if (prevType === props.type) {
+      loadTransactionsCount()
+    }
+  }, [filter[props.type].filters.length]);
+
   let columns = [];
+  const filterTo = filter[props.type].filters.find(item => item.property === 'to')
 
   switch (props.type) {
     case "staking_transaction": {
@@ -231,19 +247,45 @@ export function Transactions(props: {
     }
 
     default: {
-      columns = getColumns(id);
+      columns = getColumns(id, {
+        'to': {
+          value: filterTo ? filterTo.value.toString() : '',
+          onApply: (value = '') => {
+            const filters = filter[props.type].filters.filter(item => item.property !== 'to')
+            if (value) {
+              filters.push({
+                type: 'eq' as FilterType,
+                property: 'to' as FilterProperty,
+                value: value.toLowerCase()
+              })
+            }
+            onFilterChanged({
+              ...filter[props.type],
+              filters
+            })
+          }
+        }
+      });
       break;
     }
   }
 
   const onFilterChanged = (value: Filter) => {
-    const { offset, limit } = value
+    const { offset, limit, filters } = value
     if (limit !== filter[props.type].limit) {
       localStorage.setItem("tableLimitValue", `${limit}`);
     }
     setFilter({ ...filter, [props.type]: value });
     const activeTab = queryParams.get('activeTab') || 0
-    history.push(`?activeTab=${activeTab}&offset=${offset}&limit=${limit}`)
+
+    let historyUrl = `?activeTab=${activeTab}&offset=${offset}&limit=${limit}`
+
+    const filterTo = filters.find(item => item.property === 'to')
+    if(filterTo) {
+      historyUrl += `&to=${filterTo.value}`
+    }
+
+    history.push(historyUrl)
   }
 
   return (

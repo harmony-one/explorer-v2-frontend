@@ -45,7 +45,7 @@ export const theme = {
       backgroundError: "rgba(230, 0, 0, 0.4)",
       backgroundSuccess: "rgb(106 250 188 / 44%)",
       backgroundToaster: "rgba(0, 174, 233, 0.7)",
-      backgroundTip: palette.MidnightBlue,
+      backgroundTip: '#005ca7',
       backgroundMark: palette.WhiteBlue,
       warning: palette.GoldenBrown,
       warningBackground: palette.WhiteBrown,
@@ -73,8 +73,16 @@ export const theme = {
   },
   button: {
     // backgroundColor: "transparent",
-    color: "brand",
-    borderColor: "brand",
+    primary: {
+      color: 'backgroundDropdownItem', // Bug in grommet library, it should be background-color
+    },
+    color: "text",
+    borderColor: "border",
+    border: {
+      radius: '4px',
+      width: '1px',
+      color: 'border'
+    }
   },
   dataTable: {
     border: {
