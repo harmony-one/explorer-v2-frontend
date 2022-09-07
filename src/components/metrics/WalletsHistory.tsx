@@ -89,14 +89,14 @@ export default function WalletsHistory() {
                 <Text size="small" color="minorText" style={{ flex: "1 0 auto" }}>
                     {"ACTIVE WALLETS"}
                 </Text>
-                {!isTabletOrMobile &&
-                    <Box direction={'row'}>
-                        By&nbsp;
-                        <a href={`https://harmony-transactions.vercel.app/`} target={'_blank'}>
-                            <Text color={'brand'} size={'small'}>Metrics DAO</Text>
-                        </a>
-                    </Box>
-                }
+                {/*{!isTabletOrMobile &&*/}
+                {/*    <Box direction={'row'}>*/}
+                {/*        By&nbsp;*/}
+                {/*        <a href={`https://harmony-transactions.vercel.app/`} target={'_blank'}>*/}
+                {/*            <Text color={'brand'} size={'small'}>Metrics DAO</Text>*/}
+                {/*        </a>*/}
+                {/*    </Box>*/}
+                {/*}*/}
             </Box>
             <Box style={{ flex: "1 1 100%", marginTop: "10px" }}>
                 {isLoading && (
