@@ -174,7 +174,7 @@ export const NoVerifiedContractDetails = (props: {
             color="brand"
           >
             Verify and Publish
-          </Text>{" "}
+          </Text>
           your contract source code today!
         </Box>
 

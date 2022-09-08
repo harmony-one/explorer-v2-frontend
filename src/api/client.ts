@@ -1,11 +1,11 @@
 import { transport } from "./explorer";
 import {
-  Block,
-  InternalTransaction,
-  RPCStakingTransactionHarmony,
-  RPCTransactionHarmony,
-  RelatedTransaction,
-  Log, LogDetailed, AddressDetails
+    Block,
+    InternalTransaction,
+    RPCStakingTransactionHarmony,
+    RPCTransactionHarmony,
+    RelatedTransaction,
+    Log, LogDetailed, AddressDetails, ShardID
 } from "src/types";
 import {
   IHoldersInfo,
@@ -210,4 +210,12 @@ export async function getTokenERC1155AssetDetails(address: string, tokenID: stri
     const res = await transport("getTokenERC1155AssetDetails", [address, tokenID])
     // todo fix on backend
     return res && res[0]
+}
+
+export function getProxyImplementation(params: [ShardID, string]) {
+    return transport("getProxyImplementation", params) as Promise<any>;
+}
+
+export function assignProxyImplementation(params: [ShardID, string, string]) {
+    return transport("assignProxyImplementation", params) as Promise<any>;
 }

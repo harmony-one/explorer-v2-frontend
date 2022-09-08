@@ -287,6 +287,7 @@ export interface AddressDetails {
   meta?: { name?: string; image?: string };
   solidityVersion: string
   transactionHash: TransactionHash
+  implementationAddress?: string
 }
 
 export interface IHexSignature {
