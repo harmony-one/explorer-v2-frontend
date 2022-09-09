@@ -9,6 +9,7 @@ import {
 } from "../../api/client";
 import {Address, BaseContainer, BasePage, Button} from "../../components/ui";
 import styled from "styled-components";
+import {getAddress} from "../../utils";
 
 export const ActionButton = styled(Button)`
   font-size: 14px;
@@ -27,35 +28,63 @@ export function VerifyProxyContract() {
     const [verificationError, setVerificationError] = useState('')
     const [isVerified, setIsVerified] = useState(false)
 
+    const enrichAddress = (address: string) => {
+        let a = address.trim().toLowerCase()
+        if(address.startsWith('one1')) { // convert one1 to 0x before send request to backend
+            try {
+                a = getAddress(address).basicHex
+            } catch (e) {}
+        }
+        return a
+    }
+
     const setDefaultState = () => {
         setImplementationAddress('')
         setVerificationError('')
         setIsVerified(false)
     }
 
-    const verifyContract = async () => {
-        try {
-            setIsLoading(true)
-            setVerificationError('')
-            setImplementationAddress('')
-            const proxyAddress = contractAddress.toLowerCase()
-            const implContract = await getProxyImplementation([0, proxyAddress]);
-            if(implContract) {
-                setImplementationAddress(implContract.address)
-            } else {
-                setImplementationAddress('')
-                setVerificationError('This contract does not look like it contains any delegatecall opcode sequence.')
+    const validateAddress = (address: string) => {
+        if(address.length === 0) {
+            return ''
+        } else {
+            if(!address.startsWith('0x') && !address.startsWith('one1')) {
+                return 'Address should start with 0x or one1'
             }
-        } catch (e) {
-            console.error('Unable to verify contract', e)
-            setVerificationError('Cannot verify contract address, try again later')
-        } finally {
-            setIsLoading(false)
+            if(address.length != 42) {
+                return 'Address must be 42 characters long'
+            }
+        }
+        return ''
+    }
+
+    const verifyContract = async () => {
+        setImplementationAddress('')
+        const err = validateAddress(contractAddress)
+        if(err) {
+            setVerificationError(err)
+        } else {
+            try {
+                setIsLoading(true)
+                setVerificationError('')
+                const implContract = await getProxyImplementation([0, enrichAddress(contractAddress)]);
+                if(implContract) {
+                    setImplementationAddress(implContract.address)
+                } else {
+                    setImplementationAddress('')
+                    setVerificationError('This contract does not look like it contains any delegatecall opcode sequence.')
+                }
+            } catch (e) {
+                console.error('Unable to verify contract', e)
+                setVerificationError('Cannot verify contract address, try again later')
+            } finally {
+                setIsLoading(false)
+            }
         }
     }
 
     const applyImplementationAddress = async () => {
-        const contract = await assignProxyImplementation([0, contractAddress.toLowerCase(), implementationAddress])
+        const contract = await assignProxyImplementation([0, enrichAddress(contractAddress), implementationAddress])
         setDefaultState()
         setIsVerified(true)
     }
