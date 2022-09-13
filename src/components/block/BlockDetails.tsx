@@ -129,7 +129,7 @@ export const BlockDetails: FunctionComponent<BlockDetailsProps> = ({
           style={{ width: "100%", minWidth: "698px" }}
           columns={columns}
           data={blockData}
-          step={10}
+          step={50}
           border={{
             header: false,
             body: {
