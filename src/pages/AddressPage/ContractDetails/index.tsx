@@ -15,13 +15,23 @@ const StyledTextArea = styled(TextArea)`
   font-weight: normal;
 `;
 
+const LabelSuccess = styled(Box)`
+  width: fit-content;
+  padding: 0 4px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: bold;
+`
+
 export const ContractDetails = (props: {
   address: string;
   contracts?: AddressDetails | null;
   sourceCode?: ISourceCode | null;
+  implementation?: AddressDetails | null;
+  implementationSourceCode?: ISourceCode | null;
   shard?: ShardID;
 }) => {
-  // console.log(111, appendABI(abi, props.address));
 
   if (!!props.sourceCode) {
     return (
@@ -30,6 +40,8 @@ export const ContractDetails = (props: {
         contracts={props.contracts}
         address={props.address}
         shard={props.shard || 0}
+        implementation={props.implementation}
+        implementationSourceCode={props.implementationSourceCode}
       />
     );
   }
@@ -218,15 +230,19 @@ const TabBox = styled(Box) <{ selected: boolean }>`
 `;
 
 const TabButton = (props: {
-  text: string;
+  text?: string;
   onClick: () => void;
   selected: boolean;
+  children?: any;
 }) => {
   return (
     <TabBox onClick={props.onClick} selected={props.selected}>
-      <Text size="small" color={"minorText"}>
-        {props.text}
-      </Text>
+      {props.text &&
+          <Text size="small" color={"minorText"}>
+            {props.text}
+          </Text>
+      }
+      {props.children && props.children}
     </TabBox>
   );
 };
@@ -236,6 +252,8 @@ export const VerifiedContractDetails = (props: {
   address: string;
   contracts?: AddressDetails | null;
   shard: number;
+  implementation?: AddressDetails | null;
+  implementationSourceCode?: ISourceCode | null;
 }) => {
   const [tab, setTab] = useState<V_TABS>(V_TABS.CODE);
   const [metamaskAddress, setMetamask] = useState("");
@@ -277,19 +295,39 @@ export const VerifiedContractDetails = (props: {
             />
           </>
         ) : null}
-        {props.sourceCode.proxyAddress && props.sourceCode.proxy  ? (
-          <>
-            <TabButton
-              text={V_TABS.READ_PROXY + "(new)"}
-              onClick={() => setTab(V_TABS.READ_PROXY)}
-              selected={tab === V_TABS.READ_PROXY}
-            />
-            <TabButton
-              text={V_TABS.WRITE_PROXY + "(new)"}
-              onClick={() => setTab(V_TABS.WRITE_PROXY)}
-              selected={tab === V_TABS.WRITE_PROXY}
-            />
-          </>
+        {/*{props.sourceCode.proxyAddress && props.sourceCode.proxy  ? (*/}
+        {/*  <>*/}
+        {/*    <TabButton*/}
+        {/*      text={V_TABS.READ_PROXY + "(new)"}*/}
+        {/*      onClick={() => setTab(V_TABS.READ_PROXY)}*/}
+        {/*      selected={tab === V_TABS.READ_PROXY}*/}
+        {/*    />*/}
+        {/*    <TabButton*/}
+        {/*      text={V_TABS.WRITE_PROXY + "(new)"}*/}
+        {/*      onClick={() => setTab(V_TABS.WRITE_PROXY)}*/}
+        {/*      selected={tab === V_TABS.WRITE_PROXY}*/}
+        {/*    />*/}
+        {/*  </>*/}
+        {/*) : null}*/}
+
+        {props.implementation && props.implementationSourceCode  ? (
+            <>
+              <TabButton
+                  onClick={() => setTab(V_TABS.READ_PROXY)}
+                  selected={tab === V_TABS.READ_PROXY}>
+                <Box direction={'row'} gap={'4px'}>
+                  <Text size={'small'} color={'minorText'}>{V_TABS.READ_PROXY}</Text>
+                  <LabelSuccess color={'text'} background={'backgroundSuccess'}>new</LabelSuccess>
+                </Box>
+              </TabButton>
+              <TabButton
+                  onClick={() => setTab(V_TABS.WRITE_PROXY)}
+                  selected={tab === V_TABS.WRITE_PROXY}>
+                <Box direction={'row'} gap={'4px'}>
+                  <Text size={'small'} color={'minorText'}>{V_TABS.WRITE_PROXY}</Text>
+                  <LabelSuccess color={'text'} background={'backgroundSuccess'}>new</LabelSuccess>
+                </Box></TabButton>
+            </>
         ) : null}
 
       </Box>
@@ -412,36 +450,65 @@ export const VerifiedContractDetails = (props: {
         </Box>
       ) : null}
 
-      {tab === V_TABS.READ_PROXY && props.sourceCode.proxy ? (
-        <Box style={{ padding: "10px" }}>
-          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>
-          <AbiMethods
-            abi={props.sourceCode.proxy.result.abi.filter(
-              (a: { stateMutability: string; type: string; }) => a.stateMutability === "view" && a.type === "function"
-            )}
-            address={props.address || ""}
-            isRead={V_TABS.READ_PROXY === tab}
-          />
-        </Box>
+      {tab === V_TABS.READ_PROXY && props.implementation?.address && props.implementationSourceCode?.abi  ? (
+          <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+            <AbiMethods
+                abi={props.implementationSourceCode?.abi.filter(
+                    (a) => a.stateMutability === "view" && a.type === "function"
+                )}
+                address={props.implementation?.address}
+                isRead={V_TABS.READ_PROXY === tab}
+            />
+          </Box>
       ) : null}
 
-      {tab === V_TABS.WRITE_PROXY && props.sourceCode.proxy ? (
-        <Box style={{ padding: "10px" }}>
-          <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
-          <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>
-          <AbiMethods
-            abi={props.sourceCode.proxy.result.abi.filter(
-              (a: { stateMutability: string; name: any; type: string; }) =>
-                a.stateMutability !== "view" &&
-                !!a.name &&
-                a.type === "function"
-            )}
-            address={props.address || ""}
-            metamaskAddress={metamaskAddress}
-            validChainId={validChainId}
-          />
-        </Box>
+      {tab === V_TABS.WRITE_PROXY && props.implementation?.address && props.implementationSourceCode?.abi ? (
+          <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+            <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
+            <AbiMethods
+                abi={props.implementationSourceCode?.abi.filter(
+                    (a) =>
+                        a.stateMutability !== "view" &&
+                        !!a.name &&
+                        a.type === "function"
+                )}
+                address={props.implementation?.address}
+                metamaskAddress={metamaskAddress}
+                validChainId={validChainId}
+            />
+          </Box>
       ) : null}
+
+      {/*{tab === V_TABS.READ_PROXY && props.sourceCode.proxy ? (*/}
+      {/*  <Box style={{ padding: "10px" }}>*/}
+      {/*    <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>*/}
+      {/*    <AbiMethods*/}
+      {/*      abi={props.sourceCode.proxy.result.abi.filter(*/}
+      {/*        (a: { stateMutability: string; type: string; }) => a.stateMutability === "view" && a.type === "function"*/}
+      {/*      )}*/}
+      {/*      address={props.address || ""}*/}
+      {/*      isRead={V_TABS.READ_PROXY === tab}*/}
+      {/*    />*/}
+      {/*  </Box>*/}
+      {/*) : null}*/}
+
+      {/*{tab === V_TABS.WRITE_PROXY && props.sourceCode.proxy ? (*/}
+      {/*  <Box style={{ padding: "10px" }}>*/}
+      {/*    <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />*/}
+      {/*    <ProxyContractDetails address={props.sourceCode.proxyAddress || ""} proxy={props.sourceCode.proxyDetails}></ProxyContractDetails>*/}
+      {/*    <AbiMethods*/}
+      {/*      abi={props.sourceCode.proxy.result.abi.filter(*/}
+      {/*        (a: { stateMutability: string; name: any; type: string; }) =>*/}
+      {/*          a.stateMutability !== "view" &&*/}
+      {/*          !!a.name &&*/}
+      {/*          a.type === "function"*/}
+      {/*      )}*/}
+      {/*      address={props.address || ""}*/}
+      {/*      metamaskAddress={metamaskAddress}*/}
+      {/*      validChainId={validChainId}*/}
+      {/*    />*/}
+      {/*  </Box>*/}
+      {/*) : null}*/}
     </Box>
   );
 };
