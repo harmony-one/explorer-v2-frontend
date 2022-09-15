@@ -10,6 +10,7 @@ import {
 import {Address, BaseContainer, BasePage, Button} from "../../components/ui";
 import styled from "styled-components";
 import {getAddress} from "../../utils";
+import {ISourceCode, loadSourceCode} from "../../api/explorerV1";
 
 export const ActionButton = styled(Button)`
   font-size: 14px;
@@ -25,6 +26,8 @@ export function VerifyProxyContract() {
     const [isLoading, setIsLoading] = useState(false)
     const [contractAddress, setContractAddress] = useState(queryAddress)
     const [implementationAddress, setImplementationAddress] = useState('')
+    const [implementationCode, setImplementationCode] = useState<ISourceCode>()
+    const [contractCode, setContractCode] = useState<ISourceCode>()
     const [verificationError, setVerificationError] = useState('')
     const [isVerified, setIsVerified] = useState(false)
 
@@ -67,8 +70,17 @@ export function VerifyProxyContract() {
             try {
                 setIsLoading(true)
                 setVerificationError('')
-                const implContract = await getProxyImplementation([0, enrichAddress(contractAddress)]);
+                const formattedContractAddress = enrichAddress(contractAddress)
+                const implContract = await getProxyImplementation([0, formattedContractAddress]);
                 if(implContract) {
+                    try {
+                        const code = await loadSourceCode(formattedContractAddress, 0)
+                        const implCode = await loadSourceCode(implContract.address, 0)
+                        setContractCode(code)
+                        setImplementationCode(implCode)
+                    } catch (e) {
+                        setVerificationError('Proxy or implementation contract source code is not verified. Please verify and publish the contract source before proceeding with this proxy verification.')
+                    }
                     setImplementationAddress(implContract.address)
                 } else {
                     setImplementationAddress('')
@@ -107,7 +119,7 @@ export function VerifyProxyContract() {
                             <Box direction="row">
                                 <Box width={'550px'}>
                                     <TextInput
-                                        placeholder={"ONE contract address"}
+                                        placeholder={"Contract address"}
                                         onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onChangeInput(evt.currentTarget.value)}
                                         value={contractAddress}
                                         disabled={false}
@@ -119,8 +131,10 @@ export function VerifyProxyContract() {
                     {!implementationAddress &&
                         <Box direction={'column'} gap={'16px'}>
                             {verificationError &&
-                                <Box>
-                                    <Text color={'red'} size={'small'}>{verificationError}</Text>
+                                <Box round={'8px'} background={'backgroundError'} pad={'16px'}>
+                                    <Text color={'text'} size={'small'}>
+                                        {verificationError}
+                                    </Text>
                                 </Box>
                             }
                             {isVerified &&
@@ -154,12 +168,21 @@ export function VerifyProxyContract() {
                         <Box direction={'column'} gap={'16px'}>
                             <Box>
                                 <Text size={'small'}>The proxy's implementation contract is found at:</Text>
-                                <Text size={'small'} weight={'bold'} color={'successText'}>{implementationAddress}</Text>
+                                <Text size={'small'} weight={'bold'} color={'successText'}>
+                                    <Address address={implementationAddress} />
+                                </Text>
                             </Box>
+                            {verificationError &&
+                                <Box round={'8px'} background={'backgroundError'} pad={'16px'}>
+                                    <Text color={'text'} size={'small'}>
+                                        {verificationError}
+                                    </Text>
+                                </Box>
+                            }
                             <Box direction={'row'} gap={'16px'}>
                                 <Box width={'small'}>
                                     <ActionButton
-                                        disabled={isLoading}
+                                        disabled={isLoading || !implementationCode || !contractCode}
                                         onClick={applyImplementationAddress}>Save</ActionButton>
                                 </Box>
                                 <Box width={'small'}><ActionButton onClick={setDefaultState}>Clear</ActionButton></Box>
