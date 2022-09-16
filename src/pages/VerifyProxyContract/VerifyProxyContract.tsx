@@ -117,7 +117,7 @@ export function VerifyProxyContract() {
                         <Box margin={'0'}>
                             <Text size={'small'}>Please enter the Proxy Contract Address you would like to verify</Text>
                             <Box direction="row">
-                                <Box width={'550px'}>
+                                <Box width={'600px'}>
                                     <TextInput
                                         placeholder={"Contract address"}
                                         onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onChangeInput(evt.currentTarget.value)}
