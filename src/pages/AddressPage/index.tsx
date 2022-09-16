@@ -132,9 +132,7 @@ export function AddressPage() {
           const code = await getContractCode(contract.address, shardId || 0)
           setContracts(mergedContracts);
           setContractShardId(shardId)
-          if(code) {
-            setSourceCode(code)
-          }
+          setSourceCode(code)
 
           if(contract.implementationAddress) {
             let { contract: contractData, shardId } = await getContractInAllShards(contract.implementationAddress);
@@ -145,6 +143,9 @@ export function AddressPage() {
               setImplementationSourceCode(implCode)
               // setSourceCode(implCode)
             }
+          } else {
+            setImplementation(null)
+            setImplementationSourceCode(null)
           }
         }
 
