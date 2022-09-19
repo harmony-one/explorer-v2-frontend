@@ -13,6 +13,7 @@ import {
   StakingDelegationResponse,
   TokenType
 } from "../types";
+import { config } from "../config";
 
 export type TRPCResponse<T> = { id: number; jsonrpc: "2.0"; result: T, error?: { code: number, message: string } };
 
@@ -38,8 +39,8 @@ export const rpcBigIntAdapter = <T = any>(...args: Parameters<typeof fetch>) => 
     .then((res) => JSONBig({ storeAsString: true }).parse(res)) as unknown as Promise<T>;
 };
 
-export const getBalance = (params: [string, "latest"]) => {
-  return rpcAdapter<TRPCResponse<string>>(API_URL, {
+export const getBalance = (nodeUrl: string, params: [string, "latest"]) => {
+  return rpcAdapter<TRPCResponse<string>>(nodeUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -72,62 +73,15 @@ export const hmyv2_getTransactionReceipt = (
 };
 
 export const getAllBalance = (params: [string, "latest"]) => {
-  return Promise.all([
-    rpcAdapter<TRPCResponse<string>>(
-      `${process.env["REACT_APP_RPC_URL_SHARD0"]}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "eth_getBalance",
-          id: 1,
-          params,
-        }),
-      }
-    ),
-    rpcAdapter<TRPCResponse<string>>(
-      `${process.env["REACT_APP_RPC_URL_SHARD1"]}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "eth_getBalance",
-          id: 1,
-          params,
-        }),
-      }
-    ),
-    rpcAdapter<TRPCResponse<string>>(
-      `${process.env["REACT_APP_RPC_URL_SHARD2"]}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "eth_getBalance",
-          id: 1,
-          params,
-        }),
-      }
-    ),
-    rpcAdapter<TRPCResponse<string>>(
-      `${process.env["REACT_APP_RPC_URL_SHARD3"]}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "eth_getBalance",
-          id: 1,
-          params,
-        }),
-      }
-    ),
-  ]).then((arr) => {
-    return Promise.resolve(arr.map((item) => item.result || '0x0'));
-  });
+  const getBalanceHandler = async (nodeUrl: string) => {
+    try {
+      const { result } = await getBalance(nodeUrl, params)
+      return result
+    } catch (e) {
+      return '0x0'
+    }
+  }
+  return Promise.all(config.shardUrls.map(shardUrl => getBalanceHandler(shardUrl)));
 };
 
 const defaultGetHistoryParams = {
@@ -252,14 +206,14 @@ export const hmy_getDelegationsByDelegator = (address: string): Promise<StakingD
 /**
  * Given address get all the approvals made by this address for all types of ERC1155, ERC721, and ERC20 tokens.
  * Supply optional contractAddress argument to filter to only the specified token.
- * 
+ *
  * Use pageIndex and pageSize to control how many events to load from the RPC, supply txnHistory to remove previous
- * 
- * @param address 
- * @param contractAddress 
- * @param pageIndex 
- * @param pageSize 
- * @param txnHistory 
+ *
+ * @param address
+ * @param contractAddress
+ * @param pageIndex
+ * @param pageSize
+ * @param txnHistory
  */
 export const getAllApprovalsForTokens = async (address: string,
   contractAddress: string = "",
