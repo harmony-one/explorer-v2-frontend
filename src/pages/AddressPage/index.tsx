@@ -9,7 +9,6 @@ import {
   getTokenERC721Assets,
   getTokenERC1155Assets,
   getUserERC1155Balances,
-  getERC20TokenHolders,
   getTokenERC1155Balances,
 } from "src/api/client";
 import { useHistory, useParams } from "react-router-dom";
@@ -22,9 +21,9 @@ import {
   TRelatedTransaction,
 } from "src/api/client.interface";
 import { Inventory } from "./tabs/inventory/Inventory";
-import { getAllBalance, getBalance, hmy_getDelegationsByDelegator, StakingDelegation } from "src/api/rpc";
+import { getAllBalance, hmy_getDelegationsByDelegator, StakingDelegation } from "src/api/rpc";
 import { ISourceCode, loadSourceCode } from "../../api/explorerV1";
-import { AddressDetails, RelatedTransaction, RPCTransactionHarmony, ShardID } from "../../types";
+import { AddressDetails, RelatedTransaction, ShardID } from "../../types";
 import { ContractDetails } from "./ContractDetails";
 import { ERC1155Icon } from "src/components/ui/ERC1155Icon";
 import { getAddress } from "src/utils";

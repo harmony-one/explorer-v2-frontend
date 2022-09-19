@@ -17,8 +17,15 @@ const mapKeysToLowerCase = (input: AddressMap): AddressMap => {
 export const bridgeTokensMap: Record<string, string> = bridgeTokens || {}
 export const addressAliasMap: AddressMap = mapKeysToLowerCase(addressAliases) || {}
 
-export const config = {
-  availableShards: (process.env.REACT_APP_AVAILABLE_SHARDS || '')
+const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS || '')
     .split(",")
     .map((t) => +t) as ShardID[]
+
+const shardUrls = availableShards
+    .map(shardId => process.env[`REACT_APP_RPC_URL_SHARD${shardId}`] as string)
+    .filter(url => url)
+
+export const config = {
+  availableShards,
+  shardUrls
 }
