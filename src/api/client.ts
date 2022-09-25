@@ -101,13 +101,13 @@ export function getRelatedTransactions(params: any[]) {
   >;
 }
 
-export function getTransactionCountLast14Days() {
-  return transport("getTransactionCountLast14Days", []) as Promise<any[]>;
+export function getTransactionCountLast14Days(limit = 14) {
+  return transport("getTransactionCountLast14Days", [limit]) as Promise<any[]>;
 }
 
 
-export function getWalletsCountLast14Days() {
-    return transport("getWalletsCountLast14Days", []) as Promise<any[]>;
+export function getWalletsCountLast14Days(limit = 14) {
+    return transport("getWalletsCountLast14Days", [limit]) as Promise<any[]>;
 }
 
 export function getContractsByField(params: any[]) {

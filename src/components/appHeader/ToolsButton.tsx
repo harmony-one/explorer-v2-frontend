@@ -41,7 +41,7 @@ export function ToolsButton() {
               history.push("/tools/approvals");
             }}
           >
-            Token Approvals 
+            Token Approvals
           </Anchor>
           <Anchor
             style={{ textDecoration: "underline" }}
@@ -52,6 +52,15 @@ export function ToolsButton() {
           >
             Check HRC
           </Anchor>
+            <Anchor
+                style={{ textDecoration: "underline" }}
+                onClick={(e) => {
+                    setIsOpen(false);
+                    history.push("/charts");
+                }}
+            >
+                Charts
+            </Anchor>
         </Box>
       }
       style={{
