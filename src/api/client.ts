@@ -1,11 +1,11 @@
 import { transport } from "./explorer";
 import {
-  Block,
-  InternalTransaction,
-  RPCStakingTransactionHarmony,
-  RPCTransactionHarmony,
-  RelatedTransaction,
-  Log, LogDetailed, AddressDetails
+    Block,
+    InternalTransaction,
+    RPCStakingTransactionHarmony,
+    RPCTransactionHarmony,
+    RelatedTransaction,
+    Log, LogDetailed, AddressDetails, MetricsType, MetricsDailyItem
 } from "src/types";
 import {
   IHoldersInfo,
@@ -108,6 +108,10 @@ export function getTransactionCountLast14Days(limit = 14) {
 
 export function getWalletsCountLast14Days(limit = 14) {
     return transport("getWalletsCountLast14Days", [limit]) as Promise<any[]>;
+}
+
+export function getMetricsByType(type: MetricsType, offset = 0, limit = 14) {
+    return transport("getMetricsByType", [type, offset, limit]) as Promise<MetricsDailyItem[]>;
 }
 
 export function getContractsByField(params: any[]) {

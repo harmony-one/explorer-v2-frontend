@@ -45,3 +45,14 @@ export interface IGetTxsHistoryParams {
   txType?: RequestTxType;
   order?: RequestOrder
 }
+
+export interface MetricsDailyItem {
+  date: string
+  value: string
+}
+
+export enum MetricsType {
+  transactionsCount = 'transactions_count',
+  walletsCount = 'wallets_count',
+  averageFee = 'average_fee',
+}

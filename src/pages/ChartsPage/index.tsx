@@ -3,6 +3,7 @@ import { Box, Heading, Text } from "grommet";
 import { BasePage, BaseContainer } from "src/components/ui";
 import {Route, Switch, useHistory, useLocation, useParams, useRouteMatch} from "react-router-dom";
 import {ActiveAddresses} from "./ActiveAddresses";
+import {DailyTransactions} from "./DailyTransactions";
 
 export function ChartsPage() {
     // @ts-ignore
@@ -14,7 +15,9 @@ export function ChartsPage() {
 
     const navigate = (path: string) => history.push(path)
 
-    if(route === 'addresses') {
+    if(route === 'tx') {
+        return <DailyTransactions />
+    } else if(route === 'addresses') {
         return <ActiveAddresses />
     }
 
@@ -26,6 +29,9 @@ export function ChartsPage() {
             <BasePage pad={"small"} style={{overflow: 'inherit'}}>
                 <Box style={{ width: "200px" }} direction={"row"} align={'center'}>
                     <Text onClick={() => navigate('/charts/addresses')}>daily active addresses</Text>
+                </Box>
+                <Box style={{ width: "200px" }} direction={"row"} align={'center'}>
+                    <Text onClick={() => navigate('/charts/tx')}>txs</Text>
                 </Box>
             </BasePage>
         </BaseContainer>

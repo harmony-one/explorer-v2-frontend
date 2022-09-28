@@ -50,28 +50,6 @@ export const ActiveAddresses = () => {
     // });
 
     return <BaseContainer pad={{ horizontal: "0" }}>
-        {/*<Heading size="small" margin={{ bottom: "medium", top: "0" }}>*/}
-        {/*    <Box direction={"row"}>Daily Transactions</Box>*/}
-        {/*</Heading>*/}
-        {/*<BasePage pad={"small"} style={{overflow: 'inherit'}}>*/}
-        {/*    <Box style={{ width: "100%" }} direction={"row"} align={'center'}>*/}
-        {/*        {!isLoading && (*/}
-        {/*            // @ts-ignore*/}
-        {/*            <LineChartJs options={getDetailedChartOptions(themeMode, txs)} data={getChartData(txs)} height="50px" />*/}
-        {/*        )}*/}
-        {/*    </Box>*/}
-        {/*</BasePage>*/}
-        {/*<Heading size="small" margin={{ bottom: "medium", top: "16px" }}>*/}
-        {/*    <Box direction={"row"}>Daily Active Addresses</Box>*/}
-        {/*</Heading>*/}
-        {/*<BasePage pad={"small"} style={{overflow: 'inherit'}}>*/}
-        {/*    <Box style={{ width: "100%" }} direction={"row"} align={'center'}>*/}
-        {/*        {!isLoading && (*/}
-        {/*            // @ts-ignore*/}
-        {/*            <LineChartJs options={getDetailedChartOptions(themeMode, wallets)} data={getChartData(themeMode, wallets)} height="50px" />*/}
-        {/*        )}*/}
-        {/*    </Box>*/}
-        {/*</BasePage>*/}
         <Heading size="small" margin={{ bottom: "medium", top: "16px" }}>
             <Box direction={"row"}>Daily Average Fee</Box>
         </Heading>
