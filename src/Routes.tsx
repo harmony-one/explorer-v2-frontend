@@ -101,7 +101,6 @@ export function Routes() {
 
         <Route path="/charts">
           <Route path={'/'}><ChartsPage /></Route>
-          <Route path={'/addresses'}>123</Route>
         </Route>
 
         <Route path="*">

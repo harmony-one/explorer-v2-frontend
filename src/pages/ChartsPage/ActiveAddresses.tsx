@@ -1,87 +1,59 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Heading} from "grommet";
-import {BaseContainer, BasePage} from "../../components/ui";
 import {getMetricsByType} from "../../api/client";
-import dayjs from "dayjs";
-import {palette} from "../../theme";
-import {useThemeMode} from "../../hooks/themeSwitcherHook";
-import {Line as LineChartJs} from "react-chartjs-2";
 import {MetricsDailyItem, MetricsType} from "../../types";
-import { getDetailedChartOptions, getChartData } from './utils'
+import {
+    enrichResponse,
+} from './utils'
+import {DailyChartPage} from "./DailyChartPage";
 
 export const ActiveAddresses = () => {
-    const themeMode = useThemeMode();
-    const [txs, setTxs] = useState<any[]>([]);
-    const [wallets, setWallets] = useState<any[]>([]);
-    const [fee, setFee] = useState<any[]>([]);
+    const [items, setItems] = useState<MetricsDailyItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    const enrichResponse = (items: MetricsDailyItem[]) => {
-        return items.reverse().map(item => ({
-            ...item,
-            timestamp: item.date
-        }))
-    }
+    const [loadingError, setLoadingError] = useState('')
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                setIsLoading(true);
-                const txsResults = await getMetricsByType(MetricsType.transactionsCount, 0, 1000)
-                const walletsResults = await getMetricsByType(MetricsType.walletsCount, 0, 1000)
-                const feeResults = await getMetricsByType(MetricsType.averageFee, 0, 1000)
-                console.log('feeResults', feeResults)
-                setTxs(enrichResponse(txsResults));
-                setWallets(enrichResponse(walletsResults));
-                setFee(enrichResponse(feeResults));
-                setIsLoading(false);
+                setIsLoading(true)
+                const limit = 1000
+                let data: MetricsDailyItem[] = []
+                for(let i = 0; i < 2; i++) {
+                    const res = await getMetricsByType(MetricsType.walletsCount, i * limit, limit)
+                    data = [...data, ...res]
+
+                    if(res.length < limit) {
+                        break;
+                    }
+                }
+                const cachedData = enrichResponse(data)
+                setItems(cachedData)
             } catch (e) {
                 console.error('Error on loading metrics:', e)
+                setLoadingError('Loading error')
+            } finally {
+                setIsLoading(false);
             }
         }
         loadData()
     }, [])
 
-    // let min = Number.MAX_SAFE_INTEGER;
-    // txs.forEach(e => {
-    //     if (min > +e.value) {
-    //         min = +e.value;
-    //     }
-    // });
+    const dailyPageProps = {
+        title: 'Harmony Daily Active Addresses',
+        unitLabel: 'addresses',
+        items,
+        isLoading,
+        loadingError,
+        chart: {
+            yAxisLabel: 'Active Harmony Addresses',
+            tooltipLabel: 'Active Harmony Addresses'
+        },
+        renderMaxValue: (value: string, date: string) => {
+            return `Highest number of ${value} addresses on ${date}`
+        },
+        renderMinValue: (value: string, date: string) => {
+            return `Lowest number of ${value} addresses on ${date}`
+        }
+    }
 
-    return <BaseContainer pad={{ horizontal: "0" }}>
-        {/*<Heading size="small" margin={{ bottom: "medium", top: "0" }}>*/}
-        {/*    <Box direction={"row"}>Daily Transactions</Box>*/}
-        {/*</Heading>*/}
-        {/*<BasePage pad={"small"} style={{overflow: 'inherit'}}>*/}
-        {/*    <Box style={{ width: "100%" }} direction={"row"} align={'center'}>*/}
-        {/*        {!isLoading && (*/}
-        {/*            // @ts-ignore*/}
-        {/*            <LineChartJs options={getDetailedChartOptions(themeMode, txs)} data={getChartData(txs)} height="50px" />*/}
-        {/*        )}*/}
-        {/*    </Box>*/}
-        {/*</BasePage>*/}
-        {/*<Heading size="small" margin={{ bottom: "medium", top: "16px" }}>*/}
-        {/*    <Box direction={"row"}>Daily Active Addresses</Box>*/}
-        {/*</Heading>*/}
-        {/*<BasePage pad={"small"} style={{overflow: 'inherit'}}>*/}
-        {/*    <Box style={{ width: "100%" }} direction={"row"} align={'center'}>*/}
-        {/*        {!isLoading && (*/}
-        {/*            // @ts-ignore*/}
-        {/*            <LineChartJs options={getDetailedChartOptions(themeMode, wallets)} data={getChartData(themeMode, wallets)} height="50px" />*/}
-        {/*        )}*/}
-        {/*    </Box>*/}
-        {/*</BasePage>*/}
-        <Heading size="small" margin={{ bottom: "medium", top: "16px" }}>
-            <Box direction={"row"}>Daily Average Fee</Box>
-        </Heading>
-        <BasePage pad={"small"} style={{overflow: 'inherit'}}>
-            <Box style={{ width: "100%" }} direction={"row"} align={'center'}>
-                {!isLoading && (
-                    // @ts-ignore
-                    <LineChartJs options={getDetailedChartOptions(themeMode, fee)} data={getChartData(themeMode, fee, 'Average fee')} height="50px" />
-                )}
-            </Box>
-        </BasePage>
-    </BaseContainer>
+    return <DailyChartPage {...dailyPageProps} />
 }

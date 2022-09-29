@@ -59,7 +59,7 @@ export function ToolsButton() {
                     history.push("/charts");
                 }}
             >
-                Charts
+                Charts & Stats
             </Anchor>
         </Box>
       }

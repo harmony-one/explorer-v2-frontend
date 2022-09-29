@@ -49,7 +49,8 @@ export const ChartFilter = (props: ChartFilterProps) => {
         direction={'row'}
         gap={'8px'}
         round={'8px'}
-        background={'backgroundMark'}
+        background={'backgroundBack'}
+        border={{ size: '1px' }}
     >
         {ChartOptions.map(option => <Option
             key={option}

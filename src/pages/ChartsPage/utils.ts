@@ -2,7 +2,7 @@ import {palette} from "../../theme";
 import dayjs from "dayjs";
 import dayOfYear from "dayjs/plugin/dayOfYear";
 import {MetricsDailyItem} from "../../types";
-import {ChartOption, ChartOptions} from "./ChartFilter";
+import {ChartOption} from "./ChartFilter";
 
 dayjs.extend(dayOfYear)
 
