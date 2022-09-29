@@ -44,6 +44,7 @@ export const getDetailedChartOptions = (themeMode: 'light' | 'dark', points: any
 
     return {
         responsive: true,
+        maintainAspectRatio: false, // To properly adjust height on page resize
         animation: false,
         animations: {
             colors: false,
@@ -99,7 +100,19 @@ export const getDetailedChartOptions = (themeMode: 'light' | 'dark', points: any
                         if(nextItem) {
                             if (dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month() &&
                                 ([0, 6].includes(dayjs(item.timestamp).month()))) {
-                                return dayjs(item.timestamp).format("MMM 'YY")
+                                return dayjs(nextItem.timestamp).format("MMM 'YY")
+                            }
+
+                            if(ticks.length <= 365) {
+                                if (dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month()) {
+                                    return dayjs(nextItem.timestamp).format("MMM 'YY")
+                                }
+                            }
+                            if(ticks.length <= 30) {
+                                if (dayjs(item.timestamp).day() !== dayjs(nextItem.timestamp).day() &&
+                                    [1].includes(dayjs(item.timestamp).day())) {
+                                    return dayjs(nextItem.timestamp).format("D MMM")
+                                }
                             }
                         }
                         return '';
@@ -154,8 +167,40 @@ export const getLimitByFilterOption = (option: ChartOption) => {
             const date2 = dayjs().startOf('year')
             return date1.diff(date2, 'day')
         }
-        case ChartOption.all: return 1000
+        case ChartOption.all: return 2000
         default:
             return 1000
     }
+}
+
+const downloadBlob = (content: any, filename: string) => {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link to download it
+    const pom = document.createElement('a');
+    pom.href = url;
+    pom.setAttribute('download', filename);
+    pom.click();
+}
+
+export const downloadMetricsCSV = (filename: string, params: { items: MetricsDailyItem[] }) => {
+    const { items } = params
+
+    const mappedTxs = items.map(item => ({ date: item.date, value: item.value }))
+    const header = mappedTxs.filter((_, index) => index === 0)
+        .map(item => Object.keys(item))
+    const body = mappedTxs
+        .map((item) => Object.values(item))
+
+    const csv = [...header, ...body]
+        .map(row =>
+            row
+                .map(String)  // convert every value to String
+                .map((v: any) => v.replaceAll('"', '""'))  // escape double colons
+                // .map((v: any) => `"${v}"`)  // quote it
+                .join(', ')  // comma-separated
+        ).join('\r\n');  // rows starting on new lines
+
+    downloadBlob(csv, filename)
 }

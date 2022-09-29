@@ -24,7 +24,7 @@ const Option = (props: { value: ChartOption, isActive: boolean, onSelect: (value
 
     return <Box
         round={'8px'}
-        pad={'8px'}
+        pad={'4px'}
         width={'48px'}
         background={isActive ? 'background' : 'unset'}
         align={'center'}
@@ -45,7 +45,7 @@ export const ChartFilter = (props: ChartFilterProps) => {
     const { activeOption, disabled, onSelect } = props
 
     return <Box
-        pad={'8px'}
+        pad={'4px'}
         direction={'row'}
         gap={'8px'}
         round={'8px'}
