@@ -12,9 +12,9 @@ export enum ChartOption {
 const OptionAlias = {
     [ChartOption.month]: '1M',
     [ChartOption.month3]: '3M',
-    [ChartOption.year]: ['1Y'],
-    [ChartOption.ytd]: ['YTD'],
-    [ChartOption.all]: ['ALL'],
+    [ChartOption.year]: '1Y',
+    [ChartOption.ytd]: 'YTD',
+    [ChartOption.all]: 'ALL',
 }
 
 export const ChartOptions = Object.values(ChartOption)
