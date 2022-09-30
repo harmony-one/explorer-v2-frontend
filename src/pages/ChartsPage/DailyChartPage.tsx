@@ -15,6 +15,7 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 import {Alert, Info} from "grommet-icons";
 import {Link} from "react-router-dom";
+import {useMediaQuery} from "react-responsive";
 
 const ChartModalContainer = styled(Box)`
   position: absolute;
@@ -95,7 +96,8 @@ export const DailyChartPage = (props: DailyChartPageProps) => {
         }
     }, [props.items])
 
-    const chartOptions = getDetailedChartOptions(themeMode, items, { yAxisLabel: props.chart.yAxisLabel })
+    const isMobile = useMediaQuery({ query: '(max-width: 868px)' })
+    const chartOptions = getDetailedChartOptions(themeMode, items, { isMobile, yAxisLabel: props.chart.yAxisLabel })
     const chartData = getChartData(themeMode, items, props.chart.tooltipLabel)
 
     return <BaseContainer pad={{ horizontal: "0" }}>

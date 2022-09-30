@@ -55,4 +55,5 @@ export enum MetricsType {
   transactionsCount = 'transactions_count',
   walletsCount = 'wallets_count',
   averageFee = 'average_fee',
+  blockSize = 'block_size'
 }

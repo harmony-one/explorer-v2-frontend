@@ -15,18 +15,8 @@ export const AverageFee = () => {
         const loadData = async () => {
             try {
                 setIsLoading(true)
-                const limit = 1000
-                let data: MetricsDailyItem[] = []
-                for(let i = 0; i < 2; i++) {
-                    const res = await getMetricsByType(MetricsType.averageFee, i * limit, limit)
-                    data = [...data, ...res]
-
-                    if(res.length < limit) {
-                        break;
-                    }
-                }
-                const cachedData = enrichResponse(data)
-                setItems(cachedData)
+                const data = await getMetricsByType(MetricsType.averageFee, 0, 2000)
+                setItems(enrichResponse(data))
             } catch (e) {
                 console.error('Error on loading metrics:', e)
                 setLoadingError('Loading error')

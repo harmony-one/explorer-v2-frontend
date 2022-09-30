@@ -25,6 +25,7 @@ export const getChartData = (themeMode: string, items: MetricsDailyItem[], label
 }
 
 export interface OptionsConfig {
+    isMobile?: boolean
     yAxisLabel?: string
 }
 
@@ -96,19 +97,27 @@ export const getDetailedChartOptions = (themeMode: 'light' | 'dark', points: any
                     callback: function(value: string, index: any, ticks: any) {
                         const item = points[index]
                         const nextItem = points[index + 1]
-                        // Month change
                         if(nextItem) {
+                            if(dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month()) {
+                                console.log('dayjs(nextItem.timestamp).month()', dayjs(nextItem.timestamp).month())
+                            }
+                            // Show January and July
                             if (dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month() &&
-                                ([0, 6].includes(dayjs(item.timestamp).month()))) {
+                                ([6, 0].includes(dayjs(nextItem.timestamp).month()))) {
                                 return dayjs(nextItem.timestamp).format("MMM 'YY")
                             }
 
-                            if(ticks.length <= 365) {
-                                if (dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month()) {
-                                    return dayjs(nextItem.timestamp).format("MMM 'YY")
+                            // too many labels for mobile screen
+                            if(!config.isMobile) {
+                                // show each month
+                                if(ticks.length <= 365) {
+                                    if (dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month()) {
+                                        return dayjs(nextItem.timestamp).format("MMM 'YY")
+                                    }
                                 }
                             }
                             if(ticks.length <= 30) {
+                                // show each day
                                 if (dayjs(item.timestamp).day() !== dayjs(nextItem.timestamp).day() &&
                                     [1].includes(dayjs(item.timestamp).day())) {
                                     return dayjs(nextItem.timestamp).format("D MMM")

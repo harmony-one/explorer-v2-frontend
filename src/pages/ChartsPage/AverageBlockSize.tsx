@@ -6,7 +6,7 @@ import {
 } from './utils'
 import {DailyChartPage} from "./DailyChartPage";
 
-export const ActiveAddresses = () => {
+export const AverageBlockSize = () => {
     const [items, setItems] = useState<MetricsDailyItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingError, setLoadingError] = useState('')
@@ -15,7 +15,7 @@ export const ActiveAddresses = () => {
         const loadData = async () => {
             try {
                 setIsLoading(true)
-                const data = await getMetricsByType(MetricsType.walletsCount, 0, 2000)
+                const data = await getMetricsByType(MetricsType.blockSize, 0, 2000)
                 setItems(enrichResponse(data))
             } catch (e) {
                 console.error('Error on loading metrics:', e)
@@ -28,20 +28,20 @@ export const ActiveAddresses = () => {
     }, [])
 
     const dailyPageProps = {
-        title: 'Harmony Daily Active Addresses',
-        unitLabel: 'addresses',
+        title: 'Harmony Average Block Size',
+        unitLabel: 'blocksize',
         items,
         isLoading,
         loadingError,
         chart: {
-            yAxisLabel: 'Active Harmony Addresses',
-            tooltipLabel: 'Active Harmony Addresses'
+            yAxisLabel: 'Block Size in Bytes',
+            tooltipLabel: 'Block Size (Bytes)'
         },
         renderMaxValue: (value: string, date: string) => {
-            return `Highest number of ${value} addresses on ${date}`
+            return `Largest size of ${value} bytes on ${date}`
         },
         renderMinValue: (value: string, date: string) => {
-            return `Lowest number of ${value} addresses on ${date}`
+            return `Smallest size of ${value} bytes on ${date}`
         }
     }
 
