@@ -59,7 +59,10 @@ export function ToolsButton() {
                     history.push("/charts");
                 }}
             >
-                Charts & Stats
+                <Box direction={'row'} align={'center'} gap={'4px'}>
+                    Charts & Stats
+                    <Text size={'xsmall'} color={'successText'}>(new)</Text>
+                </Box>
             </Anchor>
         </Box>
       }

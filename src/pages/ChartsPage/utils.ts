@@ -98,9 +98,6 @@ export const getDetailedChartOptions = (themeMode: 'light' | 'dark', points: any
                         const item = points[index]
                         const nextItem = points[index + 1]
                         if(nextItem) {
-                            if(dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month()) {
-                                console.log('dayjs(nextItem.timestamp).month()', dayjs(nextItem.timestamp).month())
-                            }
                             // Show January and July
                             if (dayjs(item.timestamp).month() !== dayjs(nextItem.timestamp).month() &&
                                 ([6, 0].includes(dayjs(nextItem.timestamp).month()))) {

@@ -29,6 +29,7 @@ export const ActiveAddresses = () => {
 
     const dailyPageProps = {
         title: 'Harmony Daily Active Addresses',
+        description: 'The Active Address chart shows the daily number of unique addresses that were active on the network as a sender or receiver',
         unitLabel: 'addresses',
         items,
         isLoading,

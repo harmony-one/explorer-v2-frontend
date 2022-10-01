@@ -7,6 +7,7 @@ import {DailyTransactions} from "./DailyTransactions";
 import {AverageFee} from "./AverageFee";
 import {AverageBlockSize} from "./AverageBlockSize";
 import styled from "styled-components";
+import {useThemeMode} from "../../hooks/themeSwitcherHook";
 
 enum ChartType {
     tx = 'tx',
@@ -33,20 +34,31 @@ const PreviewContainer = styled(Box)`
 `
 
 const PreviewCard = (props: { type: ChartType, title: string }) => {
+    const themeMode = useThemeMode();
     const {type, title} = props
     const history = useHistory();
 
     const onClick = () => history.push(`charts/${type}`)
+    const imgProps = {
+        alt: type,
+        style: { opacity: themeMode === 'dark' ? '0.4' : 1 }
+    }
 
-    return <PreviewContainer border={{ size: '1px' }} onClick={onClick} round={'8px'} overflow={'hidden'}>
+    return <PreviewContainer
+        border={{ size: '1px' }}
+        round={'8px'}
+        overflow={'hidden'}
+        onClick={onClick}
+        style={{ filter: 'hue-rotate(360deg)' }}
+    >
         <Box pad={'8px'} background={'backgroundDropdownItem'}>
             <Text size={'small'} color={'brand'}>{title}</Text>
         </Box>
         <Box style={{ filter: 'grayscale(0.8)' }} pad={'8px'} border={{ side: 'top' }}>
-            {type === ChartType.tx && <img src={require("./thumbnails/daily_txs.png").default} alt={type} />}
-            {type === ChartType.addresses && <img src={require("./thumbnails/daily_addresses.png").default} alt={type} />}
-            {type === ChartType.fee && <img src={require("./thumbnails/daily_fee.png").default} alt={type} />}
-            {type === ChartType.blockSize && <img src={require("./thumbnails/daily_blocksize.png").default} alt={type} />}
+            {type === ChartType.tx && <img src={require("./thumbnails/daily_txs.png").default} {...imgProps} />}
+            {type === ChartType.addresses && <img src={require("./thumbnails/daily_addresses.png").default} {...imgProps} />}
+            {type === ChartType.fee && <img src={require("./thumbnails/daily_fee.png").default} {...imgProps} />}
+            {type === ChartType.blockSize && <img src={require("./thumbnails/daily_blocksize.png").default} {...imgProps} />}
         </Box>
     </PreviewContainer>
 }
@@ -74,7 +86,13 @@ export function ChartsPage() {
                 <Box border={{ side: 'bottom' }} pad={"small"}>
                     <Text weight={'bold'}>Blockchain Data</Text>
                 </Box>
-                <Box wrap direction={'row'} pad={"small"} justify={'center'} align={'center'}>
+                <Box
+                    wrap
+                    direction={'row'}
+                    pad={"small"}
+                    justify={'center'}
+                    align={'center'}
+                >
                     <PreviewCard type={ChartType.tx} title={'Daily Transactions Chart'} />
                     <PreviewCard type={ChartType.addresses} title={'Daily Active Addresses'} />
                     <PreviewCard type={ChartType.fee} title={'Average Transaction Fee'} />

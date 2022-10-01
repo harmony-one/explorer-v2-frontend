@@ -51,6 +51,7 @@ const formatDate = (date: string) => dayjs(date).format('dddd, MMMM D, YYYY')
 
 export interface DailyChartPageProps {
     title: string
+    description?: string
     unitLabel: string
     items: MetricsDailyItem[]
     isLoading: boolean
@@ -101,13 +102,24 @@ export const DailyChartPage = (props: DailyChartPageProps) => {
     const chartData = getChartData(themeMode, items, props.chart.tooltipLabel)
 
     return <BaseContainer pad={{ horizontal: "0" }}>
-        <Heading size="20px" margin={{ bottom: "medium", top: "0" }}>
-            <Box direction={"row"} gap={'8px'} align={'center'}>
-                <Box>
-                    <Link to={'/charts'}><TextLink color={'brand'}>Charts</TextLink></Link>
+        <Heading size="20px" margin={{ bottom: "medium", top: "0" }} style={{ maxWidth: 'unset' }}>
+            <Box direction={'row'} justify={'between'} align={'center'}>
+                <Box direction={"row"} gap={'8px'} align={'center'}>
+                    <Box>
+                        <Link to={'/charts'}><TextLink color={'brand'}>Charts</TextLink></Link>
+                    </Box>
+                    <Box>
+                        <Text style={{ opacity: 0.4 }}>/</Text>
+                    </Box>
+                    <Box>
+                        {props.title}
+                    </Box>
                 </Box>
-                <Box><Text style={{ opacity: 0.4 }}>/</Text></Box>
-                <Box>{props.title}</Box>
+                {!isMobile && props.description &&
+                    <Box align={'end'}>
+                        <Text size={'xsmall'} weight={'normal'}>{props.description}</Text>
+                    </Box>
+                }
             </Box>
         </Heading>
         <BasePage pad={"small"}>
