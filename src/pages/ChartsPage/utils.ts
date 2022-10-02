@@ -93,7 +93,7 @@ export const getDetailedChartOptions = (themeMode: 'light' | 'dark', points: any
                     maxTicksLimit: 2000,
                     maxRotation: 0,
                     minRotation: 0,
-                    align: 'center',
+                    align: 'end',
                     callback: function(value: string, index: any, ticks: any) {
                         const item = points[index]
                         const nextItem = points[index + 1]
