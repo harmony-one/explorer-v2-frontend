@@ -90,10 +90,10 @@ export const getDetailedChartOptions = (themeMode: 'light' | 'dark', points: any
                 },
                 ticks: {
                     color: ticksColor,
-                    maxTicksLimit: 1000,
+                    maxTicksLimit: 2000,
                     maxRotation: 0,
                     minRotation: 0,
-                    align: 'start',
+                    align: 'center',
                     callback: function(value: string, index: any, ticks: any) {
                         const item = points[index]
                         const nextItem = points[index + 1]
