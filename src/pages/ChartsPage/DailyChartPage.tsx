@@ -47,7 +47,7 @@ const LoadingErrorModal = () => {
 }
 
 const formatValue = (value: string) => Intl.NumberFormat('en-US').format(+value)
-const formatDate = (date: string) => dayjs(date).format('dddd, MMMM D, YYYY')
+const formatDate = (date: string) => date ? dayjs(date).format('dddd, MMMM D, YYYY') : '—'
 
 export interface DailyChartPageProps {
     title: string
