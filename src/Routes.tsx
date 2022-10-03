@@ -15,6 +15,7 @@ import { ExportData } from "./pages/ExportData";
 import { InventoryDetailsPage } from "./pages/InventoryDetailsPage/InventoryDetailsPage";
 import { ApprovalPage } from "./pages/ApprovalPage";
 import { CheckHRC } from "./pages/tools/CheckHRC";
+import { ChartsPage } from "./pages/ChartsPage";
 
 export function Routes() {
   return (
@@ -96,6 +97,10 @@ export function Routes() {
 
         <Route path="/exportData">
           <ExportData />
+        </Route>
+
+        <Route path="/charts">
+          <Route path={'/'}><ChartsPage /></Route>
         </Route>
 
         <Route path="*">
