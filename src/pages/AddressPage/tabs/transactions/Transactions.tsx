@@ -261,7 +261,8 @@ export function Transactions(props: {
             }
             onFilterChanged({
               ...filter[props.type],
-              filters
+              filters,
+              offset: 0
             })
           }
         }
