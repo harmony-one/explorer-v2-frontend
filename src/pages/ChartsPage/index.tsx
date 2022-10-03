@@ -40,25 +40,24 @@ const PreviewCard = (props: { type: ChartType, title: string }) => {
 
     const onClick = () => history.push(`charts/${type}`)
     const imgProps = {
-        alt: type,
-        style: { opacity: themeMode === 'dark' ? '0.4' : 1 }
+        alt: type
     }
+    const previewImgPostfix = themeMode === 'dark' ? '_dark' : ''
 
     return <PreviewContainer
         border={{ size: '1px' }}
         round={'8px'}
         overflow={'hidden'}
         onClick={onClick}
-        style={{ filter: 'hue-rotate(360deg)' }}
     >
         <Box pad={'8px'} background={'backgroundDropdownItem'}>
             <Text size={'small'} color={'brand'}>{title}</Text>
         </Box>
-        <Box style={{ filter: 'grayscale(0.8)' }} pad={'8px'} border={{ side: 'top' }}>
-            {type === ChartType.tx && <img src={require("./thumbnails/daily_txs.png").default} {...imgProps} />}
-            {type === ChartType.addresses && <img src={require("./thumbnails/daily_addresses.png").default} {...imgProps} />}
-            {type === ChartType.fee && <img src={require("./thumbnails/daily_fee.png").default} {...imgProps} />}
-            {type === ChartType.blockSize && <img src={require("./thumbnails/daily_blocksize.png").default} {...imgProps} />}
+        <Box pad={'8px'} border={{ side: 'top' }} style={{ filter: themeMode === 'dark' ? 'unset' : 'grayscale(0.8)' }}>
+            {type === ChartType.tx && <img src={require(`./thumbnails/daily_txs${previewImgPostfix}.png`).default} {...imgProps} />}
+            {type === ChartType.addresses && <img src={require(`./thumbnails/daily_addresses${previewImgPostfix}.png`).default} {...imgProps} />}
+            {type === ChartType.fee && <img src={require(`./thumbnails/daily_fee${previewImgPostfix}.png`).default} {...imgProps} />}
+            {type === ChartType.blockSize && <img src={require(`./thumbnails/daily_blocksize${previewImgPostfix}.png`).default} {...imgProps} />}
         </Box>
     </PreviewContainer>
 }
