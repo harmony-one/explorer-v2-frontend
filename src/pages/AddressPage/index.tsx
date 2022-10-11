@@ -3,7 +3,6 @@ import { Text, Tabs, Tab, Box } from "grommet";
 import { BasePage, BaseContainer } from "src/components/ui";
 import { AddressDetailsDisplay, getType } from "./AddressDetails";
 import {
-  getContractsByField,
   getUserERC20Balances,
   getUserERC721Assets,
   getTokenERC721Assets,
@@ -32,8 +31,8 @@ import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
 import { ToolsTab } from "./tabs/tools";
-import { config } from "../../config";
 import useQuery from "../../hooks/useQuery";
+import {getContractInAllShards} from "./ContractDetails/helpers";
 
 export function AddressPage() {
   const history = useHistory();
@@ -46,6 +45,8 @@ export function AddressPage() {
   const [balance, setBalance] = useState<any>([]);
   const [delegations, setDelegations] = useState<StakingDelegation[]>([]);
   const [addressDescription, setAddressDescription] = useState('')
+  const [implementation, setImplementation] = useState<AddressDetails | null>(null)
+  const [implementationSourceCode, setImplementationSourceCode] = useState<ISourceCode | null>(null)
 
   const [tokens, setTokens] = useState<any>(null);
   const [inventory, setInventory] = useState<IUserERC721Assets[]>([]);
@@ -93,49 +94,34 @@ export function AddressPage() {
     getBal();
   }, [id]);
 
+  // useEffect(() => {
+  //   const loadCode = async () => {
+  //     try {
+  //       const data = await loadSourceCode(id, contractShardId || 0)
+  //       setSourceCode(data)
+  //     } catch (e) {
+  //       setSourceCode(null)
+  //       console.log('Error on loading source code:', e);
+  //     }
+  //   }
+  //   // contract defined and contract address same as id
+  //   // note: when we toggle there is scenarios where the id are not the same
+  //   // @ts-ignore
+  //   if (!!contracts && contracts?.address === id && contractShardId !== null) {
+  //     loadCode()
+  //   }
+  // }, [id, contracts, contractShardId]);
+
   useEffect(() => {
-    // contract defined and contract address same as id
-    // note: when we toggle there is scenarios where the id are not the same
-    // @ts-ignore
-    if (!!contracts && contracts?.address === id && contractShardId !== null) {
-      loadSourceCode(id, contractShardId)
-        .then((res) => setSourceCode(res))
-        .catch((except) => {
-          console.log(except);
-          setSourceCode(null)
-        });
-    }
-  }, [id, contracts, contractShardId]);
-
-  const getContractInAllShards = async (contractId: string) => {
-    const { availableShards } = config
-
-    let contract = null
-    let shardId = null
-
-    for(let i = 0; i < availableShards.length; i++) {
+    const getContractCode = async (id: string, shardId: ShardID) => {
       try {
-        const sId = availableShards[i]
-        contract = await getContractsByField([sId, "address", contractId]);
-        if (contract) {
-          shardId = sId
-          break
-        }
-
-        // Temp optimization to reduce number of requests
-        if(sId === 1) {
-          break
-        }
-      } catch (_) {}
+        const data = await loadSourceCode(id, shardId)
+        return data
+      } catch (e) {
+        return null
+      }
     }
 
-    return {
-      contract,
-      shardId
-    }
-  }
-
-  useEffect(() => {
     const getContracts = async () => {
       try {
         let { contract, shardId } = await getContractInAllShards(id);
@@ -143,12 +129,29 @@ export function AddressPage() {
           const mergedContracts: any = erc721Map[contract.address]
             ? { ...contracts, ...erc721Map[contract.address] }
             : contract;
+          const code = await getContractCode(contract.address, shardId || 0)
           setContracts(mergedContracts);
           setContractShardId(shardId)
+          setSourceCode(code)
+
+          if(contract.implementationAddress) {
+            let { contract: contractData, shardId } = await getContractInAllShards(contract.implementationAddress);
+            if (contractData) {
+              const implCode = await getContractCode(contractData.address, shardId || 0)
+              console.log('Implementation contract loaded:', contractData)
+              setImplementation(contractData)
+              setImplementationSourceCode(implCode)
+              // setSourceCode(implCode)
+            }
+          } else {
+            setImplementation(null)
+            setImplementationSourceCode(null)
+          }
         }
 
       } catch (err) {
         setContracts(null);
+        console.error('Error on loading contract:', JSON.stringify(err))
       }
     };
     getContracts();
@@ -376,6 +379,8 @@ export function AddressPage() {
                 contracts={contracts}
                 sourceCode={sourceCode}
                 shard={contractShardId || 0}
+                implementation={implementation}
+                implementationSourceCode={implementationSourceCode}
               />
             </Tab>
           ) : null}

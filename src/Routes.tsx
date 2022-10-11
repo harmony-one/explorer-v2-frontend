@@ -15,6 +15,7 @@ import { ExportData } from "./pages/ExportData";
 import { InventoryDetailsPage } from "./pages/InventoryDetailsPage/InventoryDetailsPage";
 import { ApprovalPage } from "./pages/ApprovalPage";
 import { CheckHRC } from "./pages/tools/CheckHRC";
+import {VerifyProxyContract} from "./pages/VerifyProxyContract/VerifyProxyContract";
 import { ChartsPage } from "./pages/ChartsPage";
 
 export function Routes() {
@@ -93,6 +94,10 @@ export function Routes() {
 
         <Route path="/verifycontract">
           <VerifyContract />
+        </Route>
+
+        <Route path="/proxyContractChecker">
+          <VerifyProxyContract />
         </Route>
 
         <Route path="/exportData">

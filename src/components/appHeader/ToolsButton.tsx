@@ -56,6 +56,15 @@ export function ToolsButton() {
                 style={{ textDecoration: "underline" }}
                 onClick={(e) => {
                     setIsOpen(false);
+                    history.push("/proxyContractChecker");
+                }}
+            >
+                Proxy verification
+            </Anchor>
+            <Anchor
+                style={{ textDecoration: "underline" }}
+                onClick={(e) => {
+                    setIsOpen(false);
                     history.push("/charts");
                 }}
             >
