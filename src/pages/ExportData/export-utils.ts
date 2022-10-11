@@ -1,5 +1,6 @@
 import { RelatedTransaction } from "../../types";
 import dayjs from "dayjs";
+import Big from "big.js";
 import { calculateFee, calculateFeePriceUSD } from "../../utils/fee";
 import {TRelatedTransaction} from "../../api/client.interface";
 import {Erc20} from "../../hooks/ERC20_Pool";
@@ -18,9 +19,7 @@ const downloadBlob = (content: any, filename: string) => {
 }
 
 const convertValue = (value: string | number, precision = 18) => {
-  const n = 4
-  const bigIntValue = BigInt(parseInt(value.toString())) / BigInt(10 ** (precision - n))
-  return parseInt(bigIntValue.toString()) / (10 ** n);
+  return Big(value).div(Math.pow(10, precision)).round(precision).toString()
 }
 
 const mapRelatedTxToExport = (ownerAddress: string, tx: RelatedTransaction, onePrice: number) => {
