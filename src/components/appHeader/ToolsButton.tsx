@@ -61,6 +61,18 @@ export function ToolsButton() {
             >
                 Proxy verification
             </Anchor>
+            <Anchor
+                style={{ textDecoration: "underline" }}
+                onClick={(e) => {
+                    setIsOpen(false);
+                    history.push("/charts");
+                }}
+            >
+                <Box direction={'row'} align={'center'} gap={'4px'}>
+                    Charts & Stats
+                    <Text size={'xsmall'} color={'successText'}>(new)</Text>
+                </Box>
+            </Anchor>
         </Box>
       }
       style={{

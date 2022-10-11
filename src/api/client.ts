@@ -1,11 +1,12 @@
 import { transport } from "./explorer";
 import {
-    Block,
-    InternalTransaction,
-    RPCStakingTransactionHarmony,
-    RPCTransactionHarmony,
-    RelatedTransaction,
-    Log, LogDetailed, AddressDetails, ShardID
+  Block,
+  InternalTransaction,
+  RPCStakingTransactionHarmony,
+  RPCTransactionHarmony,
+  RelatedTransaction,
+  Log, LogDetailed, AddressDetails,
+    ShardID, MetricsType, MetricsDailyItem
 } from "src/types";
 import {
   IHoldersInfo,
@@ -101,13 +102,17 @@ export function getRelatedTransactions(params: any[]) {
   >;
 }
 
-export function getTransactionCountLast14Days() {
-  return transport("getTransactionCountLast14Days", []) as Promise<any[]>;
+export function getTransactionCountLast14Days(limit = 14) {
+  return transport("getTransactionCountLast14Days", [limit]) as Promise<any[]>;
 }
 
 
-export function getWalletsCountLast14Days() {
-    return transport("getWalletsCountLast14Days", []) as Promise<any[]>;
+export function getWalletsCountLast14Days(limit = 14) {
+    return transport("getWalletsCountLast14Days", [limit]) as Promise<any[]>;
+}
+
+export function getMetricsByType(type: MetricsType, offset = 0, limit = 14) {
+    return transport("getMetricsByType", [type, offset, limit]) as Promise<MetricsDailyItem[]>;
 }
 
 export function getContractsByField(params: any[]) {

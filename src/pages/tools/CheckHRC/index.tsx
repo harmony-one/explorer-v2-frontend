@@ -10,7 +10,7 @@ import { ABIManager, IABI } from "src/web3/ABIManager";
 import ERC20ABI from 'src/web3/abi/ERC20ABI.json'
 import ERC721ABI from 'src/web3/abi/ERC721ABI.json'
 import ERC1155ABI from 'src/web3/abi/ERC1155ABI.json'
-import { copyTextToClipboard } from "../../../utils";
+import {copyTextToClipboard, getAddress} from "../../../utils";
 import { toaster } from "../../../App";
 import { useHistory } from "react-router-dom";
 
@@ -162,7 +162,7 @@ export function CheckHRC() {
     const getContract = async () => {
       setContractLoading(true)
       try {
-        let contract: any = await getContractsByField([0, "address", contractAddress]);
+        let contract: any = await getContractsByField([0, "address", prepareAddress(contractAddress)]);
         setContractData(contract)
         onContractLoaded(contract.bytecode)
       } catch (e) {
@@ -186,6 +186,16 @@ export function CheckHRC() {
 
     }
   }, [contractAddress])
+
+  const prepareAddress = (address: string) => {
+    let a = address.toLowerCase()
+    if(address.startsWith('one1')) { // convert one1 to 0x before send request to backend
+      try {
+        a = getAddress(address).basicHex
+      } catch (e) {}
+    }
+    return a
+  }
 
   const isAllEventsMatched = matchedEvents.length === methods[contractType].length
 
@@ -260,7 +270,7 @@ export function CheckHRC() {
               {methods[contractType].map((name) => {
                 const isMatched = !!matchedEvents.find(matchedName => matchedName === name)
                 const signature = geMethodSignature(name)
-                return <Tip content={`Signature: ${signature}`}>
+                return <Tip content={<TipContent message={`Signature: ${signature}`} />}>
                   <EventContainer onClick={() => onEventClicked(name)} isMatched={isMatched}>
                     {name}
                   </EventContainer>
