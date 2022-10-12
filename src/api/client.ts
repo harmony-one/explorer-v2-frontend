@@ -6,7 +6,7 @@ import {
     RPCTransactionHarmony,
     RelatedTransaction,
     Log, LogDetailed, AddressDetails,
-    ShardID, MetricsType, MetricsDailyItem, MetricsTopType, MetricsTopItem
+    ShardID, MetricsType, MetricsDailyItem, MetricsTopType, MetricsTopItem, MetricsTopPeriod
 } from "src/types";
 import {
   IHoldersInfo,
@@ -115,7 +115,7 @@ export function getMetricsByType(type: MetricsType, offset = 0, limit = 14) {
     return transport("getMetricsByType", [type, offset, limit]) as Promise<MetricsDailyItem[]>;
 }
 
-export function getTopMetricsByType(type: MetricsTopType, period: 1 | 3 | 7, limit = 10) {
+export function getTopMetricsByType(type: MetricsTopType, period: MetricsTopPeriod, limit = 10) {
     return transport("getTopMetricsByType", [type, period, limit]) as Promise<MetricsTopItem[]>;
 }
 

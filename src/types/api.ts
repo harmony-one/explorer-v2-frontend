@@ -74,3 +74,9 @@ export interface MetricsTopItem {
   value: string
   updatedAt: string
 }
+
+export enum MetricsTopPeriod {
+  d1 = 1,
+  d3 = 3,
+  d7 = 7
+}

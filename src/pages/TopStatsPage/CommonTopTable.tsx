@@ -10,6 +10,7 @@ export interface TopTableProps {
     items: MetricsTopItem[]
     title: string
     columns: string[]
+    isLoading?: boolean
 }
 
 interface TopTableRowProps {
@@ -20,9 +21,10 @@ const TableContainer = styled(Box)`
   flex: 0 0 calc(50% - 16px);
   margin-left: 8px;
   margin-right: 8px;
+  min-width: 500px;
 
   @media (max-width: 1024px) {
-    flex: 0 0 calc(50% - 16px);
+    flex: 0 0 calc(100% - 16px);
     margin-bottom: 0.75rem;
   }
 
@@ -93,7 +95,7 @@ const TopTableRow = (props: TopTableRowProps) => {
             <Text size={'small'}>{rank}</Text>
         </Box>
         <Box width={columnsWidth[1]}>
-            <Address address={address} hideCopyBtn={true} />
+            <Address address={address} hideCopyBtn={true} isShortEllipsis={true} />
         </Box>
         <Box width={columnsWidth[2]} direction={'row'} align={'center'} gap={'6px'}>
             {isOneTransfer && <LogoWrapper>
@@ -112,10 +114,12 @@ export const TopTable = (props: TopTableProps) => {
         border={{ size: '1px' }}
         round={'8px'}
         overflow={'hidden'}
+        margin={{ bottom: '16px' }}
+        style={{ opacity: props.isLoading ? 0.5 : 1 }}
     >
         <Box>
             <Box pad={'8px'} border={{ size: '1px', side: 'bottom' }} background={'backgroundBackEmpty'}>
-                <Text>{props.title}</Text>
+                <Text size={'small'}>{props.title}</Text>
             </Box>
             <TopTableHeader columns={props.columns} />
             {props.items.map(item => <TopTableRow key={item.address} item={item} />)}
