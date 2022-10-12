@@ -73,6 +73,15 @@ export function ToolsButton() {
                     <Text size={'xsmall'} color={'successText'}>(new)</Text>
                 </Box>
             </Anchor>
+            <Anchor
+                style={{ textDecoration: "underline" }}
+                onClick={(e) => {
+                    setIsOpen(false);
+                    history.push("/topstat");
+                }}
+            >
+                Top Statistics
+            </Anchor>
         </Box>
       }
       style={{

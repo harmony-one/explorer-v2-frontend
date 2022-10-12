@@ -17,6 +17,7 @@ import { ApprovalPage } from "./pages/ApprovalPage";
 import { CheckHRC } from "./pages/tools/CheckHRC";
 import {VerifyProxyContract} from "./pages/VerifyProxyContract/VerifyProxyContract";
 import { ChartsPage } from "./pages/ChartsPage";
+import { TopStatsPage } from "./pages/TopStatsPage";
 
 export function Routes() {
   return (
@@ -106,6 +107,10 @@ export function Routes() {
 
         <Route path="/charts">
           <Route path={'/'}><ChartsPage /></Route>
+        </Route>
+
+        <Route path="/topstat">
+          <Route path={'/'}><TopStatsPage /></Route>
         </Route>
 
         <Route path="*">
