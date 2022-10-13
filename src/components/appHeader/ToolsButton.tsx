@@ -80,7 +80,10 @@ export function ToolsButton() {
                     history.push("/topstat");
                 }}
             >
-                Top Statistics
+                <Box direction={'row'} align={'center'} gap={'4px'}>
+                    Top Statistics
+                    <Text size={'xsmall'} color={'successText'}>(new)</Text>
+                </Box>
             </Anchor>
         </Box>
       }
