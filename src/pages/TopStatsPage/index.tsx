@@ -5,7 +5,7 @@ import {TransactionTopStats} from "./Transaction";
 
 export const TopStatsPage = () => {
 return <BaseContainer pad={{ horizontal: "0" }}>
-    <Heading size="small" margin={{ bottom: "medium", top: "0" }}>
+    <Heading size="xsmall" margin={{ bottom: "medium", top: "0" }}>
         <Box direction={"row"}>Top Statistics</Box>
     </Heading>
     <BasePage pad={'0'} style={{overflow: 'inherit'}}>

@@ -4,30 +4,63 @@ import {TopTable} from "./CommonTopTable";
 import {getTopMetricsByType} from "../../api/client";
 import {MetricsTopItem, MetricsTopPeriod, MetricsTopType} from "../../types";
 import {OptionsSelect} from "./OptionsSelect";
+import dayjs from "dayjs";
+
+const defaultMetricsItem = {
+    [MetricsTopType.topOneSender]: [] as MetricsTopItem[],
+    [MetricsTopType.topOneReceiver]: [] as MetricsTopItem[],
+    [MetricsTopType.topTxsCountSent]: [] as MetricsTopItem[],
+    [MetricsTopType.topTxsCountReceived]: [] as MetricsTopItem[],
+}
+const defaultCache = {
+    [MetricsTopPeriod.d1]: {...defaultMetricsItem},
+    [MetricsTopPeriod.d3]: {...defaultMetricsItem},
+    [MetricsTopPeriod.d7]: {...defaultMetricsItem},
+}
 
 export const TransactionTopStats = () => {
     const [isLoading, setLoading] = useState(false)
     const [period, setPeriod] = useState(MetricsTopPeriod.d1)
+    const [cache, setCache] = useState(defaultCache)
     const [oneSenders, setOneSenders] = useState<MetricsTopItem[]>([])
     const [oneReceivers, setOneReceivers] = useState<MetricsTopItem[]>([])
     const [txsSenders, setTxsSenders] = useState<MetricsTopItem[]>([])
     const [txsReceivers, setTxsReceivers] = useState<MetricsTopItem[]>([])
 
     useEffect(() => {
+        const retrieveMetrics = async (type: MetricsTopType, p: MetricsTopPeriod) => {
+            const cachedRows = cache[p][type]
+            if(cachedRows.length > 0) {
+                return [...cachedRows]
+            }
+            // await new Promise(resolve => setTimeout(resolve, 500))
+
+            return await getTopMetricsByType(type, p)
+        }
+
         const loadData = async () => {
             try {
                 setLoading(true)
-                const rowsOneSent = await getTopMetricsByType(MetricsTopType.topOneSender, period)
-                const rowsOneReceive = await getTopMetricsByType(MetricsTopType.topOneReceiver, period)
-                const rowsTxsSent = await getTopMetricsByType(MetricsTopType.topTxsCountSent, period)
-                const rowsTxsReceived = await getTopMetricsByType(MetricsTopType.topTxsCountReceived, period)
-
-                await new Promise(resolve => setTimeout(resolve, 2000))
+                const rowsOneSent = await retrieveMetrics(MetricsTopType.topOneSender, period)
+                const rowsOneReceive = await retrieveMetrics(MetricsTopType.topOneReceiver, period)
+                const rowsTxsSent = await retrieveMetrics(MetricsTopType.topTxsCountSent, period)
+                const rowsTxsReceived = await retrieveMetrics(MetricsTopType.topTxsCountReceived, period)
 
                 setOneSenders(rowsOneSent)
                 setOneReceivers(rowsOneReceive)
                 setTxsSenders(rowsTxsSent)
                 setTxsReceivers(rowsTxsReceived)
+
+                const cacheUpdated = {
+                    ...cache,
+                    [period]: {
+                        [MetricsTopType.topOneSender]: rowsOneSent,
+                        [MetricsTopType.topOneReceiver]: rowsOneReceive,
+                        [MetricsTopType.topTxsCountSent]: rowsTxsSent,
+                        [MetricsTopType.topTxsCountReceived]: rowsTxsReceived
+                    }
+                }
+                setCache(cacheUpdated)
             } catch (e) {
                 console.error('Error on loading top metrics:', (e as Error).message)
             } finally {
@@ -37,15 +70,25 @@ export const TransactionTopStats = () => {
         loadData()
     }, [period])
 
+    const dateFrom = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt).subtract(period, 'day') : ''
+    const dateTo = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt): ''
+
     return <Box gap={'16px'}>
-        <Box align={'center'} pad={'8px'} direction={'row'} gap={'24px'}>
-            <OptionsSelect
-                disabled={isLoading}
-                activeOption={period}
-                onSelect={(option) => setPeriod(option)}
-            />
-            <Box>
-                {isLoading && <Spinner size={'small'} />}
+        <Box direction={'row'} align={'center'} pad={'8px'} justify={'between'}>
+            <Box direction={'row'} gap={'24px'} justify={'center'}>
+                <OptionsSelect
+                    disabled={isLoading}
+                    activeOption={period}
+                    onSelect={(option) => setPeriod(option)}
+                />
+                <Box justify={'center'}>
+                    {isLoading && <Spinner size={'small'} />}
+                </Box>
+            </Box>
+            <Box pad={'8px'}>
+                {dateFrom && dateTo &&
+                    `${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`
+                }
             </Box>
         </Box>
         <Box

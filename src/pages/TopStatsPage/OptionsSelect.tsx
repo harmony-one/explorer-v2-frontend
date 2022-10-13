@@ -1,5 +1,5 @@
 import React from 'react'
-import {Box} from "grommet";
+import {Box, Text} from "grommet";
 import {MetricsTopPeriod} from "../../types";
 
 const OptionAlias = {
@@ -20,7 +20,7 @@ const Option = (props: { value: MetricsTopPeriod, isActive: boolean, onSelect: (
         onClick={() => onSelect(value)}
         style={{ cursor: 'pointer', fontWeight: isActive ? 'bold': 'normal' }}
     >
-        {OptionAlias[value]}
+        <Text size='small'>{OptionAlias[value]}</Text>
     </Box>
 }
 
