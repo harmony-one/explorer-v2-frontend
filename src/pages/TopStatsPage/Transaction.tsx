@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Spinner} from "grommet";
+import {Box, Spinner, Tip, Text} from "grommet";
 import {TopTable} from "./CommonTopTable";
 import {getTopMetricsByType} from "../../api/client";
 import {MetricsTopItem, MetricsTopPeriod, MetricsTopType} from "../../types";
 import {OptionsSelect} from "./OptionsSelect";
 import dayjs from "dayjs";
+import {TipContent} from "../../components/ui";
 
 const defaultMetricsItem = {
     [MetricsTopType.topOneSender]: [] as MetricsTopItem[],
@@ -12,6 +13,7 @@ const defaultMetricsItem = {
     [MetricsTopType.topTxsCountSent]: [] as MetricsTopItem[],
     [MetricsTopType.topTxsCountReceived]: [] as MetricsTopItem[],
 }
+
 const defaultCache = {
     [MetricsTopPeriod.d1]: {...defaultMetricsItem},
     [MetricsTopPeriod.d3]: {...defaultMetricsItem},
@@ -85,40 +87,45 @@ export const TransactionTopStats = () => {
                     {isLoading && <Spinner size={'small'} />}
                 </Box>
             </Box>
-            <Box pad={'8px'}>
-                {dateFrom && dateTo &&
-                    `${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`
-                }
-            </Box>
+            {!isLoading && dateFrom && dateTo &&
+                <Box pad={{ right: '4px' }}>
+                    <Tip
+                        dropProps={{ align: { bottom: "top" }}}
+                        content={<TipContent showArrow={true} message={`Last update: ${dateTo.format('DD MMM HH:mm:ss')}`} />}
+                    >
+                        <Text size={'small'}>{dateFrom.format('DD MMM')} - {dateTo.format('DD MMM')}</Text>
+                    </Tip>
+                </Box>
+            }
         </Box>
         <Box
             wrap
             direction={'row'}
-            justify={'center'}
+            justify={'start'}
             align={'center'}
         >
             <TopTable
                 items={oneSenders}
                 title={'Top ONE Senders'}
-                columns={['Rank', 'Address', 'Total ONE', 'Share']}
+                columns={['Rank', 'Address', 'Total ONE', 'Percentage']}
                 isLoading={isLoading}
             />
             <TopTable
                 items={oneReceivers}
                 title={'Top ONE Receivers'}
-                columns={['Rank', 'Address', 'Total ONE', 'Share']}
+                columns={['Rank', 'Address', 'Total ONE', 'Percentage']}
                 isLoading={isLoading}
             />
             <TopTable
                 items={txsSenders}
                 title={'Top Txs Count Sent'}
-                columns={['Rank', 'Address', 'Total Txs', 'Share']}
+                columns={['Rank', 'Address', 'Total Txs', 'Percentage']}
                 isLoading={isLoading}
             />
             <TopTable
                 items={txsReceivers}
                 title={'Top Txs Count Received'}
-                columns={['Rank', 'Address', 'Total Txs', 'Share']}
+                columns={['Rank', 'Address', 'Total Txs', 'Percentage']}
                 isLoading={isLoading}
             />
         </Box>

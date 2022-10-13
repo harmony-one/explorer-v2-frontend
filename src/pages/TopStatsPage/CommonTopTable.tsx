@@ -21,23 +21,16 @@ const TableContainer = styled(Box)`
   flex: 0 0 calc(50% - 16px);
   margin-left: 8px;
   margin-right: 8px;
-  min-width: 500px;
 
   @media (max-width: 1024px) {
     flex: 0 0 calc(100% - 16px);
-    margin-bottom: 0.75rem;
-  }
-
-  @media (max-width: 768px) {
-    flex: 0 0 calc(100% - 16px);
-    margin-top: 0.75rem;
     margin-bottom: 0.75rem;
   }
 `
 
 const LogoWrapper = styled(Box)`
   svg path {
-    fill: #00AEE9
+    fill: #00AEE9;
   }
 `
 
@@ -95,7 +88,7 @@ const TopTableRow = (props: TopTableRowProps) => {
             <Text size={'small'}>{rank}</Text>
         </Box>
         <Box width={columnsWidth[1]}>
-            <Address address={address} hideCopyBtn={true} isShortEllipsis={true} />
+            <Address address={address} hideCopyBtn={true} isShortEllipsis={true} style={{ fontSize: 'small' }} />
         </Box>
         <Box width={columnsWidth[2]} direction={'row'} align={'center'} gap={'6px'}>
             {isOneTransfer && <LogoWrapper>
@@ -113,16 +106,19 @@ export const TopTable = (props: TopTableProps) => {
     return <TableContainer
         border={{ size: '1px' }}
         round={'8px'}
-        overflow={'hidden'}
+        // overflow={'hidden'}
         margin={{ bottom: '16px' }}
         style={{ opacity: props.isLoading ? 0.5 : 1 }}
+        background={'background'}
     >
-        <Box>
-            <Box pad={'8px'} border={{ size: '1px', side: 'bottom' }} background={'backgroundBackEmpty'}>
-                <Text size={'small'}>{props.title}</Text>
+        <Box style={{ overflowX: 'auto' }}>
+            <Box style={{ minWidth: '550px' }}>
+                <Box pad={'8px'} border={{ size: '1px', side: 'bottom' }} background={'backgroundBackEmpty'}>
+                    <Text size={'small'}>{props.title}</Text>
+                </Box>
+                <TopTableHeader columns={props.columns} />
+                {props.items.map(item => <TopTableRow key={item.address} item={item} />)}
             </Box>
-            <TopTableHeader columns={props.columns} />
-            {props.items.map(item => <TopTableRow key={item.address} item={item} />)}
         </Box>
     </TableContainer>
 }
