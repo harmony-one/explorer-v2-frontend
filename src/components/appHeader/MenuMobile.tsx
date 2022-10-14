@@ -97,9 +97,9 @@ export const MenuMobile = (props: { isOpened: boolean; onClose: () => void }) =>
 
     return <Box pad={'8px 0'} background={'background'} style={{ display: props.isOpened ? 'block' : 'none' }}>
         <MenuRow title={'Home'} items={[]} route={'/'} onSelect={onSelect} />
-        <MenuRow title={'Tokens'} items={[{ title: 'HRC20', route: 'hrc20' }, { title: 'HRC721', route: 'hrc721' }, { title: 'HRC1155', route: 'hrc1155' }]} onSelect={onSelect} />
-        <MenuRow title={'Tools'} items={[{ title: 'Token Approvals', route: '/tools/approvals' }, { title: 'Check HRC', route: '/tools/checkHrc' }, { title: 'Proxy Verification', route: 'proxyContractChecker' }]} onSelect={onSelect} />
-        <MenuRow title={'Resources'} items={[{ title: 'Charts & Stats', route: 'charts' }, { title: 'Top Statistics', route: 'topstat' }]} onSelect={onSelect} />
+        <MenuRow title={'Tokens'} items={[{ title: 'HRC20', route: '/hrc20' }, { title: 'HRC721', route: '/hrc721' }, { title: 'HRC1155', route: '/hrc1155' }]} onSelect={onSelect} />
+        <MenuRow title={'Tools'} items={[{ title: 'Token Approvals', route: '/tools/approvals' }, { title: 'Check HRC', route: '/tools/checkHrc' }, { title: 'Proxy Verification', route: '/proxyContractChecker' }]} onSelect={onSelect} />
+        <MenuRow title={'Resources'} items={[{ title: 'Charts & Stats', route: '/charts' }, { title: 'Top Statistics', route: '/topstat' }]} onSelect={onSelect} />
         <MenuRow title={'Appearance'} items={[{ title: '', content: <ThemeSwitch /> }, { title: '', content: <DateFormatSwitch />}]} />
     </Box>
 }
