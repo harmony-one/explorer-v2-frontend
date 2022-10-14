@@ -161,24 +161,6 @@ export const enrichResponse = (items: MetricsDailyItem[]) => {
     }))
 }
 
-export const getLimitByFilterOption = (option: ChartOption) => {
-    switch(option) {
-        case ChartOption.month: return 30
-        case ChartOption.month3: return 30 * 3
-        case ChartOption.year: {
-            return 365
-        }
-        case ChartOption.ytd: {
-            const date1 = dayjs()
-            const date2 = dayjs().startOf('year')
-            return date1.diff(date2, 'day')
-        }
-        case ChartOption.all: return 2000
-        default:
-            return 1000
-    }
-}
-
 const downloadBlob = (content: any, filename: string) => {
     const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);

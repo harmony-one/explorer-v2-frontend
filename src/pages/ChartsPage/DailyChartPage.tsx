@@ -7,7 +7,6 @@ import {MetricsDailyItem} from "../../types";
 import {
     getDetailedChartOptions,
     getChartData,
-    getLimitByFilterOption,
     downloadMetricsCSV
 } from './utils'
 import {ChartFilter, ChartOption} from "./ChartFilter";
@@ -64,6 +63,19 @@ export interface DailyChartPageProps {
     renderMinValue: (value: string, date: string) => string
 }
 
+const chartItemFilter = (item: MetricsDailyItem, option: ChartOption) => {
+    const date = dayjs(item.date)
+    const current = dayjs()
+    switch(option) {
+        case ChartOption.month: return current.diff(date, 'month') <= 1
+        case ChartOption.month3: return current.diff(date, 'month') <= 3
+        case ChartOption.year: return current.diff(date, 'month') <= 12
+        case ChartOption.ytd: return current.year() === date.year()
+        default:
+            return true
+    }
+}
+
 export const DailyChartPage = (props: DailyChartPageProps) => {
     const themeMode = useThemeMode();
 
@@ -76,10 +88,9 @@ export const DailyChartPage = (props: DailyChartPageProps) => {
     const [maxValue, setMaxValue] = useState<MetricsDailyItem>({value: '0', date: ''})
 
     const applyFilter = (cachedData: MetricsDailyItem[]) => {
-        const limit = getLimitByFilterOption(filterOption)
-        const data = cachedData.slice(-limit)
+        const data = cachedData.filter((item) => chartItemFilter(item, filterOption))
         const sortedData = [...data].sort((a, b) => +a.value - +b.value)
-        setItems(cachedData.slice(-limit))
+        setItems(data)
         setMinValue(sortedData[0])
         setMaxValue(sortedData[sortedData.length - 1])
     }
