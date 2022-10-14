@@ -50,8 +50,8 @@ const MenuRow = (props: MenuRowProps) => {
     return <Box pad={'4px 16px'} onClick={onClick}>
         <Box direction={'row'} justify={'between'} pad={'8px'}>
             <Text size={'medium'} color={isItemsVisible ? 'brand' : 'text'}>{title}</Text>
-            {items.length > 0 && !isItemsVisible && <CaretDownFill size={'14px'} color={'text'} /> }
-            {items.length > 0 && isItemsVisible && <CaretUpFill size={'14px'} color={'brand'} /> }
+            {items.length > 0 && !isItemsVisible && <CaretDownFill size={'16px'} color={'text'} /> }
+            {items.length > 0 && isItemsVisible && <CaretUpFill size={'16px'} color={'brand'} /> }
         </Box>
         {isItemsVisible &&
             <Box style={{ position: 'relative' }}>
