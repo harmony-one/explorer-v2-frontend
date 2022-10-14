@@ -57,3 +57,26 @@ export enum MetricsType {
   averageFee = 'average_fee',
   blockSize = 'block_size'
 }
+
+export enum MetricsTopType {
+  topOneSender = 'top_one_sender',
+  topOneReceiver = 'top_one_receiver',
+  topTxsCountSent = 'top_txs_count_sent',
+  topTxsCountReceived = 'top_txs_count_received',
+}
+
+export interface MetricsTopItem {
+  type: MetricsTopType
+  address: string
+  period: number
+  rank: number
+  share: number
+  value: string
+  updatedAt: string
+}
+
+export enum MetricsTopPeriod {
+  d1 = 1,
+  d3 = 3,
+  d7 = 7
+}
