@@ -106,7 +106,7 @@ export const TopTable = (props: TopTableProps) => {
     return <TableContainer
         border={{ size: '1px' }}
         round={'8px'}
-        // overflow={'hidden'}
+        overflow={'hidden'}
         margin={{ bottom: '16px' }}
         style={{ opacity: props.isLoading ? 0.5 : 1 }}
         background={'background'}
