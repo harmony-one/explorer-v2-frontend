@@ -42,7 +42,7 @@ const TopTableHeader = (props: { columns: string[] }) => {
         direction={'row'}
         gap={'8px'}
         pad={'8px'}
-        border={{ size: '2px', side: 'bottom' }}
+        // border={{ size: '2px', side: 'top' }}
         style={{ fontWeight: 'bold' }}
     >
         <Box width={columnsWidth[0]}>
@@ -82,7 +82,7 @@ const TopTableRow = (props: TopTableRowProps) => {
         direction={'row'}
         gap={'8px'}
         pad={'8px'}
-        border={{ size: '1px', side: 'bottom' }}
+        border={{ size: '1px', side: 'top' }}
     >
         <Box width={columnsWidth[0]}>
             <Text size={'small'}>{rank}</Text>
