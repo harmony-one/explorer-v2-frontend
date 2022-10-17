@@ -67,8 +67,8 @@ const chartItemFilter = (item: MetricsDailyItem, option: ChartOption) => {
     const date = dayjs(item.date)
     const current = dayjs()
     switch(option) {
-        case ChartOption.month: return current.diff(date, 'month') <= 1
-        case ChartOption.month3: return current.diff(date, 'month') <= 3
+        case ChartOption.month: return current.diff(date, 'month') < 1
+        case ChartOption.month3: return current.diff(date, 'month') < 3
         case ChartOption.year: return current.diff(date, 'month') <= 12
         case ChartOption.ytd: return current.year() === date.year()
         default:
@@ -184,9 +184,10 @@ export const DailyChartPage = (props: DailyChartPageProps) => {
             </Box>
             <Box margin={{ top: '32px' }} align={'end'}>
                 <Box direction={'row'} gap={'4px'}>
-                    <Text>Download</Text>
+                    <Text size={'small'}>Download</Text>
                     <TextLink
                         color={'brand'}
+                        size={'small'}
                         onClick={() => downloadMetricsCSV(`${props.unitLabel}_metrics.csv`, { items: [...cache].reverse() })}>
                         CSV Data
                     </TextLink>
