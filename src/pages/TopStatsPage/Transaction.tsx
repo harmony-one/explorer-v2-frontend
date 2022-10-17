@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Spinner, Tip, Text} from "grommet";
+import {Box, Spinner, Text, Tip} from "grommet";
 import {TopTable} from "./CommonTopTable";
 import {getTopMetricsByType} from "../../api/client";
 import {MetricsTopItem, MetricsTopPeriod, MetricsTopType} from "../../types";
@@ -73,7 +73,7 @@ export const TransactionTopStats = () => {
     }, [period])
 
     const dateFrom = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt).subtract(period, 'day') : ''
-    const dateTo = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt): ''
+    const dateTo = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt).subtract(1, 'day'): ''
 
     return <Box gap={'16px'}>
         <Box direction={'row'} align={'center'} pad={'8px'} justify={'between'}>
@@ -93,7 +93,14 @@ export const TransactionTopStats = () => {
                         dropProps={{ align: { bottom: "top" }}}
                         content={<TipContent showArrow={true} message={`Last update: ${dateTo.format('DD MMM HH:mm:ss')}`} />}
                     >
-                        <Text size={'small'}>{dateFrom.format('DD MMM')} - {dateTo.format('DD MMM')}</Text>
+                        <Box>
+                            {period === MetricsTopPeriod.d1 &&
+                                <Text size={'small'}>{dateTo.format('DD MMM')}</Text>
+                            }
+                            {period !== MetricsTopPeriod.d1 &&
+                                <Text size={'small'}>{dateFrom.format('DD MMM')} - {dateTo.format('DD MMM')}</Text>
+                            }
+                        </Box>
                     </Tip>
                 </Box>
             }
