@@ -52,15 +52,15 @@ export function ToolsButton() {
           >
             Check HRC
           </Anchor>
-            <Anchor
-                style={{ textDecoration: "underline" }}
-                onClick={(e) => {
-                    setIsOpen(false);
-                    history.push("/proxyContractChecker");
-                }}
-            >
-                Proxy verification
-            </Anchor>
+            {/*<Anchor*/}
+            {/*    style={{ textDecoration: "underline" }}*/}
+            {/*    onClick={(e) => {*/}
+            {/*        setIsOpen(false);*/}
+            {/*        history.push("/proxyContractChecker");*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    Proxy verification*/}
+            {/*</Anchor>*/}
         </Box>
       }
       style={{
