@@ -73,7 +73,8 @@ export const TransactionTopStats = () => {
     }, [period])
 
     const dateFrom = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt).subtract(period, 'day') : ''
-    const dateTo = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt).subtract(1, 'day'): ''
+    const dateTo = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt).subtract(1, 'day') : ''
+    const dateUpdate = oneSenders.length > 0 ? dayjs(oneSenders[0].updatedAt) : ''
 
     return <Box gap={'16px'}>
         <Box direction={'row'} align={'center'} pad={'8px'} justify={'between'}>
@@ -87,11 +88,11 @@ export const TransactionTopStats = () => {
                     {isLoading && <Spinner size={'small'} />}
                 </Box>
             </Box>
-            {!isLoading && dateFrom && dateTo &&
+            {!isLoading && dateFrom && dateTo && dateUpdate &&
                 <Box pad={{ right: '4px' }}>
                     <Tip
                         dropProps={{ align: { bottom: "top" }}}
-                        content={<TipContent showArrow={true} message={`Last update: ${dateTo.format('DD MMM HH:mm:ss')}`} />}
+                        content={<TipContent showArrow={true} message={`Last update: ${dateUpdate.format('DD MMM HH:mm:ss')}`} />}
                     >
                         <Box>
                             {period === MetricsTopPeriod.d1 &&
