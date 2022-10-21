@@ -8,6 +8,7 @@ import { ISourceCode } from "src/api/explorerV1";
 import { AbiMethodsView } from "./AbiMethodView";
 import { AbiItem } from "web3-utils";
 import { Wallet } from "./ConnectWallets";
+import {Address} from "../../../components/ui";
 
 const StyledTextArea = styled(TextArea)`
   padding: 0.75rem;
@@ -280,20 +281,18 @@ export const VerifiedContractDetails = (props: {
           onClick={() => setTab(V_TABS.CODE)}
           selected={tab === V_TABS.CODE}
         />
-        {props.sourceCode?.abi ? (
-          <>
-            <TabButton
+        <>
+          <TabButton
               text={V_TABS.READ}
               onClick={() => setTab(V_TABS.READ)}
               selected={tab === V_TABS.READ}
-            />
-            <TabButton
+          />
+          <TabButton
               text={V_TABS.WRITE}
               onClick={() => setTab(V_TABS.WRITE)}
               selected={tab === V_TABS.WRITE}
-            />
-          </>
-        ) : null}
+          />
+        </>
         {/*{props.sourceCode.proxyAddress && props.sourceCode.proxy  ? (*/}
         {/*  <>*/}
         {/*    <TabButton*/}
@@ -417,20 +416,22 @@ export const VerifiedContractDetails = (props: {
 
       {tab === V_TABS.CODE && !props.sourceCode && props.contracts && <NoVerifiedContractDetails contracts={props.contracts} address={props.address} shard={props.shard} />}
 
-      {tab === V_TABS.READ && props.sourceCode && props.sourceCode.abi  ? (
-        <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
-          <AbiMethods
-            abi={props.sourceCode?.abi?.filter(
-              (a) => a.stateMutability === "view" && a.type === "function"
-            )}
-            address={props.address}
-            isRead={V_TABS.READ === tab}
-          />
-        </Box>
+      {tab === V_TABS.READ ? (
+          (props.sourceCode && props.sourceCode.abi) ? <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+            <AbiMethods
+                abi={props.sourceCode?.abi?.filter(
+                    (a) => a.stateMutability === "view" && a.type === "function"
+                )}
+                address={props.address}
+                isRead={V_TABS.READ === tab}
+            />
+          </Box> : <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+            Sorry, there are no available Contract ABI methods to read. Unable to read contract info.
+          </Box>
       ) : null}
 
-      {tab === V_TABS.WRITE && props.sourceCode && props.sourceCode.abi ? (
-        <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+      {tab === V_TABS.WRITE ? (
+          (props.sourceCode && props.sourceCode.abi) ? <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
           <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
           <AbiMethods
             abi={props.sourceCode.abi.filter(
@@ -443,11 +444,17 @@ export const VerifiedContractDetails = (props: {
             metamaskAddress={metamaskAddress}
             validChainId={validChainId}
           />
-        </Box>
+        </Box> : <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+        Sorry, there are no available Contract ABI methods to write. Unable to write contract info.
+      </Box>
       ) : null}
 
       {tab === V_TABS.READ_PROXY && props.implementation?.address && props.implementationSourceCode?.abi  ? (
-          <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+          <Box style={{ padding: "10px" }} margin={{ top: "xsmall" }} gap={'16px'}>
+            <Box direction={'row'} align={'center'} gap={'4px'}>
+              <Text size={'small'}>ABI for the implementation contract at</Text>
+              <Address address={props.implementation?.address} hideCopyBtn={true} />
+            </Box>
             <AbiMethods
                 abi={props.implementationSourceCode?.abi.filter(
                     (a) => a.stateMutability === "view" && a.type === "function"
@@ -459,7 +466,11 @@ export const VerifiedContractDetails = (props: {
       ) : null}
 
       {tab === V_TABS.WRITE_PROXY && props.implementation?.address && props.implementationSourceCode?.abi ? (
-          <Box style={{ padding: "10px" }} margin={{ top: "medium" }}>
+          <Box style={{ padding: "10px" }} margin={{ top: "xsmall" }} gap={'16px'}>
+            <Box direction={'row'} align={'center'} gap={'4px'}>
+              <Text size={'small'}>ABI for the implementation contract at</Text>
+              <Address address={props.implementation?.address} hideCopyBtn={true} />
+            </Box>
             <Wallet onSetMetamask={setMetamask} onSetChainId={setChainId} />
             <AbiMethods
                 abi={props.implementationSourceCode?.abi.filter(
