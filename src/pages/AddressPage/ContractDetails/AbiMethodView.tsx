@@ -184,7 +184,7 @@ export const AbiMethodsView = (props: {
               const itemType = input.type.slice(0, input.type.indexOf('[]'));
 
               return (
-                <Field gap='5px'>
+                <Field gap='5px' key={idx}>
                   <Text size='small'>
                     {name} <span>({input.type})</span>
                   </Text>
@@ -296,6 +296,7 @@ export const AbiMethodsView = (props: {
         {abiMethod.outputs
           ? abiMethod.outputs.map((input, idx) => {
             return (<AbiParam
+              key={idx}
               readonly={true}
               type={input.type}
               name={input.name}
