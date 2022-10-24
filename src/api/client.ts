@@ -220,11 +220,3 @@ export async function getTokenERC1155AssetDetails(address: string, tokenID: stri
     // todo fix on backend
     return res && res[0]
 }
-
-export function getProxyImplementation(params: [ShardID, string]) {
-    return transport("getProxyImplementation", params) as Promise<any>;
-}
-
-export function assignProxyImplementation(params: [ShardID, string, string]) {
-    return transport("assignProxyImplementation", params) as Promise<any>;
-}
