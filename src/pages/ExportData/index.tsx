@@ -111,9 +111,9 @@ export const ExportData = () => {
           offset: 0,
           limit: 1,
           orderBy: 'number',
-          orderDirection: 'asc',
+          orderDirection: 'desc',
           filters: [{
-            type: 'gte',
+            type: 'lte',
             property: 'timestamp',
             value: `'${dateFrom}'`
           }]
@@ -128,16 +128,21 @@ export const ExportData = () => {
         }
       }
       if (dateTo) {
+        const diff = dayjs().diff(dayjs(dateTo), 'days')
+        const isCurrentDateOrNext = diff <= 0
         const blockToFilter = {
           offset: 0,
           limit: 1,
           orderBy: 'number',
           orderDirection: 'desc',
-          filters: [{
-            type: 'lt',
+          filters: [] as any
+        }
+        if(!isCurrentDateOrNext) {
+          blockToFilter.filters.push({
+            type: 'lte',
             property: 'timestamp',
             value: `'${dayjs(dateTo).add(1, 'day').format(dateFormat)}'`
-          }]
+          })
         }
         const [blockTo] = await getBlocks([0, blockToFilter]);
         if(blockTo) {
@@ -202,27 +207,29 @@ export const ExportData = () => {
         Export the last {DefaultLimit} {getTxTextType(type)} for <Address address={address} />
         {type === 'transaction' && 'starting from'}
       </Box>
-      <FlexWrapper>
-        <InputContainer>
-          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
-            <DateInput
-                {...dateInputProps}
-                value={dayjs(dateFrom).toISOString()}
-                onChange={({ value }) => onChangeDateFrom(value)}
-            />
-          </Tip>
-        </InputContainer>
-        <div>to</div>
-        <InputContainer>
-          <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
-            <DateInput
-                {...dateInputProps}
-                value={dayjs(dateTo).toISOString()}
-                onChange={({ value }) => onChangeDateTo(value)}
-            />
-          </Tip>
-        </InputContainer>
-      </FlexWrapper>
+      {!['erc20', 'internal_transaction'].includes(type) &&
+          <FlexWrapper>
+            <InputContainer>
+              <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>
+                <DateInput
+                    {...dateInputProps}
+                    value={dayjs(dateFrom).toISOString()}
+                    onChange={({ value }) => onChangeDateFrom(value)}
+                />
+              </Tip>
+            </InputContainer>
+            <div>to</div>
+            <InputContainer>
+              <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select end date'} />}>
+                <DateInput
+                    {...dateInputProps}
+                    value={dayjs(dateTo).toISOString()}
+                    onChange={({ value }) => onChangeDateTo(value)}
+                />
+              </Tip>
+            </InputContainer>
+          </FlexWrapper>
+      }
       <Box style={{ justifyContent: 'center', alignItems: 'center' }} pad={{ top: 'large', bottom: 'medium' }}>
         <Box width={'small'}>
           <DownloadButton
