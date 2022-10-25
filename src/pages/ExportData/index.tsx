@@ -4,7 +4,7 @@ import { Address, BaseContainer, BasePage, Button, TipContent } from "src/compon
 import { Heading, DateInput, Box, Spinner, Tip, Text } from "grommet";
 import styled from "styled-components";
 import useQuery from "../../hooks/useQuery";
-import { getRelatedTransactionsByType } from "../../api/client";
+import {getBlocks, getRelatedTransactionsByType} from "../../api/client";
 import { downloadCSV } from "./export-utils";
 import dayjs from "dayjs";
 import { toaster } from "../../App";
@@ -35,9 +35,11 @@ const DownloadButton = styled(Button)`
   height: 42px;
 `
 
+const DefaultLimit = 5000
+
 export const ExportData = () => {
   const query = useQuery();
-  const address = query.get('address') || '';
+  const address = (query.get('address') || '').toLowerCase()
   const type = (query.get('type') || 'transaction') as TRelatedTransaction;
 
   const dateFormat = 'YYYY-MM-DD'
@@ -63,22 +65,6 @@ export const ExportData = () => {
     inputProps: { width: '170px' }
   }
 
-  const filter = {
-    offset: 0,
-    limit: 5000,
-    orderBy: 'block_number',
-    orderDirection: 'desc',
-    filters: [{
-      type: 'gt',
-      property: 'timestamp',
-      value: `'${dateFrom}'`
-    }, {
-      type: 'lt',
-      property: 'timestamp',
-      value: `'${dayjs(dateTo).add(1, 'day').format(dateFormat)}'`
-    }]
-  }
-
   const showErrorNotification = () => {
     toaster.show({
       message: () => (
@@ -93,11 +79,86 @@ export const ExportData = () => {
   const onDownloadClicked = async () => {
     try {
       setIsDownloading(true)
+
+      const txsFilter: any = {
+        offset: 0,
+        limit: DefaultLimit,
+        orderBy: 'block_number',
+        orderDirection: 'desc',
+        filters: []
+      }
+
+      // if (type === 'transaction') {
+      //   if (dateFrom) {
+      //     txsFilter.filters.push({
+      //       type: 'gt',
+      //       property: 'timestamp',
+      //       value: `'${dateFrom}'`
+      //     })
+      //   }
+      //   if (dateTo) {
+      //     txsFilter.filters.push({
+      //       type: 'lt',
+      //       property: 'timestamp',
+      //       value: `'${dayjs(dateTo).add(1, 'day').format(dateFormat)}'`
+      //     })
+      //   }
+      // }
+
+      // Get block numbers first, then filter internal by block number (not timestamp)
+      if (dateFrom) {
+        const blockFromFilter = {
+          offset: 0,
+          limit: 1,
+          orderBy: 'number',
+          orderDirection: 'desc',
+          filters: [{
+            type: 'lte',
+            property: 'timestamp',
+            value: `'${dateFrom}'`
+          }]
+        }
+        const [blockFrom] = await getBlocks([0, blockFromFilter]);
+        if(blockFrom) {
+              txsFilter.filters.push({
+                type: 'gte',
+                property: 'block_number',
+                value: blockFrom.number
+              })
+        }
+      }
+      if (dateTo) {
+        const diff = dayjs().diff(dayjs(dateTo), 'days')
+        const isCurrentDateOrNext = diff <= 0
+        const blockToFilter = {
+          offset: 0,
+          limit: 1,
+          orderBy: 'number',
+          orderDirection: 'desc',
+          filters: [] as any
+        }
+        if(!isCurrentDateOrNext) {
+          blockToFilter.filters.push({
+            type: 'lte',
+            property: 'timestamp',
+            value: `'${dayjs(dateTo).add(1, 'day').format(dateFormat)}'`
+          })
+        }
+        const [blockTo] = await getBlocks([0, blockToFilter]);
+        if(blockTo) {
+          txsFilter.filters.push({
+            type: 'lte',
+            property: 'block_number',
+            value: blockTo.number
+          })
+        }
+      }
+
       const txs = await getRelatedTransactionsByType([
         0,
         address,
         type,
-        filter,
+        txsFilter,
       ]);
       const downloadParams = {
         type,
@@ -126,20 +187,27 @@ export const ExportData = () => {
   }
 
   const getTxTextType = (type: TRelatedTransaction) => {
-    return type === 'transaction' ? 'transactions' : type + ' transactions'
+    if(type === 'transaction') {
+      return 'transactions'
+    } else if (type === 'internal_transaction') {
+      return 'internal transactions'
+    }
+    return type + ' transactions'
   }
 
-  return <BaseContainer pad={{ horizontal: "0" }} style={{ maxWidth: '700px', alignSelf: 'center' }}>
+  return <BaseContainer pad={{ horizontal: "0" }} style={{ maxWidth: '740px', alignSelf: 'center' }}>
     <Heading size="xsmall" margin={{ bottom: "medium", top: "0" }}>
-      Export transactions
+      <Box gap={'4px'} direction={'row'} align={'baseline'}>
+        Download Data
+        <Text size={'medium'} weight={'normal'} color={'minorText'}>({getTxTextType(type)})</Text>
+      </Box>
     </Heading>
     <BasePage pad={"medium"} style={{ overflow: "inherit" }}>
       <Box pad={{ top: 'medium', bottom: 'medium' }} style={{ display: 'inline-block' }}>
-        Export the last {filter.limit} {getTxTextType(type)} for <Address address={address} />
+        Export the last {DefaultLimit} {getTxTextType(type)} for <Address address={address} />
         {type === 'transaction' && 'starting from'}
       </Box>
-      {/* TODO: support timestamp filter on backend side */}
-      {type === 'transaction' &&
+      {!['erc20', 'internal_transaction'].includes(type) &&
           <FlexWrapper>
             <InputContainer>
               <Tip dropProps={{ align: { bottom: "top" }}} content={<TipContent showArrow={true} message={'Select start date'} />}>

@@ -17,7 +17,8 @@ export const useERC20Pool = singletonHook(initValue, () => {
       erc20.forEach(item => {
         erc20Map[item.address] = {
           ...item,
-          isBridged: isTokenBridged(item.address)
+          isBridged: isTokenBridged(item.address),
+          name: item.implementationAddress ? `${item.name} (Proxy)` : item.name
         };
       })
       setMode(erc20Map)
@@ -55,6 +56,7 @@ export interface Erc20 {
     image?: string;
   };
   isBridged: boolean;
+  implementationAddress: string
 }
 
 export type ERC20_Pool = Record<string, Erc20>;

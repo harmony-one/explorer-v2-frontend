@@ -1,4 +1,4 @@
-import { RelatedTransaction } from "../../types";
+import {InternalTransaction, RelatedTransaction} from "../../types";
 import dayjs from "dayjs";
 import Big from "big.js";
 import { calculateFee, calculateFeePriceUSD } from "../../utils/fee";
@@ -62,6 +62,24 @@ const mapHrc20TxToExport = (ownerAddress: string, tx: any, erc20Map: Record<stri
   }
 }
 
+const mapInternalTxToExport = (ownerAddress: string, tx: InternalTransaction, onePrice: number) => {
+  const txDate = dayjs(tx.timestamp)
+  const isSender = ownerAddress === tx.from
+  return {
+    Txhash: tx.transactionHash,
+    Blockno: tx.blockNumber,
+    UnixTimestamp: txDate.unix(),
+    DateTime: txDate.format('YYYY-MM-DD HH:MM:ss'),
+    From: tx.from,
+    To: tx.to,
+    ['Value_IN(ONE)']: convertValue(isSender ? '0': tx.value),
+    ['Value_OUT(ONE)']: convertValue(isSender ? tx.value : '0'),
+    [`CurrentValue @ $${onePrice}/ONE`]: convertValue(onePrice * +tx.value),
+    Method: tx.input.slice(0, 10),
+    Type: tx.type
+  }
+}
+
 export interface IDownloadCsvParams {
   type: TRelatedTransaction
   address: string
@@ -76,12 +94,15 @@ export const downloadCSV = (params: IDownloadCsvParams, filename: string) => {
   const { type, address, txs, onePrice, erc20Map, erc721Map, erc1155Map } = params
 
   const mapTx = (tx: any) => {
-    return type === 'transaction'
-        ? mapRelatedTxToExport(address, tx, onePrice)
-        : mapHrc20TxToExport(address, tx, erc20Map, erc721Map, erc1155Map)
+    if(type === 'erc20') {
+      return mapHrc20TxToExport(address, tx, erc20Map, erc721Map, erc1155Map)
+    } else if (type === 'internal_transaction') {
+      return mapInternalTxToExport(address, tx, onePrice)
+    }
+    return mapRelatedTxToExport(address, tx, onePrice)
   }
 
-  const mappedTxs = txs.map((tx) => mapTx(tx))
+  const mappedTxs = txs.map(mapTx)
   const header = mappedTxs.filter((_, index) => index === 0).map(item => Object.keys(item))
   const body = mappedTxs
     .map((item) => Object.values(item))

@@ -72,7 +72,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ width: '320px' }}
+          style={{ width: '260px' }}
         >
           Value
         </Text>
@@ -103,7 +103,7 @@ export function getERC20Columns(id: string): ColumnConfig<any>[] {
         <Text
           color="minorText"
           size="small"
-          style={{ width: '120px' }}
+          style={{ width: '150px' }}
         >
           Token
         </Text>

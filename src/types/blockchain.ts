@@ -231,6 +231,7 @@ export type InternalTransaction = {
   blockNumber: BlockNumber;
   transactionHash: TransactionHash;
   signatures?: any[];
+  timestamp?: string
 };
 
 export type Transaction = {

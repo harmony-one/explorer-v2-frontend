@@ -20,7 +20,8 @@ export function ERC20_Pool() {
         erc20 = erc20.map((item) => {
           erc20Map[item.address] = {
             ...item,
-            isBridged: isTokenBridged(item.address)
+            isBridged: isTokenBridged(item.address),
+            name: item.implementationAddress ? `${item.name} (Proxy)` : item.name
           };
           return {
             [IndexedDbKeyPath]: item.address,
