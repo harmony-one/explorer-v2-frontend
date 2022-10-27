@@ -49,7 +49,7 @@ const TextBold = styled(Text)`
 `;
 
 const GAS_LIMIT = 6721900;
-const GAS_PRICE = 30000000000;
+const GAS_PRICE = 100000000000;
 
 export const AbiMethodsView = (props: {
   abiMethod: AbiItem;
