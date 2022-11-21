@@ -96,12 +96,10 @@ export function getInternalTransactionsByField(params: any[], blockNumber?: stri
         gas: tx.action.gas
       }))
       return mapTxs as InternalTransaction[]
-    })
-  } */
+    }) */
+  }
 
-  return transport("getInternalTransactionsByField", params) as Promise<
-    InternalTransaction[]
-  >;
+  return transport("getInternalTransactionsByField", params) as Promise<InternalTransaction[]>;
 }
 
 export function getTransactionLogsByField(params: any[]) {
