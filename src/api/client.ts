@@ -77,8 +77,11 @@ export function getInternalTransactionsByField(params: any[], blockNumber?: stri
     }
 
     const txHash = params[2]
+    //
+    console.info('internal transactions is not available to serve')
+    return [] as InternalTransaction[]
     // todo note check error field may not work properly
-    return eth_traceTransaction(txHash).then(txs => {
+    /* return eth_traceTransaction(txHash).then(txs => {
       const mapTxs = txs.map((tx: any, i: number) => ({
         type: tx.action.type || tx.type,
         value: tx.value,
@@ -94,7 +97,7 @@ export function getInternalTransactionsByField(params: any[], blockNumber?: stri
       }))
       return mapTxs as InternalTransaction[]
     })
-  }
+  } */
 
   return transport("getInternalTransactionsByField", params) as Promise<
     InternalTransaction[]
