@@ -71,7 +71,7 @@ export function getInternalTransactionsByField(params: any[], blockNumber?: stri
   // fallback to rpc as we don't keep old records older than 34000000 any more in postgres
   if (!blockNumber || +blockNumber < 34000000) {
     const queryType = params[1]
-    if (params[1] !== queryType) {
+    if (queryType !== 'transaction_hash') {
       console.error('use only transaction hash to get internal transactions')
       return [] as InternalTransaction[]
     }
