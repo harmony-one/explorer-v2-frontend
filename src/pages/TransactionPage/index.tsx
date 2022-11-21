@@ -93,7 +93,7 @@ export const TransactionPage = () => {
           trxInputSignature = await getTxInputSignature(trx)
         }
       }
-      
+
       setTx((trx || {}) as RPCTransactionHarmony);
       setInputSignature(trxInputSignature)
     };
@@ -110,7 +110,10 @@ export const TransactionPage = () => {
             0,
             "transaction_hash",
             tx.hash,
-          ]);
+          ],
+          // need to track fallback
+          tx.blockNumber
+        );
           const methodSignatures = await Promise.all(
             txs.map((tx) => {
               return tx.input && tx.input.length > 10

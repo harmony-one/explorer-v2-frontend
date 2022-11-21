@@ -16,6 +16,7 @@ import {
 } from "./client.interface";
 import { ApiCache } from "./ApiCache";
 import { get4byteSignatureByHex } from "./3rdPartyApi";
+import { eth_traceTransaction } from './rpc'
 // import { ClientCache } from "./clientCache";
 
 // const clientCache = new ClientCache({
@@ -66,7 +67,35 @@ export function getStakingTransactionByField(params: [number, "hash", string]) {
   ) as Promise<RPCStakingTransactionHarmony>;
 }
 
-export function getInternalTransactionsByField(params: any[]) {
+export function getInternalTransactionsByField(params: any[], blockNumber?: string) {
+  // fallback to rpc as we don't keep old records older than 34000000 any more in postgres
+  if (!blockNumber || +blockNumber < 34000000) {
+    const queryType = params[1]
+    if (queryType !== 'transaction_hash') {
+      console.error('use only transaction hash to get internal transactions')
+      return [] as InternalTransaction[]
+    }
+
+    const txHash = params[2]
+    // todo note check error field may not work properly
+    return eth_traceTransaction(txHash).then(txs => {
+      const mapTxs = txs.map((tx: any, i: number) => ({
+        type: tx.action.type || tx.type,
+        value: tx.value,
+        input: tx.action.input,
+        output: tx.result.output,
+        transactionHash: tx.transactionHash,
+        gasUsed: tx.result.gasUsed,
+        index: i,
+        to: tx.action.to,
+        from: tx.action.from,
+        error: tx.result.error,
+        gas: tx.action.gas
+      }))
+      return mapTxs as InternalTransaction[]
+    })
+  }
+
   return transport("getInternalTransactionsByField", params) as Promise<
     InternalTransaction[]
   >;

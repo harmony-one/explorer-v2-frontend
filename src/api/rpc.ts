@@ -90,6 +90,24 @@ const defaultGetHistoryParams = {
   order: RequestOrder.DESC
 }
 
+export const eth_traceTransaction = (hash: string) => {
+  return rpcAdapter<any>(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "trace_transaction",
+      id: 1,
+      params: [hash],
+    }),
+  }).then(data => {
+    if (data.error) {
+      throw new Error(data.error.message)
+    }
+    return data.result
+  });
+}
+
 export const hmyv2_getTransactionsHistory = (params: IGetTxsHistoryParams[]) => {
   return rpcAdapter<TRPCResponse<{ transactions: RPCTransactionHarmony[] }>>(API_URL, {
     method: "POST",
