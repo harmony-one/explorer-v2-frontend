@@ -25,6 +25,8 @@ import { eth_traceTransaction } from './rpc'
 
 // TODO: hardcode
 let pairCache: { [pair: string]: IPairPrice } = {};
+const contractShardID = 1
+
 setInterval(() => {
   pairCache = {};
 }, 90000);
@@ -154,41 +156,41 @@ export function getContractsByField(params: any[]) {
 }
 
 export function getAllERC20() {
-  return transport("getAllERC20", []) as Promise<any[]>;
+  return transport("getAllERC20", [contractShardID]) as Promise<any[]>;
 }
 
 export function getAllERC721() {
-  return transport("getAllERC721", []) as Promise<any[]>;
+  return transport("getAllERC721", [contractShardID]) as Promise<any[]>;
 }
 
 export function getAllERC1155() {
-  return transport("getAllERC1155", []) as Promise<any[]>;
+  return transport("getAllERC1155", [contractShardID]) as Promise<any[]>;
 }
 
 export function getUserERC20Balances(params: any[]) {
-  return transport("getUserERC20Balances", params) as Promise<any[]>;
+  return transport("getUserERC20Balances", [contractShardID, ...params]) as Promise<any[]>;
 }
 
 export function getUserERC721Assets(params: any[]) {
-  return transport("getUserERC721Assets", params) as Promise<
+  return transport("getUserERC721Assets", [contractShardID, ...params]) as Promise<
     IUserERC721Assets[]
   >;
 }
 
 export function getTokenERC721Assets(params: [string]) {
-  return transport("getTokenERC721Assets", params) as Promise<
+  return transport("getTokenERC721Assets", [contractShardID, ...params]) as Promise<
     IUserERC721Assets[]
   >;
 }
 
 export function getTokenERC1155Assets(params: [string]) {
-  return transport("getTokenERC1155Assets", params) as Promise<
+  return transport("getTokenERC1155Assets", [contractShardID, ...params]) as Promise<
     IUserERC721Assets[]
   >;
 }
 
 export function getUserERC1155Balances(params: [string]) {
-  return transport("getUserERC1155Balances", params) as Promise<
+  return transport("getUserERC1155Balances", [contractShardID, ...params]) as Promise<
     {
       tokenID: string;
       ownerAddress: string;
@@ -201,7 +203,7 @@ export function getUserERC1155Balances(params: [string]) {
 }
 
 export function getTokenERC1155Balances(params: [string]) {
-  return transport("getTokenERC1155Balances", params) as Promise<
+  return transport("getTokenERC1155Balances", [contractShardID, ...params]) as Promise<
     {
       tokenID: string;
       ownerAddress: string;
@@ -214,17 +216,17 @@ export function getTokenERC1155Balances(params: [string]) {
 }
 
 export function getRelatedTransactionsByType(
-  params: [0, string, TRelatedTransaction, any]
+  params: [number, string, TRelatedTransaction, any]
 ) {
-  return transport("getRelatedTransactionsByType", params) as Promise<
+  return transport("getRelatedTransactionsByType", [contractShardID, params[1], params[2], params[3]]) as Promise<
     RelatedTransaction[]
   >;
 }
 
 export function getRelatedTransactionsCountByType(
-  params: [0, string, TRelatedTransaction, any]
+  params: [number, string, TRelatedTransaction, any]
 ) {
-  return transport("getRelatedTransactionsCountByType", params) as Promise<number>;
+  return transport("getRelatedTransactionsCountByType", [contractShardID, params[1], params[2], params[3]]) as Promise<number>;
 }
 
 export function getBinancePairPrice(params: [string]) {
@@ -242,11 +244,11 @@ export function getBinancePairHistoricalPrice(params: [string]) {
 }
 
 export function getERC20TokenHolders(params: [string, number, number]) {
-  return transport("getERC20TokenHolders", params) as Promise<IHoldersInfo[]>;
+  return transport("getERC20TokenHolders", [contractShardID, ...params]) as Promise<IHoldersInfo[]>;
 }
 
 export async function getTokenERC1155AssetDetails(address: string, tokenID: string) {
-    const res = await transport("getTokenERC1155AssetDetails", [address, tokenID])
+    const res = await transport("getTokenERC1155AssetDetails", [contractShardID, address, tokenID])
     // todo fix on backend
     return res && res[0]
 }
