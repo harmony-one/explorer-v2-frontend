@@ -25,7 +25,7 @@ import { eth_traceTransaction } from './rpc'
 
 // TODO: hardcode
 let pairCache: { [pair: string]: IPairPrice } = {};
-const contractShardID = +process.env.REACT_APP_CONTRACT_SHARD || 0
+const contractShardID = process.env.REACT_APP_CONTRACT_SHARD ? (+process.env.REACT_APP_CONTRACT_SHARD || 0) : 0
 
 setInterval(() => {
   pairCache = {};
