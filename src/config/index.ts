@@ -25,7 +25,10 @@ const shardUrls = availableShards
     .map(shardId => process.env[`REACT_APP_RPC_URL_SHARD${shardId}`] as string)
     .filter(url => url)
 
+const contractShardId = +(process.env.REACT_APP_CONTRACT_SHARD || '0') as ShardID
+
 export const config = {
   availableShards,
-  shardUrls
+  shardUrls,
+  contractShardId
 }

@@ -15,30 +15,15 @@ export const convertInputs = (inputs: string[], abiInputs: AbiInput[]) => {
   });
 };
 
-export const getContractInAllShards = async (contractId: string) => {
-  const { availableShards } = config
+export const getContractByAddress = async (contractId: string) => {
+  const { contractShardId } = config
 
   let contract = null
-  let shardId = null
-
-  for(let i = 0; i < availableShards.length; i++) {
-    try {
-      const sId = availableShards[i]
-      contract = await getContractsByField([sId, "address", contractId]);
-      if (contract) {
-        shardId = sId
-        break
-      }
-
-      // Temp optimization to reduce number of requests
-      if(sId === 1) {
-        break
-      }
-    } catch (_) {}
-  }
-
+  try {
+    contract = await getContractsByField([contractShardId, "address", contractId]);
+  } catch (_) {}
   return {
     contract,
-    shardId
+    shardId: contractShardId
   }
 }
