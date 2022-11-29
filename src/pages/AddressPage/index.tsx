@@ -32,7 +32,7 @@ import { parseHexToText } from "../../web3/parseHex";
 import { EventsTab } from "./tabs/events/Events";
 import { ToolsTab } from "./tabs/tools";
 import useQuery from "../../hooks/useQuery";
-import {getContractInAllShards} from "./ContractDetails/helpers";
+import {getContractByAddress} from "./ContractDetails/helpers";
 
 export function AddressPage() {
   const history = useHistory();
@@ -124,7 +124,7 @@ export function AddressPage() {
 
     const getContracts = async () => {
       try {
-        let { contract, shardId } = await getContractInAllShards(id);
+        let { contract, shardId } = await getContractByAddress(id);
         if (contract) {
           const mergedContracts: any = erc721Map[contract.address]
             ? { ...contracts, ...erc721Map[contract.address] }
@@ -135,7 +135,7 @@ export function AddressPage() {
           setSourceCode(code)
 
           if(contract.implementationAddress) {
-            let { contract: contractData, shardId } = await getContractInAllShards(contract.implementationAddress);
+            let { contract: contractData, shardId } = await getContractByAddress(contract.implementationAddress);
             if (contractData) {
               const implCode = await getContractCode(contractData.address, shardId || 0)
               console.log('Implementation contract loaded:', contractData)
