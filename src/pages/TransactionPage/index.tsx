@@ -142,7 +142,19 @@ export const TransactionPage = () => {
 
   useEffect(() => {
     const getLogs = async () => {
-      if (tx.hash && tx.shardID === 0) {
+      //
+      const contractShardID = process.env.REACT_APP_CONTRACT_SHARD ? (process.env.REACT_APP_CONTRACT_SHARD || 0) : 0
+      if (tx.hash && [0, contractShardID].includes(tx.shardID)) {
+
+        const SevenDaysBlock = 60 * 60 * 24 * 7 / 2
+        const txDate = new Date(tx.timestamp).getTime()
+        const now = Date.now()
+
+        if (now - txDate > SevenDaysBlock) {
+          console.log('no logs served')
+          return
+        }
+
         try {
           //@ts-ignore
           const logs: any[] = await getTransactionLogsByField([
