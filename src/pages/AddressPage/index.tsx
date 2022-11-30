@@ -385,11 +385,11 @@ export function AddressPage() {
             </Tab>
           ) : null}
 
-          {type === "erc20" &&
+          {/*type === "erc20" &&
             <Tab title={<Text size="small">Events</Text>}>
               <EventsTab id={id} />
             </Tab>
-          }
+          */}
 
           {(type === "erc721" || type === "erc1155" || type === "erc20") ? (
             <Tab title={<Text size="small">Tools</Text>}>
