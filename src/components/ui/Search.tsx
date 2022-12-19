@@ -17,6 +17,8 @@ import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Address } from "./Address";
 import { config } from "../../config";
+import {getAddressByName} from "../../utils/oneCountry";
+import {toaster} from "../../App";
 
 let timeoutID: any | null = null;
 
@@ -92,6 +94,29 @@ export const SearchInput = () => {
         history.push(`/block/${v}`);
         setValue("");
         return;
+      }
+
+      if(config.oneCountryContractAddress && v.endsWith('.1')) {
+        const [prefix] = v.split('.1')
+        if(prefix) {
+          try {
+            const address = await getAddressByName(prefix)
+            if(address) {
+              history.push(`/address/${address}`);
+            } else {
+              toaster.show({
+                message: () => (
+                    <Box direction={"row"} align={"center"} pad={"small"}>
+                      <Text size={"small"}>Address for "{v}" not found</Text>
+                    </Box>
+                ),
+                time: 5000
+              })
+            }
+          } catch (e) {
+            console.log('Cannot get one country address', e)
+          }
+        }
       }
 
       if (v.length !== 66 && v.length !== 42) {
@@ -185,7 +210,9 @@ export const SearchInput = () => {
       }
     };
 
-    exec();
+    if(readySubmit) {
+      exec();
+    }
   }, [readySubmit]);
 
   const Row = (options: { index: number; style: any }) => {
