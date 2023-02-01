@@ -1,12 +1,17 @@
 import React, { useEffect } from "react";
+import * as api from 'src/api/client'
 import dayjs from "dayjs";
 export function ONE_USDT_Rate() {
   useEffect(() => {
     const getRates = () => {
       const rates = {} as Record<string, number>;
-      fetch("https://api.binance.com/api/v3/klines?symbol=ONEUSDT&interval=1d")
-        .then((_res) => _res.json())
+      // fetch("https://api.binance.com/api/v3/klines?symbol=ONEUSDT&interval=1d")
+      fetch("https://api.coingecko.com/api/v3/coins/harmony/market_chart?vs_currency=usd&days=2000&interval=daily")
+      //https://api.coingecko.com/api/v3/coins/harmony/market_chart?vs_currency=usd&days=2000&interval=daily
+      .then((_res) => _res.json())
+      .then(res => res.prices) // for coingecko, delete for binance
         .then((res) => {
+          console.log('price', {res})
           res.forEach((t: Array<string | number>) => {
             rates[String(t[0])] = Number(t[1]);
           });
