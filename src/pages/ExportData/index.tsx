@@ -14,6 +14,8 @@ import {useERC20Pool} from "../../hooks/ERC20_Pool";
 import {useERC721Pool} from "../../hooks/ERC721_Pool";
 import {useERC1155Pool} from "../../hooks/ERC1155_Pool";
 
+const erc20TransfersURL = 'https://api-hrc-tx.t.hmny.io'
+
 const IconError = styled(StatusCritical)`
   margin-right: 5px;
 `;
@@ -77,6 +79,25 @@ export const ExportData = () => {
   }
 
   const onDownloadClicked = async () => {
+    // using dedicated server and db to get erc20 (for tax returns)
+    if (type === 'erc20') {
+      const url = `${erc20TransfersURL}/v0/shard/0/address/${address.toLowerCase()}/transactions/type/erc20`
+      const txs = await fetch(url).then(r => r.json())
+
+      const downloadParams = {
+        type,
+        address,
+        txs,
+        onePrice,
+        erc20Map,
+        erc721Map,
+        erc1155Map
+      }
+      downloadCSV(downloadParams, `export_${type}_${address}.csv`)
+      return
+    }
+
+
     try {
       setIsDownloading(true)
 
@@ -204,7 +225,9 @@ export const ExportData = () => {
     </Heading>
     <BasePage pad={"medium"} style={{ overflow: "inherit" }}>
       <Box pad={{ top: 'medium', bottom: 'medium' }} style={{ display: 'inline-block' }}>
-        Export the last {DefaultLimit} {getTxTextType(type)} for <Address address={address} />
+        {type !== 'erc20'
+          ? <>Export the last {DefaultLimit} {getTxTextType(type)} for <Address address={address} /></>
+          : <>Export ERC20 transfers for <Address address={address} /></> }
         {type === 'transaction' && 'starting from'}
       </Box>
       {!['erc20', 'internal_transaction'].includes(type) &&
