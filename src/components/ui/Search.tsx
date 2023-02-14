@@ -29,6 +29,11 @@ export interface ISearchItem {
   item: any;
 }
 
+const oneCountryPostfix = {
+  dotOne: '.1',
+  dotCountry: '.country'
+}
+
 export const SearchInput = () => {
   const [value, setValue] = useState("");
   const [readySubmit, setReadySubmit] = useState(false);
@@ -96,25 +101,29 @@ export const SearchInput = () => {
         return;
       }
 
-      if(config.oneCountryContractAddress && v.endsWith('.1')) {
-        const [prefix] = v.split('.1')
-        if(prefix) {
-          try {
-            const address = await getAddressByName(prefix)
-            if(address) {
-              history.push(`/address/${address}`);
-            } else {
-              toaster.show({
-                message: () => (
+      if(config.oneCountryContractAddress) {
+        const onePostfix = v.endsWith(oneCountryPostfix.dotOne)
+        const countryPostfix = v.endsWith(oneCountryPostfix.dotCountry)
+        if(onePostfix || countryPostfix) {
+          const [prefix] = v.split(onePostfix ? oneCountryPostfix.dotOne : oneCountryPostfix.dotCountry);
+          if(prefix) {
+            try {
+              const address = await getAddressByName(prefix);
+              if(address) {
+                history.push(`/address/${address}`);
+              } else {
+                toaster.show({
+                  message: () => (
                     <Box direction={"row"} align={"center"} pad={"small"}>
                       <Text size={"small"}>Address for "{v}" not found</Text>
                     </Box>
-                ),
-                time: 5000
-              })
+                  ),
+                  time: 5000
+                })
+              }
+            } catch (e) {
+              console.log('Cannot get one country address', e)
             }
-          } catch (e) {
-            console.log('Cannot get one country address', e)
           }
         }
       }
