@@ -1,7 +1,7 @@
 import { TransactionDetails } from "src/components/transaction/TransactionDetails";
 import { InternalTransactionList } from "src/components/transaction/InternalTransactionList";
 import { TransactionLogs } from "src/components/transaction/TransactionLogs";
-import { IHexSignature, InternalTransaction, RPCTransactionHarmony } from "src/types";
+import {IHexSignature, InternalTransaction, RPCTransactionHarmony, TxReceipt} from "src/types";
 import { BaseContainer, BasePage } from "src/components/ui";
 
 import { useHistory, useParams } from "react-router-dom";
@@ -37,6 +37,7 @@ export const TransactionPage = () => {
 
   // hash or number
   const [tx, setTx] = useState<RPCTransactionHarmony>({} as RPCTransactionHarmony);
+  const [txReceipt, setTxReceipt] = useState<TxReceipt>();
   const [trxs, setTrxs] = useState<InternalTransaction[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -85,9 +86,12 @@ export const TransactionPage = () => {
 
       if (trx) {
         const txnReceipt = await hmyv2_getTransactionReceipt([id], shard);
-        if (txnReceipt && txnReceipt.result && txnReceipt.result.gasUsed) {
-          trx.gasLimit = trx.gas
-          trx.gas = parseInt(txnReceipt.result.gasUsed).toString();
+        if (txnReceipt && txnReceipt.result) {
+          setTxReceipt(txnReceipt.result)
+          if(txnReceipt.result.gasUsed) {
+            trx.gasLimit = trx.gas
+            trx.gas = parseInt(txnReceipt.result.gasUsed).toString();
+          }
         }
         if (trx.input && trx.input.length > 10) {
           trxInputSignature = await getTxInputSignature(trx)
@@ -193,6 +197,19 @@ export const TransactionPage = () => {
     );
   }
 
+  const internalErrorMsg = txrsLoading
+    ? undefined
+    : trxs.length
+      ? trxs
+        .map((t) => t.error)
+        .filter((_) => _)
+        .map(extractError)
+        .join(",")
+      : ""
+  const txReceiptErrorMsg = txReceipt && txReceipt.status === 0
+    ? 'Failed (from receipt)'
+    : ''
+
   return (
     <BaseContainer pad={{ horizontal: "0" }}>
       <Heading size="small" margin={{ bottom: "medium", top: "0" }}>
@@ -218,17 +235,7 @@ export const TransactionPage = () => {
               logs={logs}
               internalTxs={trxs}
               inputSignature={inputSignature}
-              errorMsg={
-                txrsLoading
-                  ? undefined
-                  : trxs.length
-                  ? trxs
-                      .map((t) => t.error)
-                      .filter((_) => _)
-                      .map(extractError)
-                      .join(",")
-                  : ""
-              }
+              errorMsg={internalErrorMsg || txReceiptErrorMsg}
             />
           </Tab>
           {trxs.length ? (

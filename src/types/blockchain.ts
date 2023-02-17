@@ -321,3 +321,20 @@ export interface StakingDelegationResponse {
   reward: string,
   validator_address: string
 }
+
+export interface TxReceipt {
+  blockHash: string;
+  blockNumber: number;
+  contractAddress: string;
+  cumulativeGasUsed: number;
+  from: string;
+  gasUsed: string;
+  logs: any[];
+  logsBloom: string;
+  root: string;
+  shardID: number;
+  status: number;
+  to: string;
+  transactionHash: string;
+  transactionIndex: number;
+}

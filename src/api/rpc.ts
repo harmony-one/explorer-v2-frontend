@@ -11,7 +11,8 @@ import {
   RequestTxType,
   RPCTransactionHarmony,
   StakingDelegationResponse,
-  TokenType
+  TokenType,
+  TxReceipt
 } from "../types";
 import { config } from "../config";
 
@@ -57,7 +58,7 @@ export const hmyv2_getTransactionReceipt = (
   params: [string],
   shardNumber: number
 ) => {
-  return rpcAdapter<TRPCResponse<{ logs: [{ data: string }], gasUsed: string }>>(
+  return rpcAdapter<TRPCResponse<TxReceipt>>(
     process.env[`REACT_APP_RPC_URL_SHARD${shardNumber}`] as string,
     {
       method: "POST",
