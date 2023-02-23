@@ -11,7 +11,7 @@
     "grommet": "2.17.2",
     "grommet-icons": "^4.5.0",
     "json-bigint": "^1.0.0",
-    "one-country-sdk": "^0.2.0",
+    "one-country-sdk": "3.1.2",
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.1",
     "react-dom": "^17.0.2",
@@ -25,7 +25,7 @@
     "web3": "^1.3.6"
   },
   "scripts": {
-    "start": "env-cmd -f .env react-scripts --openssl-legacy-provider start",
+    "start": "env-cmd -f .env react-scripts start",
     "start:testnet": "env-cmd -f .env.testnet react-scripts start",
     "start:devnet": "env-cmd -f .env.devnet react-scripts start",
     "build": "env-cmd -f .env react-scripts build",
