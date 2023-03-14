@@ -21,7 +21,7 @@ export interface IDropdownProps<T = {}> {
   onToggle?: (isOpen: boolean) => void;
   onClickItem?: (dataItem: T) => void;
   themeMode: "dark" | "light";
-  itemHeight: string;
+  itemHeight?: string;
   itemStyles: React.CSSProperties;
 }
 
@@ -32,12 +32,10 @@ const DropdownWrapper = styled(Box)`
   border-radius: 8px;
   margin: 5px;
   position: relative;
-  user-select: none;
 `;
 
 const Value = styled(Box)`
   width: 100%;
-  cursor: pointer;
 `;
 
 const DataList = styled(Box)`
@@ -52,13 +50,12 @@ const DataList = styled(Box)`
 `;
 
 const DataItem = styled(Box)<{
-  itemHeight: string;
+  itemHeight?: string;
 }>`
-  cursor: pointer;
 
   ${(props) => {
     return css`
-      min-height: ${props.itemHeight};
+      min-height: ${props.itemHeight || 'unset'};
     `;
   }}
 `;
@@ -67,7 +64,7 @@ export class Dropdown<T = {}> extends React.Component<
   IDropdownProps<T>,
   { isOpen: boolean; searchText: string }
 > {
-  public element!: HTMLDivElement;
+  public element: React.RefObject<HTMLDivElement>;
 
   public initValue: T = this.props.defaultValue || this.props.items[0];
 
@@ -79,6 +76,12 @@ export class Dropdown<T = {}> extends React.Component<
     isOpen: this.props.isOpen || false,
     searchText: "",
   };
+
+  constructor(props: any) {
+    super(props);
+
+    this.element = React.createRef();
+  }
 
   componentDidMount() {
     document.body.addEventListener("click", this.handleClickBody as any);
@@ -96,7 +99,7 @@ export class Dropdown<T = {}> extends React.Component<
   }
 
   handleClickBody = (e: React.MouseEvent<HTMLElement>) => {
-    if (!(this.element && this.element.contains(e.target as Node))) {
+    if (!(this.element && this.element.current && this.element.current.contains(e.target as Node))) {
       this.setOpened(false)
     }
   };
@@ -108,14 +111,14 @@ export class Dropdown<T = {}> extends React.Component<
       this.props.onClickItem(item);
     }
 
-    this.setOpened(false)
+    // this.setOpened(false)
   };
 
   renderGroupItems() {
     const {
       group = [],
       searchable,
-      itemHeight = "47px",
+      // itemHeight = "47px",
       itemStyles = {},
     } = this.props;
 
@@ -138,7 +141,7 @@ export class Dropdown<T = {}> extends React.Component<
               key={`${item[this.props.keyField] || index}`}
               background={"backgroundDropdownItem"}
               onClick={(evt) => this.onClickItem(item, evt)}
-              itemHeight={itemHeight}
+              itemHeight={this.props.itemHeight}
               style={{ ...itemStyles }}
             >
               {this.props.renderItem(item)}
@@ -154,7 +157,7 @@ export class Dropdown<T = {}> extends React.Component<
       group = [],
       searchable,
       themeMode,
-      itemHeight = "47px",
+      // itemHeight = "47px",
       itemStyles = {},
       padDataList = "small",
     } = this.props;
@@ -162,7 +165,7 @@ export class Dropdown<T = {}> extends React.Component<
     return (
       <DropdownWrapper
         className={this.props.className}
-        ref={(element) => (this.element = element as HTMLDivElement)}
+        ref={this.element}
         border={{ size: "xsmall", color: "border" }}
       >
         <Value
@@ -194,7 +197,6 @@ export class Dropdown<T = {}> extends React.Component<
           <DataList
             background="background"
             border={{ size: "xsmall", color: "border" }}
-            style={{ borderRadius: "0px" }}
             pad={padDataList}
           >
             {searchable ? (
@@ -222,7 +224,7 @@ export class Dropdown<T = {}> extends React.Component<
                   <DataItem
                     key={`${item[this.props.keyField] || index}`}
                     onClick={(evt) => this.onClickItem(item, evt)}
-                    itemHeight={itemHeight}
+                    itemHeight={this.props.itemHeight}
                     style={{ ...itemStyles }}
                   >
                     {this.props.renderItem(item)}

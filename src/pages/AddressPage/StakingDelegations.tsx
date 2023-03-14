@@ -51,7 +51,7 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
     items,
     renderItem: (item: StakingDelegation) => {
       return <Box
-        background={"backgroundBack"}
+        background={"backgroundDropdownItem"}
         direction="column"
         pad={'4px'}
         gap={'4px'}
