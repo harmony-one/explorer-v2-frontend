@@ -21,7 +21,7 @@ export interface IDropdownProps<T = {}> {
   onToggle?: (isOpen: boolean) => void;
   onClickItem?: (dataItem: T) => void;
   themeMode: "dark" | "light";
-  itemHeight: string;
+  itemHeight?: string;
   itemStyles: React.CSSProperties;
 }
 
@@ -36,7 +36,6 @@ const DropdownWrapper = styled(Box)`
 
 const Value = styled(Box)`
   width: 100%;
-  cursor: pointer;
 `;
 
 const DataList = styled(Box)`
@@ -51,13 +50,12 @@ const DataList = styled(Box)`
 `;
 
 const DataItem = styled(Box)<{
-  itemHeight: string;
+  itemHeight?: string;
 }>`
-  cursor: pointer;
 
   ${(props) => {
     return css`
-      min-height: ${props.itemHeight};
+      min-height: ${props.itemHeight || 'unset'};
     `;
   }}
 `;
@@ -120,7 +118,7 @@ export class Dropdown<T = {}> extends React.Component<
     const {
       group = [],
       searchable,
-      itemHeight = "47px",
+      // itemHeight = "47px",
       itemStyles = {},
     } = this.props;
 
@@ -143,7 +141,7 @@ export class Dropdown<T = {}> extends React.Component<
               key={`${item[this.props.keyField] || index}`}
               background={"backgroundDropdownItem"}
               onClick={(evt) => this.onClickItem(item, evt)}
-              itemHeight={itemHeight}
+              itemHeight={this.props.itemHeight}
               style={{ ...itemStyles }}
             >
               {this.props.renderItem(item)}
@@ -159,7 +157,7 @@ export class Dropdown<T = {}> extends React.Component<
       group = [],
       searchable,
       themeMode,
-      itemHeight = "47px",
+      // itemHeight = "47px",
       itemStyles = {},
       padDataList = "small",
     } = this.props;
@@ -226,7 +224,7 @@ export class Dropdown<T = {}> extends React.Component<
                   <DataItem
                     key={`${item[this.props.keyField] || index}`}
                     onClick={(evt) => this.onClickItem(item, evt)}
-                    itemHeight={itemHeight}
+                    itemHeight={this.props.itemHeight}
                     style={{ ...itemStyles }}
                   >
                     {this.props.renderItem(item)}

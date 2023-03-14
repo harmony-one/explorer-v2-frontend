@@ -110,8 +110,7 @@ export function TokensInfo(props: { value: Token[] }) {
       <Box style={{ width: "550px" }}>
         <Dropdown<Token>
           keyField={"tokenID"}
-          itemHeight={"55px"}
-          itemStyles={{ padding: "5px", marginBottom: "10px" }}
+          itemStyles={{ padding: "4px", borderBottom: '1px solid', borderColor: '#f3f3f3' }}
           searchable={(item, searchText) => {
             const outPutAddress =
               currency === "ONE"
@@ -152,7 +151,7 @@ export function TokensInfo(props: { value: Token[] }) {
                   width: "100%",
                   flex: "0 0 auto",
                   justifyContent: "space-between",
-                  marginBottom: "10px",
+                  // marginBottom: "10px",
                   padding: "5px",
                 }}
               >
@@ -188,7 +187,7 @@ export function TokensInfo(props: { value: Token[] }) {
                 </Box>
                 {item.isERC1155 ? (
                   <Text size={"small"} color={"minorText"}>
-                    Token ID: {item.tokenID}{" "}
+                    <b>Token ID</b>: {item.tokenID}{" "}
                   </Text>
                 ) : null}
               </Box>
@@ -197,14 +196,14 @@ export function TokensInfo(props: { value: Token[] }) {
           renderValue={() => (
             <Box direction={"row"} style={{ paddingTop: "3px" }}>
               {erc20Tokens.length ? (
-                <Box style={{ marginRight: "10px" }} direction={"row"}>
+                <Box direction={"row"}>
                   HRC20{" "}
                   <Box
                     background={"backgroundBack"}
                     style={{
                       minWidth: "20px",
                       height: "20px",
-                      marginLeft: "5px",
+                      marginLeft: "4px",
                       textAlign: "center",
                       borderRadius: "4px",
                     }}
@@ -214,14 +213,14 @@ export function TokensInfo(props: { value: Token[] }) {
                 </Box>
               ) : null}
               {erc721Tokens.length ? (
-                <Box direction={"row"}>
+                <Box direction={"row"} margin={{ left: '8px' }}>
                   HRC721{" "}
                   <Box
                     background={"backgroundBack"}
                     style={{
                       minWidth: "20px",
                       height: "20px",
-                      marginLeft: "5px",
+                      marginLeft: "4px",
                       textAlign: "center",
                       borderRadius: "4px",
                     }}
@@ -231,14 +230,14 @@ export function TokensInfo(props: { value: Token[] }) {
                 </Box>
               ) : null}
               {erc1155Tokens.length ? (
-                <Box direction={"row"}>
+                <Box direction={"row"} margin={{ left: '8px' }}>
                   HRC1155{" "}
                   <Box
                     background={"backgroundBack"}
                     style={{
                       minWidth: "20px",
                       height: "20px",
-                      marginLeft: "5px",
+                      marginLeft: "4px",
                       textAlign: "center",
                       borderRadius: "4px",
                     }}
@@ -256,8 +255,9 @@ export function TokensInfo(props: { value: Token[] }) {
                 <Box
                   style={{
                     minHeight: "35px",
-                    borderRadius: "8px",
-                    marginBottom: "10px",
+                    borderTopLeftRadius: '4px',
+                    borderTopRightRadius: '4px',
+                    // marginBottom: "10px",
                     marginTop: "10px",
                   }}
                   pad={"xsmall"}
@@ -273,8 +273,9 @@ export function TokensInfo(props: { value: Token[] }) {
                 <Box
                   style={{
                     minHeight: "35px",
-                    borderRadius: "8px",
-                    marginBottom: "10px",
+                    borderTopLeftRadius: '4px',
+                    borderTopRightRadius: '4px',
+                    // marginBottom: "10px",
                     marginTop: "10px",
                   }}
                   pad={"xsmall"}
@@ -290,8 +291,9 @@ export function TokensInfo(props: { value: Token[] }) {
                 <Box
                   style={{
                     minHeight: "35px",
-                    borderRadius: "8px",
-                    marginBottom: "10px",
+                    borderTopLeftRadius: '4px',
+                    borderTopRightRadius: '4px',
+                    // marginBottom: "10px",
                     marginTop: "10px",
                   }}
                   pad={"xsmall"}
