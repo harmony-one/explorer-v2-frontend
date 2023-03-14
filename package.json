@@ -11,7 +11,7 @@
     "grommet": "2.17.2",
     "grommet-icons": "^4.5.0",
     "json-bigint": "^1.0.0",
-    "one-country-sdk": "3.1.2",
+    "one-country-sdk": "3.2.0",
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.1",
     "react-dom": "^17.0.2",
