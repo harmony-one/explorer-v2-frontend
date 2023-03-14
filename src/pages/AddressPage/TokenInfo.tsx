@@ -276,7 +276,7 @@ export function TokensInfo(props: { value: Token[] }) {
                     borderTopLeftRadius: '4px',
                     borderTopRightRadius: '4px',
                     // marginBottom: "10px",
-                    marginTop: "10px",
+                    marginTop: "24px",
                   }}
                   pad={"xsmall"}
                   background={"backgroundBack"}
@@ -294,7 +294,7 @@ export function TokensInfo(props: { value: Token[] }) {
                     borderTopLeftRadius: '4px',
                     borderTopRightRadius: '4px',
                     // marginBottom: "10px",
-                    marginTop: "10px",
+                    marginTop: "24px",
                   }}
                   pad={"xsmall"}
                   background={"backgroundBack"}
