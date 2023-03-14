@@ -137,7 +137,7 @@ export function TokensInfo(props: { value: Token[] }) {
           themeMode={themeMode}
           items={data}
           onClickItem={(item) => {
-            history.push(`/address/${item.tokenAddress}`);
+            // history.push(`/address/${item.tokenAddress}`);
           }}
           renderItem={(item) => {
             const symbol =
