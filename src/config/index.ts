@@ -27,10 +27,12 @@ const shardUrls = availableShards
 
 const contractShardId = +(process.env.REACT_APP_CONTRACT_SHARD || '0') as ShardID
 const oneCountryContractAddress = process.env.REACT_APP_ONE_COUNTRY_CONTRACT_ADDRESS || ''
+const ipfsGateway = process.env.REACT_APP_INDEXER_IPFS_GATEWAY || ''
 
 export const config = {
   availableShards,
   shardUrls,
   contractShardId,
-  oneCountryContractAddress
+  oneCountryContractAddress,
+  ipfsGateway
 }
