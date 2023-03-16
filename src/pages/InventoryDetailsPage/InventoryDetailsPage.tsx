@@ -2,14 +2,21 @@ import {Box, Text} from "grommet";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {getTokenERC1155Assets, getTokenERC1155Balances, getTokenERC721Assets} from "src/api/client";
-import {IERC1155Balance, IUserERC721Assets} from "src/api/client.interface";
-import {Address, BasePage} from "src/components/ui";
+import {IUserERC721Assets} from "src/api/client.interface";
+import {BasePage} from "src/components/ui";
 import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
 import {ERC721, useERC721Pool} from "src/hooks/ERC721_Pool";
 import styled from "styled-components";
 import HarmonyLogo from '../../assets/Logo.svg';
 import { config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
+
+const AddressLink = styled.a`
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
 
 interface NFTImageProps {
   imageUrl: string
@@ -40,10 +47,11 @@ const NFTContainer = styled(Box)`
 
 const DetailsWrapper = styled(Box)`
   margin-top: 32px;
+  width: 100%;
 
   @media (min-width: 768px) {
-    width: 58%;
     margin-top: 0;
+    width: 56%;
   }
 `
 
@@ -108,7 +116,9 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Owner:</Text>
         </DetailsProp>
         <Box>
-          <Address address={tokenOwnerAddress} isShortEllipsis={true} />
+          <AddressLink href={`/address/${tokenOwnerAddress}`}>
+            <Text color={'brand'} size={'small'}>{tokenOwnerAddress}</Text>
+          </AddressLink>
         </Box>
       </DetailsRow>
       <DetailsRow>
@@ -116,7 +126,9 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Contract Address:</Text>
         </DetailsProp>
         <Box>
-          <Address address={token.address} />
+          <AddressLink href={`/address/${token.address}`}>
+            <Text color={'brand'} size={'small'}>{token.address}</Text>
+          </AddressLink>
         </Box>
       </DetailsRow>
       <DetailsRow>
@@ -161,14 +173,16 @@ const NFTInfo = (props: NFTInfoProps) => {
   const name = token.name || '';
   const erc1155Image = tokenERC1155 && tokenERC1155.meta ? tokenERC1155.meta.image : ''
 
-  return <Box pad={{ left: '32px' }}>
+  return <Box>
     <Box>
       <Box>
         <Text weight={'bold'} size={'large'}>{name} {meta?.name || ""}</Text>
       </Box>
       <Box direction={'row'} align={'center'} gap={'12px'} margin={{ top: '4px' }}>
         <ERC1155Icon imageUrl={erc1155Image} />
-        <Address address={token.address} hideCopyBtn={true} />
+        <AddressLink href={`/address/${token.address}`}>
+          <Text color={'brand'} size={'small'}>{token.name}</Text>
+        </AddressLink>
       </Box>
       <Box margin={{ top: '24px' }}>
         <NFTDetails {...props} />
@@ -198,7 +212,6 @@ export function InventoryDetailsPage() {
               ? await getTokenERC721Assets([address])
               : await getTokenERC1155Assets([address]);
           const inventoryItem = inventoryItems.filter((item) => item.tokenID === tokenID)[0]
-          setInventory(inventoryItem);
 
           if(type === 'erc1155') {
             const balances = await getTokenERC1155Balances([address]);
@@ -207,6 +220,7 @@ export function InventoryDetailsPage() {
               setTokenOwnerAddress(userBalance.ownerAddress)
             }
           }
+          setInventory(inventoryItem);
         }
       } catch (e) {
         console.error('Cannot load token data:', e)
@@ -225,7 +239,7 @@ export function InventoryDetailsPage() {
   return (
     <>
       <BasePage>
-        <Box direction={'row'} justify={'start'} wrap={true}>
+        <Box direction={'row'} justify={'between'} wrap={true}>
           <NFTContainer>
             <NFTImage imageUrl={inventory.meta?.image || ''} />
           </NFTContainer>
