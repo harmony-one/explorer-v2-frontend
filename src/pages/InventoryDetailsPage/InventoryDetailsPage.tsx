@@ -35,6 +35,7 @@ const Image = styled.img`
 const ImageContainer = styled(Box)`
   background-color: #f1f2f3;
   width: 100%;
+  border-radius: 0.35rem;
 `
 
 const NFTContainer = styled(Box)`
@@ -72,10 +73,9 @@ const NFTImage = (props: NFTImageProps) => {
 
   return <ImageContainer width={'inherit'} height={'inherit'} justify={'center'} align={'center'}>
     {isLoading &&
-        <Image src={HarmonyLogo} style={{ width: '50%' }} />
+        <Image src={HarmonyLogo} style={{ height: '50%' }} />
     }
     <Image
-      color={'red'}
       src={`${config.ipfsGateway}${imageUrl}`}
       onLoad={onLoadSuccess}
       onError={onLoadError}
