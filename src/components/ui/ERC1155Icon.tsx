@@ -44,7 +44,7 @@ export function ERC1155Icon(props: IERC1155IconProps) {
     : "";
 
   return (
-    <Box style={{ marginLeft: "15px" }}>
+    <Box>
       {isLoading ? (
         <Loader>
           <Box align={"center"} justify={"center"} flex height={"100%"}>

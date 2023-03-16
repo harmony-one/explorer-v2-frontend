@@ -63,3 +63,12 @@ export interface IHoldersInfo {
   ownerAddress: string;
   tokenAddress: string;
 }
+
+export interface IERC1155Balance {
+  tokenID: string;
+  ownerAddress: string;
+  tokenAddress: string;
+  amount: string;
+  needUpdate: boolean;
+  lastUpdateBlockNumber: number | null;
+}

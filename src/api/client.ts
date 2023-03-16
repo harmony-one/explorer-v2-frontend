@@ -9,6 +9,7 @@ import {
     ShardID, MetricsType, MetricsDailyItem, MetricsTopType, MetricsTopItem, MetricsTopPeriod
 } from "src/types";
 import {
+  IERC1155Balance,
   IHoldersInfo,
   IPairPrice,
   IUserERC721Assets,
@@ -190,29 +191,11 @@ export function getTokenERC1155Assets(params: [string]) {
 }
 
 export function getUserERC1155Balances(params: [string]) {
-  return transport("getUserERC1155Balances", [contractShardID, ...params]) as Promise<
-    {
-      tokenID: string;
-      ownerAddress: string;
-      tokenAddress: string;
-      amount: string;
-      needUpdate: boolean;
-      lastUpdateBlockNumber: number | null;
-    }[]
-  >;
+  return transport("getUserERC1155Balances", [contractShardID, ...params]) as Promise<IERC1155Balance[]>;
 }
 
 export function getTokenERC1155Balances(params: [string]) {
-  return transport("getTokenERC1155Balances", [contractShardID, ...params]) as Promise<
-    {
-      tokenID: string;
-      ownerAddress: string;
-      tokenAddress: string;
-      amount: string;
-      needUpdate: boolean;
-      lastUpdateBlockNumber: number | null;
-    }[]
-  >;
+  return transport("getTokenERC1155Balances", [contractShardID, ...params]) as Promise<IERC1155Balance[]>;
 }
 
 export function getRelatedTransactionsByType(
