@@ -1,8 +1,8 @@
 import {Box, Text} from "grommet";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getTokenERC1155Assets, getTokenERC721Assets } from "src/api/client";
-import { IUserERC721Assets } from "src/api/client.interface";
+import {getTokenERC1155Assets, getTokenERC1155Balances, getTokenERC721Assets} from "src/api/client";
+import {IERC1155Balance, IUserERC721Assets} from "src/api/client.interface";
 import {Address, BasePage} from "src/components/ui";
 import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
 import {ERC721, useERC721Pool} from "src/hooks/ERC721_Pool";
@@ -80,6 +80,7 @@ interface NFTInfoProps {
   tokenERC721: ERC721
   tokenERC1155: ERC1155
   asset: IUserERC721Assets
+  tokenOwnerAddress: string
 }
 
 const DetailsProp = styled(Box)`
@@ -93,11 +94,9 @@ const DetailsRow = styled(Box)`
 `
 
 const NFTDetails = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset } = props
+  const { tokenERC721, tokenERC1155, asset, tokenOwnerAddress } = props
 
   const token = tokenERC721 || tokenERC1155 || {}
-  console.log('token', token)
-  console.log('asset', asset)
 
   return <Box round={'8px'} border={{ color: 'border' }} style={{ boxShadow: '0 0.5rem 1.2rem rgb(189 197 209 / 20%)' }}>
     <Box pad={'16px'} border={{ side: 'bottom' }}>
@@ -108,28 +107,38 @@ const NFTDetails = (props: NFTInfoProps) => {
         <DetailsProp>
           <Text size={'small'}>Owner:</Text>
         </DetailsProp>
-        <Box>{asset.ownerAddress}</Box>
+        <Box>
+          <Address address={tokenOwnerAddress} isShortEllipsis={true} />
+        </Box>
       </DetailsRow>
       <DetailsRow>
-        <DetailsProp><Text size={'small'}>Contract Address:</Text></DetailsProp>
+        <DetailsProp>
+          <Text size={'small'}>Contract Address:</Text>
+        </DetailsProp>
         <Box>
           <Address address={token.address} />
         </Box>
       </DetailsRow>
       <DetailsRow>
-        <DetailsProp><Text size={'small'}>Classification:</Text></DetailsProp>
+        <DetailsProp>
+          <Text size={'small'}>Classification:</Text>
+        </DetailsProp>
         <Box>
           <Text size={'small'}>Off-Chain (IPFS)</Text>
         </Box>
       </DetailsRow>
       <DetailsRow>
-        <DetailsProp><Text size={'small'}>Token ID:</Text></DetailsProp>
+        <DetailsProp>
+          <Text size={'small'}>Token ID:</Text>
+        </DetailsProp>
         <Box>
           <Text size={'small'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{asset.tokenID}</Text>
         </Box>
       </DetailsRow>
       <DetailsRow>
-        <DetailsProp><Text size={'small'}>Token Standard:</Text></DetailsProp>
+        <DetailsProp>
+          <Text size={'small'}>Token Standard:</Text>
+        </DetailsProp>
         <Box>
           <Text size={'small'}>{tokenERC721 ? 'ERC721' : 'ERC1155'}</Text>
         </Box>
@@ -145,14 +154,14 @@ const NFTDetails = (props: NFTInfoProps) => {
 }
 
 const NFTInfo = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset } = props
+  const { tokenERC721, tokenERC1155, asset, tokenOwnerAddress } = props
   const { meta } = asset
 
   const token = tokenERC721 || tokenERC1155 || {}
   const name = token.name || '';
   const erc1155Image = tokenERC1155 && tokenERC1155.meta ? tokenERC1155.meta.image : ''
 
-  return <Box pad={{ left: 'medium' }}>
+  return <Box pad={{ left: '32px' }}>
     <Box>
       <Box>
         <Text weight={'bold'} size={'large'}>{name} {meta?.name || ""}</Text>
@@ -172,6 +181,7 @@ export function InventoryDetailsPage() {
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
   const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
+  const [tokenOwnerAddress, setTokenOwnerAddress] = useState(''); // TODO: create API to get all  token props in one request
 
   //  @ts-ignore
   const { address, tokenID, type } = useParams();
@@ -180,31 +190,37 @@ export function InventoryDetailsPage() {
   const token1155 = erc1155Map[address]
 
   useEffect(() => {
-    const getInventory = async () => {
+    const loadData = async () => {
       try {
         if (type === "erc721" || type === "erc1155") {
-          let inventory =
+          let inventoryItems =
             type === "erc721"
               ? await getTokenERC721Assets([address])
               : await getTokenERC1155Assets([address]);
+          const inventoryItem = inventoryItems.filter((item) => item.tokenID === tokenID)[0]
+          setInventory(inventoryItem);
 
-          setInventory(inventory.filter((item) => item.tokenID === tokenID)[0]);
-        } else {
-          setInventory({} as any);
+          if(type === 'erc1155') {
+            const balances = await getTokenERC1155Balances([address]);
+            const userBalance = balances.find((b) => b.tokenID === inventoryItem.tokenID)
+            if(userBalance) {
+              setTokenOwnerAddress(userBalance.ownerAddress)
+            }
+          }
         }
-      } catch (err) {
-        setInventory({} as any);
+      } catch (e) {
+        console.error('Cannot load token data:', e)
       }
     };
-    getInventory();
+    loadData();
   }, [address]);
 
-  let meta = "";
-  try {
-    meta = JSON.stringify(inventory.meta, null, 4);
-  } catch {
-    meta = "";
-  }
+  // let meta = "";
+  // try {
+  //   meta = JSON.stringify(inventory.meta, null, 4);
+  // } catch {
+  //   meta = "";
+  // }
 
   return (
     <>
@@ -214,7 +230,12 @@ export function InventoryDetailsPage() {
             <NFTImage imageUrl={inventory.meta?.image || ''} />
           </NFTContainer>
           <DetailsWrapper>
-            <NFTInfo tokenERC721={token721} tokenERC1155={token1155} asset={inventory} />
+            <NFTInfo
+              tokenERC721={token721}
+              tokenERC1155={token1155}
+              asset={inventory}
+              tokenOwnerAddress={tokenOwnerAddress}
+            />
           </DetailsWrapper>
         </Box>
       </BasePage>
