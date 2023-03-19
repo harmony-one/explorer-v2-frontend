@@ -181,7 +181,10 @@ export function AddressPage() {
                 await getTokenERC1155Assets([id])
               ).map((item) => {
                 if (item.meta && item.meta.image) {
-                  item.meta.image = `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${item.meta.image}`;
+                  const { image } = item.meta
+                  item.meta.image = image.includes('http')
+                    ? image
+                    : `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${image}`;
                 }
                 return item;
               });

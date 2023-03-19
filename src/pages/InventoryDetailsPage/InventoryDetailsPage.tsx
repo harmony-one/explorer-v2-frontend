@@ -10,6 +10,7 @@ import styled from "styled-components";
 import HarmonyLogo from '../../assets/Logo.svg';
 import { config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
+import dayjs from "dayjs";
 
 const AddressLink = styled.a`
   text-decoration: none;
@@ -76,7 +77,7 @@ const NFTImage = (props: NFTImageProps) => {
         <Image src={HarmonyLogo} style={{ height: '50%' }} />
     }
     <Image
-      src={`${config.ipfsGateway}${imageUrl}`}
+      src={imageUrl}
       onLoad={onLoadSuccess}
       onError={onLoadError}
       style={{ display: isLoading ? 'none': 'block' }}
@@ -93,18 +94,34 @@ interface NFTInfoProps {
 
 const DetailsProp = styled(Box)`
   width: 30%;
+  min-width: 30%;
   max-width: 300px;
-  min-width: 140px;
 `
 
 const DetailsRow = styled(Box)`
   flex-direction: row;
 `
 
+const Attribute = styled(Box)`
+  width: calc(25% - 16px);
+  min-width: 100px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: center;
+  
+  &:not(:last-child) {
+    margin-right: 16px;
+  }
+`
+
 const NFTDetails = (props: NFTInfoProps) => {
   const { tokenERC721, tokenERC1155, asset, tokenOwnerAddress } = props
 
   const token = tokenERC721 || tokenERC1155 || {}
+  const meta = asset.meta || {} as any
+  const metaImage = meta?.image ? meta?.image : ''
+  const classification = metaImage?.includes('google') ? 'GCP': 'IPFS'
 
   return <Box round={'8px'} border={{ color: 'border' }} style={{ boxShadow: '0 0.5rem 1.2rem rgb(189 197 209 / 20%)' }}>
     <Box pad={'16px'} border={{ side: 'bottom' }}>
@@ -131,14 +148,14 @@ const NFTDetails = (props: NFTInfoProps) => {
           </AddressLink>
         </Box>
       </DetailsRow>
-      <DetailsRow>
-        <DetailsProp>
-          <Text size={'small'}>Classification:</Text>
-        </DetailsProp>
-        <Box>
-          <Text size={'small'}>Off-Chain (IPFS)</Text>
-        </Box>
-      </DetailsRow>
+      {/*<DetailsRow>*/}
+      {/*  <DetailsProp>*/}
+      {/*    <Text size={'small'}>Classification:</Text>*/}
+      {/*  </DetailsProp>*/}
+      {/*  <Box>*/}
+      {/*    <Text size={'small'}>Off-Chain ({classification})</Text>*/}
+      {/*  </Box>*/}
+      {/*</DetailsRow>*/}
       <DetailsRow>
         <DetailsProp>
           <Text size={'small'}>Token ID:</Text>
@@ -162,11 +179,35 @@ const NFTDetails = (props: NFTInfoProps) => {
     <Box pad={'16px'}>
       {asset.meta?.description}
     </Box>
+    {meta.attributes &&
+      <Box border={{ side: 'top' }}>
+          <Box pad={'16px'} border={{ side: 'bottom' }}>
+              <Text weight={'bold'}>Attributes</Text>
+          </Box>
+          <Box pad={'0px 24px 16px'} wrap={true} direction={'row'}>
+            {Object.values(meta.attributes).map((attr: any, index: number) => {
+              const { trait_type, display_type } = attr
+
+              const value = display_type === 'date'
+                ? dayjs(+attr.value).format('MMM DD, YYYY')
+                : attr.value
+              const valueTitle = display_type === 'date'
+                ? dayjs(+attr.value).format('MMM DD, YYYY HH:mm:ss')
+                : attr.value
+
+              return <Attribute key={index} border={{ color: 'border' }} background={'backgroundDropdownItem'}>
+                <Text size={'small'} color={'brand'} weight={'bold'}>{trait_type}</Text>
+                <Text size={'small'} title={valueTitle}>{value}</Text>
+              </Attribute>
+            })}
+          </Box>
+      </Box>
+    }
   </Box>
 }
 
 const NFTInfo = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset, tokenOwnerAddress } = props
+  const { tokenERC721, tokenERC1155, asset } = props
   const { meta } = asset
 
   const token = tokenERC721 || tokenERC1155 || {}
@@ -236,12 +277,15 @@ export function InventoryDetailsPage() {
   //   meta = "";
   // }
 
+  const metaImageUrl = inventory.meta?.image || ''
+  const imageUrl = metaImageUrl.includes('http') ? metaImageUrl : `${config.ipfsGateway}${metaImageUrl}`
+
   return (
     <>
       <BasePage>
         <Box direction={'row'} justify={'between'} wrap={true}>
           <NFTContainer>
-            <NFTImage imageUrl={inventory.meta?.image || ''} />
+            <NFTImage imageUrl={imageUrl} />
           </NFTContainer>
           <DetailsWrapper>
             <NFTInfo
