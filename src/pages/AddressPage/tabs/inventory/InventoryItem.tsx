@@ -83,9 +83,11 @@ export function InventoryItem(props: IInventoryItemProps) {
           align={"center"}
           justify={"center"}
           style={{
-            minHeight: "225px",
-            maxHeight: "225px",
+            width: '215px',
+            minHeight: "215px",
+            maxHeight: "215px",
             overflow: "hidden",
+            borderRadius: '16px'
           }}
           background={"backgroundBack"}
         >
