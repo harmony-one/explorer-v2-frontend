@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-
 import styled from "styled-components";
-
 import { IUserERC721Assets } from "src/api/client.interface";
 import { Box, Spinner, Text } from "grommet";
 import { Address } from "src/components/ui";
-import { Alert } from "grommet-icons";
 import { useHistory } from "react-router-dom";
 
 export interface IInventoryItemProps {
   item: IUserERC721Assets;
 }
 
-const InventItem = styled.div`
+const InventItem = styled(Box)`
   width: 215px;
   height: 270px;
   position: relative;
-  margin: 10px;
+  margin-right: 24px;
+  margin-top: 16px;
 `;
 
 const Loader = styled.div`
@@ -60,16 +58,11 @@ export function InventoryItem(props: IInventoryItemProps) {
   const url = props.item?.meta?.image || "";
   const description = props.item?.meta?.description || "";
   const { tokenID, ownerAddress } = props.item;
+
+  const itemLink = `/inventory/${props.item.type}/${props.item.tokenAddress}/${props.item.tokenID}`
+
   return (
-    <a
-      onClick={() =>
-        history.push(
-          `/inventory/${props.item.type}/${props.item.tokenAddress}/${props.item.tokenID}`
-        )
-      }
-      style={{ cursor: "pointer" }}
-    >
-      <InventItem>
+    <InventItem border={{ color: 'border' }} round={'16px'} pad={'12px'}>
         {isLoading ? (
           <Loader>
             <Box align={"center"} justify={"center"} flex height={"100%"}>
@@ -78,16 +71,17 @@ export function InventoryItem(props: IInventoryItemProps) {
           </Loader>
         ) : null}
 
+      <a href={itemLink}>
         <Box
           direction={"column"}
           align={"center"}
           justify={"center"}
           style={{
-            width: '215px',
-            minHeight: "215px",
-            maxHeight: "215px",
+            // width: '215px',
+            // minHeight: "215px",
+            // maxHeight: "215px",
             overflow: "hidden",
-            borderRadius: '16px'
+            borderRadius: '8px'
           }}
           background={"backgroundBack"}
         >
@@ -121,24 +115,30 @@ export function InventoryItem(props: IInventoryItemProps) {
             </EmptyImage>
           )}
         </Box>
+      </a>
 
-        <Box direction={"column"} flex align={"center"}>
-          <Text title={tokenID} size="small">
-            #
-            {tokenID.length > 8
-              ? `${tokenID.slice(0, 5)}...${tokenID.slice(-5)}`
-              : tokenID}
-          </Text>
-          {ownerAddress ? (
-            <Text>
-              <Text color="minorText" size="small">
-                Owner
-              </Text>{" "}
-              <Address address={ownerAddress} isShort={true} />
+        <Box direction={"column"} flex align={"start"} margin={{ top: '16px' }}>
+          <Box direction={'row'} gap={'8px'}>
+            <Text title={tokenID} size="small">
+              Token ID:
             </Text>
+            <a href={itemLink} style={{ cursor: "pointer" }}>
+              <Text title={tokenID} size="small" color={'brand'}>
+                {tokenID.length > 8
+                  ? `${tokenID.slice(0, 5)}...${tokenID.slice(-5)}`
+                  : tokenID}
+              </Text>
+            </a>
+          </Box>
+          {ownerAddress ? (
+            <Box gap={'8px'} direction={'row'}>
+              <Text size="small">
+                Owner:
+              </Text>
+              <Address address={ownerAddress} isShort={true} hideCopyBtn={true} />
+            </Box>
           ) : null}
         </Box>
-      </InventItem>{" "}
-    </a>
+      </InventItem>
   );
 }

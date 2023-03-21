@@ -174,37 +174,25 @@ export function AddressPage() {
     const getInventory = async () => {
       try {
         if (type === "erc721" || type === "erc1155") {
-          let inventory =
-            type === "erc721"
-              ? await getTokenERC721Assets([id])
-              : await (
-                await getTokenERC1155Assets([id])
-              ).map((item) => {
-                if (item.meta && item.meta.image) {
-                  const { image } = item.meta
-                  item.meta.image = image.includes('http')
-                    ? image
-                    : `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${image}`;
-                }
-                return item;
-              });
+          let items = type === "erc721"
+            ? await getTokenERC721Assets([id])
+            : await getTokenERC1155Assets([id])
 
-          let inventoryHolders1155 = [] as any[];
-
-          if (type === "erc1155") {
-            inventoryHolders1155 = await getTokenERC1155Balances([id]);
-          }
-
-          setInventoryForHolders(inventoryHolders1155);
-
-          setInventory(
-            inventory
-              .filter((item) => item.meta)
-              .map((item) => {
-                item.type = type;
-                return item;
-              })
-          );
+          items = items.map((item) => {
+            if (item.meta && item.meta.image) {
+              const {image} = item.meta
+              item.meta.image = image.includes('http')
+                ? image
+                : `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${image}`;
+            }
+            return item;
+          })
+          .filter((item) => item.meta)
+          .map((item) => {
+            item.type = type;
+            return item;
+          })
+          setInventory(items);
         } else {
           setInventory([]);
         }
@@ -360,9 +348,7 @@ export function AddressPage() {
               <HoldersTab
                 id={id}
                 type={type}
-                inventory={
-                  inventoryHolders.length ? inventoryHolders : inventory
-                }
+                inventory={inventory}
               />
             </Tab>
           ) : null}
