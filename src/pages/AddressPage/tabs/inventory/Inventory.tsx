@@ -5,11 +5,12 @@ import { IUserERC721Assets } from "src/api/client.interface";
 import { InventoryItem } from "./InventoryItem";
 import { Pagination } from "src/components/pagination/Pagination";
 import {Search} from "grommet-icons";
-import {debounce} from "chart.js/helpers";
 
 export interface IInventoryProps {
   inventory: IUserERC721Assets[];
 }
+
+const pageSize = 24;
 
 export function Inventory(props: IInventoryProps) {
   const { inventory } = props;
@@ -18,7 +19,6 @@ export function Inventory(props: IInventoryProps) {
   const [page, setPage] = useState<number>(0);
   const [filteredInventory, setFilteredInventory] = useState([...inventory])
 
-  const pageSize = 10;
   const maxPage = Math.ceil(filteredInventory.length / pageSize);
   const renderedInventory = filteredInventory.slice(
     page * pageSize,
@@ -74,6 +74,11 @@ export function Inventory(props: IInventoryProps) {
           return <InventoryItem key={item.tokenID} item={item} />;
         })}
       </Box>
+      {renderedInventory.length === 0 &&
+          <Box justify={'center'} height={'240px'} width={'100%'} align={'center'}>
+              No inventory found
+          </Box>
+      }
     </Box>
   );
 }

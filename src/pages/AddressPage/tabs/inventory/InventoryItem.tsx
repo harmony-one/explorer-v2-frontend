@@ -10,8 +10,8 @@ export interface IInventoryItemProps {
 }
 
 const InventItem = styled(Box)`
-  width: 215px;
-  height: 270px;
+  width: 190px;
+  height: 250px;
   position: relative;
   margin-right: 24px;
   margin-top: 16px;
@@ -62,7 +62,7 @@ export function InventoryItem(props: IInventoryItemProps) {
   const itemLink = `/inventory/${props.item.type}/${props.item.tokenAddress}/${props.item.tokenID}`
 
   return (
-    <InventItem border={{ color: 'border' }} round={'16px'} pad={'12px'}>
+    <InventItem border={{ color: 'border' }} round={'8px'} pad={'12px'}>
         {isLoading ? (
           <Loader>
             <Box align={"center"} justify={"center"} flex height={"100%"}>
@@ -81,7 +81,7 @@ export function InventoryItem(props: IInventoryItemProps) {
             // minHeight: "215px",
             // maxHeight: "215px",
             overflow: "hidden",
-            borderRadius: '8px'
+            borderRadius: '6px'
           }}
           background={"backgroundBack"}
         >
