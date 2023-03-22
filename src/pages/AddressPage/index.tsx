@@ -197,6 +197,7 @@ export function AddressPage() {
           setInventory([]);
         }
       } catch (err) {
+        console.log('Cannot load inventory:', err)
         setInventory([]);
       }
     };
@@ -339,9 +340,9 @@ export function AddressPage() {
             <Transactions {...txsCommonProps} type={"erc20"} />
           </Tab>
 
-          <Tab title={<Text size="small">NFT Transfers</Text>}>
-            <Transactions {...txsCommonProps} type={"erc721"} />
-          </Tab>
+          {/*<Tab title={<Text size="small">NFT Transfers</Text>}>*/}
+          {/*  <Transactions {...txsCommonProps} type={"erc721"} />*/}
+          {/*</Tab>*/}
 
           {type === "erc721" || type === "erc1155" || type === "erc20" ? (
             <Tab title={<Text size="small">Holders</Text>}>

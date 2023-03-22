@@ -43,18 +43,17 @@ const InventImg = styled.img`
 `;
 
 const ErrorPreview = styled(Box)`
-  width: 215px;
-  height: 270px;
+  width: 100%;
+  height: 150px;
 
-  border-radius: 8px;
+  @media (max-width: 768px) {
+    width: 130px;
+    height: 100px;
+    min-width: 130px;
+  }
 `;
 
-const EmptyImage = styled(Box)`
-  width: 215px;
-  height: 270px;
-
-  border-radius: 8px;
-`;
+const EmptyImage = ErrorPreview
 
 const Image = styled(Box)`
   width: 30px;
@@ -106,7 +105,6 @@ export function InventoryItem(props: IInventoryItemProps) {
                 justify={"center"}
                 align={"center"}
               >
-                <Image style={{ marginBottom: "10px" }} />
                 <Text style={{ opacity: 0.7 }}>No Image</Text>
               </ErrorPreview>
             ) : url ? (
@@ -125,7 +123,6 @@ export function InventoryItem(props: IInventoryItemProps) {
                 justify={"center"}
                 align={"center"}
               >
-                <Image style={{ marginBottom: "10px" }} />
                 <Text style={{ opacity: 0.7 }}>No image</Text>
               </EmptyImage>
             )}
