@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { IUserERC721Assets } from "src/api/client.interface";
 import { Box, Spinner, Text } from "grommet";
 import { Address } from "src/components/ui";
-import { useHistory } from "react-router-dom";
 
 export interface IInventoryItemProps {
   item: IUserERC721Assets;
@@ -13,10 +12,18 @@ const InventItem = styled(Box)`
   position: relative;
   width: 16.6666%;
   min-width: 178px;
-  height: 246px;
+  height: 256px;
   padding-right: 10px;
   padding-left: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 32px;
+  
+  img {
+    transition: transform 500ms;
+  }
+
+  img:hover {
+    transform: scale(1.07);
+  }
 
   @media (max-width: 768px) {
     width: 130px;
@@ -25,7 +32,19 @@ const InventItem = styled(Box)`
   }
 `
 
+const InventBoxContainer = styled(Box)`
+  box-shadow: rgb(0 0 0 / 7%) 0 4px 14px;
+  overflow: hidden;
+`
+
+const InventImg = styled.img`
+  max-width: 100%;
+  max-height: 205px;
+`;
+
 const InventoryInfo = styled(Box)`
+  padding: 10px;
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -38,10 +57,6 @@ const Loader = styled.div`
   left: 50%;
   transform: translate(-50%,-50%);
   background: ${(props) => props.theme.backgroundBack};
-`;
-
-const InventImg = styled.img`
-  width: 100%;
 `;
 
 const ErrorPreview = styled(Box)`
@@ -58,18 +73,9 @@ const ErrorPreview = styled(Box)`
 
 const EmptyImage = ErrorPreview
 
-const Image = styled(Box)`
-  width: 30px;
-  height: 30px;
-
-  border-radius: 8px;
-  background: ${(props) => props.theme.global.colors.backgroundEmptyIcon};
-`;
-
 export function InventoryItem(props: IInventoryItemProps) {
   const [isLoading, setIsLoading] = useState(!!props.item?.meta?.image);
   const [isErrorLoading, setIsErrorLoading] = useState(false);
-  const history = useHistory();
 
   const url = props.item?.meta?.image || "";
   const description = props.item?.meta?.description || "";
@@ -79,7 +85,7 @@ export function InventoryItem(props: IInventoryItemProps) {
 
   return (
     <InventItem>
-      <Box border={{ color: 'border' }} round={'8px'} pad={'12px'}>
+      <InventBoxContainer round={'10px'}>
         {isLoading ? (
           <Loader>
             <Box align={"center"} justify={"center"} flex height={"100%"}>
@@ -98,7 +104,7 @@ export function InventoryItem(props: IInventoryItemProps) {
               // minHeight: "215px",
               // maxHeight: "215px",
               overflow: "hidden",
-              borderRadius: '6px'
+              // borderRadius: '6px'
             }}
             background={"backgroundBack"}
           >
@@ -131,7 +137,7 @@ export function InventoryItem(props: IInventoryItemProps) {
             )}
           </Box>
         </a>
-        <InventoryInfo direction={"column"} flex align={"start"} margin={{ top: '16px' }}>
+        <InventoryInfo direction={"column"} flex align={"start"}>
           <Box direction={'row'} gap={'8px'}>
             <Text title={tokenID} size="small">
               Token ID:
@@ -153,7 +159,7 @@ export function InventoryItem(props: IInventoryItemProps) {
             </Box>
           ) : null}
         </InventoryInfo>
-      </Box>
+      </InventBoxContainer>
     </InventItem>
   );
 }
