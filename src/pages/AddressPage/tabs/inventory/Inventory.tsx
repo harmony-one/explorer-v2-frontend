@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Box, TextInput} from "grommet";
+import {Box, TextInput, Text} from "grommet";
 import { useThemeMode } from "../../../../hooks/themeSwitcherHook";
 import { IUserERC721Assets } from "src/api/client.interface";
 import { InventoryItem } from "./InventoryItem";
@@ -69,16 +69,16 @@ export function Inventory(props: IInventoryProps) {
           />
         </Box>
       </Box>
-      <Box direction={"row"} wrap={true} justify={'start'} margin={{ top: '4px' }}>
+      <Box direction={"row"} wrap={true} justify={'start'} margin={{ top: '24px' }} style={{ minHeight: '240px' }}>
         {renderedInventory.map((item) => {
           return <InventoryItem key={item.tokenID} item={item} />;
         })}
+        {renderedInventory.length === 0 &&
+            <Box justify={'center'} width={'100%'} align={'center'}>
+                <Text>No inventory found</Text>
+            </Box>
+        }
       </Box>
-      {renderedInventory.length === 0 &&
-          <Box justify={'center'} height={'240px'} width={'100%'} align={'center'}>
-              No inventory found
-          </Box>
-      }
     </Box>
   );
 }

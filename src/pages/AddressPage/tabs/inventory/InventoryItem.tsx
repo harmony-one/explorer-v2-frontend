@@ -11,11 +11,21 @@ export interface IInventoryItemProps {
 
 const InventItem = styled(Box)`
   width: 190px;
-  height: 250px;
+  //height: 250px;
   position: relative;
   margin-right: 24px;
-  margin-top: 16px;
+  margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    width: 130px;
+  }
 `;
+
+const InventoryInfo = styled(Box)`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`
 
 const Loader = styled.div`
   position: absolute;
@@ -116,29 +126,28 @@ export function InventoryItem(props: IInventoryItemProps) {
           )}
         </Box>
       </a>
-
-        <Box direction={"column"} flex align={"start"} margin={{ top: '16px' }}>
-          <Box direction={'row'} gap={'8px'}>
-            <Text title={tokenID} size="small">
-              Token ID:
+      <InventoryInfo direction={"column"} flex align={"start"} margin={{ top: '16px' }}>
+        <Box direction={'row'} gap={'8px'}>
+          <Text title={tokenID} size="small">
+            Token ID:
+          </Text>
+          <a href={itemLink} style={{ cursor: "pointer" }}>
+            <Text title={tokenID} size="small" color={'brand'}>
+              {tokenID.length > 8
+                ? `${tokenID.slice(0, 5)}...${tokenID.slice(-5)}`
+                : tokenID}
             </Text>
-            <a href={itemLink} style={{ cursor: "pointer" }}>
-              <Text title={tokenID} size="small" color={'brand'}>
-                {tokenID.length > 8
-                  ? `${tokenID.slice(0, 5)}...${tokenID.slice(-5)}`
-                  : tokenID}
-              </Text>
-            </a>
-          </Box>
-          {ownerAddress ? (
-            <Box gap={'8px'} direction={'row'}>
-              <Text size="small">
-                Owner:
-              </Text>
-              <Address address={ownerAddress} isShort={true} hideCopyBtn={true} />
-            </Box>
-          ) : null}
+          </a>
         </Box>
+        {ownerAddress ? (
+          <Box gap={'8px'} direction={'row'}>
+            <Text size="small">
+              Owner:
+            </Text>
+            <Address address={ownerAddress} isShort={true} hideCopyBtn={true} />
+          </Box>
+        ) : null}
+      </InventoryInfo>
       </InventItem>
   );
 }
