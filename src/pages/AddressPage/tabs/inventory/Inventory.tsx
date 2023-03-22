@@ -5,6 +5,7 @@ import { IUserERC721Assets } from "src/api/client.interface";
 import { InventoryItem } from "./InventoryItem";
 import { Pagination } from "src/components/pagination/Pagination";
 import {Search} from "grommet-icons";
+import {useDebounce} from "../../../../hooks/debounce";
 
 export interface IInventoryProps {
   inventory: IUserERC721Assets[];
@@ -43,6 +44,8 @@ export function Inventory(props: IInventoryProps) {
     }
   }
 
+  const onSearchDebounce = useDebounce(onSearch, 300)
+
   return (
     <Box style={{ padding: "10px" }}>
       <Box direction={'row'} justify={'between'} margin={{ top: '8px' }}>
@@ -55,13 +58,13 @@ export function Inventory(props: IInventoryProps) {
               fontWeight: 500,
               borderRadius: '8px'
             }}
-            onChange={onSearch}
+            onChange={onSearchDebounce}
           />
         </Box>
         <Box direction={'row'} align={'center'}>
           <Pagination
             disablePrev={page === 0}
-            disableNext={page === maxPage - 1}
+            disableNext={page === maxPage - 1 || maxPage === 0}
             onClickPrev={() => setPage(page - 1)}
             onClickNext={() => {
               setPage(page + 1);
