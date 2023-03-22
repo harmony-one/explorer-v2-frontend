@@ -31,7 +31,7 @@ export function Inventory(props: IInventoryProps) {
 
     if(value) {
       const values = inventory.filter(item => {
-        const { ownerAddress, tokenID, meta } = item
+        const { ownerAddress = '', tokenID, meta } = item
         let name = meta && meta.name ? meta.name.toLowerCase() : ''
 
         return ownerAddress.toLowerCase().includes(value)

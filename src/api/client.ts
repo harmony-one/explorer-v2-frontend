@@ -184,6 +184,10 @@ export function getTokenERC721Assets(params: [string]) {
   >;
 }
 
+export async function getTokenERC721AssetDetails(address: string, tokenID: string) {
+  return transport("getTokenERC721AssetDetails", [contractShardID, address, tokenID])
+}
+
 export function getTokenERC1155Assets(params: [string]) {
   return transport("getTokenERC1155Assets", [contractShardID, ...params]) as Promise<
     IUserERC721Assets[]
