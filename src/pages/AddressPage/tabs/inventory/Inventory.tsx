@@ -49,7 +49,7 @@ export function Inventory(props: IInventoryProps) {
         <Box width={'450px'}>
           <TextInput
             icon={<Search color="minorText" size={'14px'} />}
-            placeholder="Search by Token ID / Name / Owner"
+            placeholder="Search by Token ID / Owner / Name"
             style={{
               backgroundColor: themeMode === "light" ? "white" : "transparent",
               fontWeight: 500,
@@ -58,7 +58,7 @@ export function Inventory(props: IInventoryProps) {
             onChange={onSearch}
           />
         </Box>
-        <Box direction={'row'}>
+        <Box direction={'row'} align={'center'}>
           <Pagination
             disablePrev={page === 0}
             disableNext={page === maxPage - 1}

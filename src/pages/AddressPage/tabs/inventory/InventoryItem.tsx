@@ -10,16 +10,18 @@ export interface IInventoryItemProps {
 }
 
 const InventItem = styled(Box)`
-  width: 190px;
-  //height: 250px;
   position: relative;
-  margin-right: 24px;
+  width: 16.6666%;
+  height: 246px;
+  padding-right: 10px;
+  padding-left: 10px;
   margin-bottom: 16px;
 
   @media (max-width: 768px) {
     width: 130px;
+    height: 130px;
   }
-`;
+`
 
 const InventoryInfo = styled(Box)`
   @media (max-width: 768px) {
@@ -72,7 +74,8 @@ export function InventoryItem(props: IInventoryItemProps) {
   const itemLink = `/inventory/${props.item.type}/${props.item.tokenAddress}/${props.item.tokenID}`
 
   return (
-    <InventItem border={{ color: 'border' }} round={'8px'} pad={'12px'}>
+    <InventItem>
+      <Box border={{ color: 'border' }} round={'8px'} pad={'12px'}>
         {isLoading ? (
           <Loader>
             <Box align={"center"} justify={"center"} flex height={"100%"}>
@@ -81,73 +84,74 @@ export function InventoryItem(props: IInventoryItemProps) {
           </Loader>
         ) : null}
 
-      <a href={itemLink}>
-        <Box
-          direction={"column"}
-          align={"center"}
-          justify={"center"}
-          style={{
-            // width: '215px',
-            // minHeight: "215px",
-            // maxHeight: "215px",
-            overflow: "hidden",
-            borderRadius: '6px'
-          }}
-          background={"backgroundBack"}
-        >
-          {isErrorLoading ? (
-            <ErrorPreview
-              direction={"column"}
-              justify={"center"}
-              align={"center"}
-            >
-              <Image style={{ marginBottom: "10px" }} />
-              <Text style={{ opacity: 0.7 }}>No Image</Text>
-            </ErrorPreview>
-          ) : url ? (
-            <InventImg
-              title={description}
-              src={url}
-              onLoad={() => setIsLoading(false)}
-              onError={() => {
-                setIsLoading(false);
-                setIsErrorLoading(true);
-              }}
-            />
-          ) : (
-            <EmptyImage
-              direction={"column"}
-              justify={"center"}
-              align={"center"}
-            >
-              <Image style={{ marginBottom: "10px" }} />
-              <Text style={{ opacity: 0.7 }}>No image</Text>
-            </EmptyImage>
-          )}
-        </Box>
-      </a>
-      <InventoryInfo direction={"column"} flex align={"start"} margin={{ top: '16px' }}>
-        <Box direction={'row'} gap={'8px'}>
-          <Text title={tokenID} size="small">
-            Token ID:
-          </Text>
-          <a href={itemLink} style={{ cursor: "pointer" }}>
-            <Text title={tokenID} size="small" color={'brand'}>
-              {tokenID.length > 8
-                ? `${tokenID.slice(0, 5)}...${tokenID.slice(-5)}`
-                : tokenID}
-            </Text>
-          </a>
-        </Box>
-        {ownerAddress ? (
-          <Box gap={'8px'} direction={'row'}>
-            <Text size="small">
-              Owner:
-            </Text>
-            <Address address={ownerAddress} isShort={true} hideCopyBtn={true} />
+        <a href={itemLink}>
+          <Box
+            direction={"column"}
+            align={"center"}
+            justify={"center"}
+            style={{
+              // width: '215px',
+              // minHeight: "215px",
+              // maxHeight: "215px",
+              overflow: "hidden",
+              borderRadius: '6px'
+            }}
+            background={"backgroundBack"}
+          >
+            {isErrorLoading ? (
+              <ErrorPreview
+                direction={"column"}
+                justify={"center"}
+                align={"center"}
+              >
+                <Image style={{ marginBottom: "10px" }} />
+                <Text style={{ opacity: 0.7 }}>No Image</Text>
+              </ErrorPreview>
+            ) : url ? (
+              <InventImg
+                title={description}
+                src={url}
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setIsLoading(false);
+                  setIsErrorLoading(true);
+                }}
+              />
+            ) : (
+              <EmptyImage
+                direction={"column"}
+                justify={"center"}
+                align={"center"}
+              >
+                <Image style={{ marginBottom: "10px" }} />
+                <Text style={{ opacity: 0.7 }}>No image</Text>
+              </EmptyImage>
+            )}
           </Box>
-        ) : null}
-      </InventoryInfo>
-      </InventItem>
+        </a>
+        <InventoryInfo direction={"column"} flex align={"start"} margin={{ top: '16px' }}>
+          <Box direction={'row'} gap={'8px'}>
+            <Text title={tokenID} size="small">
+              Token ID:
+            </Text>
+            <a href={itemLink} style={{ cursor: "pointer" }}>
+              <Text title={tokenID} size="small" color={'brand'}>
+                {tokenID.length > 8
+                  ? `${tokenID.slice(0, 5)}...${tokenID.slice(-5)}`
+                  : tokenID}
+              </Text>
+            </a>
+          </Box>
+          {ownerAddress ? (
+            <Box gap={'8px'} direction={'row'}>
+              <Text size="small">
+                Owner:
+              </Text>
+              <Address address={ownerAddress} isShort={true} hideCopyBtn={true} />
+            </Box>
+          ) : null}
+        </InventoryInfo>
+      </Box>
+    </InventItem>
   );
 }
