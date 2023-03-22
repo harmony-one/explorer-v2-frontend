@@ -12,6 +12,7 @@ export interface IInventoryItemProps {
 const InventItem = styled(Box)`
   position: relative;
   width: 16.6666%;
+  min-width: 178px;
   height: 246px;
   padding-right: 10px;
   padding-left: 10px;
@@ -20,6 +21,7 @@ const InventItem = styled(Box)`
   @media (max-width: 768px) {
     width: 130px;
     height: 130px;
+    min-width: 130px;
   }
 `
 

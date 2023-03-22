@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Box, TextInput, Text} from "grommet";
 import { useThemeMode } from "../../../../hooks/themeSwitcherHook";
 import { IUserERC721Assets } from "src/api/client.interface";
@@ -19,6 +19,10 @@ export function Inventory(props: IInventoryProps) {
   const themeMode = useThemeMode();
   const [page, setPage] = useState<number>(0);
   const [filteredInventory, setFilteredInventory] = useState([...inventory])
+
+  useEffect(() => {
+    setFilteredInventory([...inventory])
+  }, [inventory.length])
 
   const maxPage = Math.ceil(filteredInventory.length / pageSize);
   const renderedInventory = filteredInventory.slice(
