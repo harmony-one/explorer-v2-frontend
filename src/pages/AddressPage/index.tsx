@@ -127,7 +127,7 @@ export function AddressPage() {
         let { contract, shardId } = await getContractByAddress(id);
         if (contract) {
           const mergedContracts: any = erc721Map[contract.address]
-            ? { ...contracts, ...erc721Map[contract.address] }
+            ? { ...contracts, ...erc721Map[contract.address], ...contract }
             : contract;
           const code = await getContractCode(contract.address, shardId || 0)
           setContracts(mergedContracts);

@@ -33,8 +33,10 @@ const InventoryInfo = styled(Box)`
 
 const Loader = styled.div`
   position: absolute;
-  width: 215px;
-  height: 270px;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
   background: ${(props) => props.theme.backgroundBack};
 `;
 
@@ -43,6 +45,7 @@ const InventImg = styled.img`
 `;
 
 const ErrorPreview = styled(Box)`
+  position: relative;
   width: 100%;
   height: 150px;
 

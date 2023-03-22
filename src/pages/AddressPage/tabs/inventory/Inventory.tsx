@@ -53,7 +53,7 @@ export function Inventory(props: IInventoryProps) {
   return (
     <Box style={{ padding: "10px" }}>
       <Box direction={'row'} justify={'between'} margin={{ top: '8px' }}>
-        <Box width={'450px'} margin={{ left: '8px' }}>
+        <Box width={'414px'} margin={{ left: '8px' }}>
           <TextInput
             icon={<Search color="minorText" size={'14px'} />}
             placeholder="Search by Token ID / Owner / Name"
