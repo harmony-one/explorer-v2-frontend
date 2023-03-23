@@ -6,7 +6,7 @@ import {
   getTokenERC721AssetDetails,
 } from "src/api/client";
 import {IUserERC721Assets} from "src/api/client.interface";
-import {BasePage} from "src/components/ui";
+import {Address, BasePage} from "src/components/ui";
 import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
 import {ERC721, useERC721Pool} from "src/hooks/ERC721_Pool";
 import styled from "styled-components";
@@ -137,9 +137,7 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Owner:</Text>
         </DetailsProp>
         <Box>
-          <AddressLink href={`/address/${ownerAddress}`}>
-            <Text color={'brand'} size={'small'}>{ownerAddress}</Text>
-          </AddressLink>
+          <Address address={ownerAddress} />
         </Box>
       </DetailsRow>
       <DetailsRow>
@@ -147,9 +145,7 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Contract Address:</Text>
         </DetailsProp>
         <Box>
-          <AddressLink href={`/address/${token.address}`}>
-            <Text color={'brand'} size={'small'}>{token.address}</Text>
-          </AddressLink>
+          <Address address={token.address} displayHash />
         </Box>
       </DetailsRow>
       {/*<DetailsRow>*/}
