@@ -42,7 +42,7 @@ export function ERC1155_Pool() {
       }
     };
 
-    const lastLoadTimestamp = +(window.localStorage.getItem(IndexedDbStore.ERC20Pool) || 0)
+    const lastLoadTimestamp = +(window.localStorage.getItem(IndexedDbStore.ERC1155Pool) || 0)
     const timeToTextUpdate = lastLoadTimestamp + updateTokensInterval - Date.now()
     if(timeToTextUpdate < 0) {
       getTokens()

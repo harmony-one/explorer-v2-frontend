@@ -43,7 +43,7 @@ export function ERC721_Pool() {
       }
     };
 
-    const lastLoadTimestamp = +(window.localStorage.getItem(IndexedDbStore.ERC20Pool) || 0)
+    const lastLoadTimestamp = +(window.localStorage.getItem(IndexedDbStore.ERC721Pool) || 0)
     const timeToTextUpdate = lastLoadTimestamp + updateTokensInterval - Date.now()
     if(timeToTextUpdate < 0) {
       getTokens()
