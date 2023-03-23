@@ -6,7 +6,7 @@ import {
   getTokenERC721AssetDetails,
 } from "src/api/client";
 import {IUserERC721Assets} from "src/api/client.interface";
-import {BasePage} from "src/components/ui";
+import {Address, BasePage} from "src/components/ui";
 import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
 import {ERC721, useERC721Pool} from "src/hooks/ERC721_Pool";
 import styled from "styled-components";
@@ -14,6 +14,7 @@ import HarmonyLogo from '../../assets/Logo.svg';
 import { config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
 import dayjs from "dayjs";
+import {CopyBtn} from "../../components/ui/CopyBtn";
 
 const AddressLink = styled.a`
   text-decoration: none;
@@ -119,7 +120,7 @@ const Attribute = styled(Box)`
 
 const NFTDetails = (props: NFTInfoProps) => {
   const { tokenERC721, tokenERC1155, asset } = props
-  const { ownerAddress } = asset
+  const { ownerAddress, tokenID } = asset
 
   const token = tokenERC721 || tokenERC1155 || {}
   const meta = asset.meta || {} as any
@@ -136,9 +137,7 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Owner:</Text>
         </DetailsProp>
         <Box>
-          <AddressLink href={`/address/${ownerAddress}`}>
-            <Text color={'brand'} size={'small'}>{ownerAddress}</Text>
-          </AddressLink>
+          <Address address={ownerAddress} />
         </Box>
       </DetailsRow>
       <DetailsRow>
@@ -146,9 +145,7 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Contract Address:</Text>
         </DetailsProp>
         <Box>
-          <AddressLink href={`/address/${token.address}`}>
-            <Text color={'brand'} size={'small'}>{token.address}</Text>
-          </AddressLink>
+          <Address address={token.address} displayHash />
         </Box>
       </DetailsRow>
       {/*<DetailsRow>*/}
@@ -163,8 +160,14 @@ const NFTDetails = (props: NFTInfoProps) => {
         <DetailsProp>
           <Text size={'small'}>Token ID:</Text>
         </DetailsProp>
-        <Box>
-          <Text size={'small'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{asset.tokenID}</Text>
+        <Box direction={'row'} align={'center'}>
+          <CopyBtn
+            value={tokenID}
+            showNotification={true}
+          />
+          <Text size={'small'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginLeft: '4px' }}>
+            {tokenID}
+          </Text>
         </Box>
       </DetailsRow>
       <DetailsRow>
