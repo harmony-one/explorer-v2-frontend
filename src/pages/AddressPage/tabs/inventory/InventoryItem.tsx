@@ -137,6 +137,7 @@ export function InventoryItem(props: IInventoryItemProps) {
                   setIsLoading(false);
                   setIsErrorLoading(true);
                 }}
+                style={{ display: isLoading ? 'none' : 'unset' }}
               />
             ) : (
               <EmptyPreview
