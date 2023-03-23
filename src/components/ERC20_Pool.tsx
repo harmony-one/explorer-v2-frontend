@@ -45,7 +45,7 @@ export function ERC20_Pool() {
     const lastLoadTimestamp = +(window.localStorage.getItem(IndexedDbStore.ERC20Pool) || 0)
     const timeToTextUpdate = lastLoadTimestamp + updateTokensInterval - Date.now()
     if(timeToTextUpdate < 0) {
-      getTokens()
+      tId = window.setTimeout(getTokens, 1000 * 2);
     } else {
       console.log(`ERC20 tokens pool is up to date, next update in ${Math.floor((timeToTextUpdate) / 60 / 1000)} min`)
     }

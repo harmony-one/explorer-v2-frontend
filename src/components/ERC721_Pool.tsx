@@ -46,7 +46,7 @@ export function ERC721_Pool() {
     const lastLoadTimestamp = +(window.localStorage.getItem(IndexedDbStore.ERC721Pool) || 0)
     const timeToTextUpdate = lastLoadTimestamp + updateTokensInterval - Date.now()
     if(timeToTextUpdate < 0) {
-      getTokens()
+      tId = window.setTimeout(getTokens, 1000 * 3);
     } else {
       console.log(`ERC721 tokens pool is up to date, next update in ${Math.floor((timeToTextUpdate) / 60 / 1000)} min`)
     }
