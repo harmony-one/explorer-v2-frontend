@@ -5,7 +5,7 @@ import { getTabHidden, useWindowFocused } from "src/hooks/useWindowFocusHook";
 import { IndexedDbKeyPath, IndexedDbStore, saveToIndexedDB } from "../utils/indexedDB";
 import { isTokenBridged } from "../utils";
 
-const updateTokensInterval = 1000 * 60 * 10
+const updateTokensInterval = 1000 * 60 * 15
 
 export function ERC20_Pool() {
   const focus = useWindowFocused();
