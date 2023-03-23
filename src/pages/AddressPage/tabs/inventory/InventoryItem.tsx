@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { IUserERC721Assets } from "src/api/client.interface";
 import { Box, Spinner, Text } from "grommet";
 import { Address } from "src/components/ui";
+import HarmonyLogo from '../../../../assets/Logo.svg';
 
 export interface IInventoryItemProps {
   item: IUserERC721Assets;
@@ -62,7 +63,7 @@ const Loader = styled.div`
 const ErrorPreview = styled(Box)`
   position: relative;
   width: 100%;
-  height: 150px;
+  pointer-events: none;
 
   @media (max-width: 768px) {
     width: 130px;
@@ -71,7 +72,15 @@ const ErrorPreview = styled(Box)`
   }
 `;
 
-const EmptyImage = ErrorPreview
+const EmptyPreview = ErrorPreview
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 0.5;
+`
 
 export function InventoryItem(props: IInventoryItemProps) {
   const [isLoading, setIsLoading] = useState(!!props.item?.meta?.image);
@@ -86,14 +95,6 @@ export function InventoryItem(props: IInventoryItemProps) {
   return (
     <InventItem>
       <InventBoxContainer round={'10px'}>
-        {isLoading ? (
-          <Loader>
-            <Box align={"center"} justify={"center"} flex height={"100%"}>
-              <Spinner />
-            </Box>
-          </Loader>
-        ) : null}
-
         <a href={itemLink}>
           <Box
             direction={"column"}
@@ -108,13 +109,24 @@ export function InventoryItem(props: IInventoryItemProps) {
             }}
             background={"backgroundBack"}
           >
+            {isLoading ? (
+              <ErrorPreview direction={"column"} justify={"center"} align={"center"}>
+                <Image src={HarmonyLogo} />
+                <Box style={{ position: 'absolute' }}>
+                  <Spinner />
+                </Box>
+              </ ErrorPreview>
+            ) : null}
             {isErrorLoading ? (
               <ErrorPreview
                 direction={"column"}
                 justify={"center"}
                 align={"center"}
               >
-                <Text style={{ opacity: 0.7 }}>No Image</Text>
+                <Image src={HarmonyLogo} />
+                <Box style={{ position: 'absolute' }}>
+                  <Text style={{ opacity: 0.7 }}>No Image</Text>
+                </Box>
               </ErrorPreview>
             ) : url ? (
               <InventImg
@@ -127,13 +139,16 @@ export function InventoryItem(props: IInventoryItemProps) {
                 }}
               />
             ) : (
-              <EmptyImage
+              <EmptyPreview
                 direction={"column"}
                 justify={"center"}
                 align={"center"}
               >
-                <Text style={{ opacity: 0.7 }}>No image</Text>
-              </EmptyImage>
+                <Image src={HarmonyLogo} />
+                <Box style={{ position: 'absolute' }}>
+                  <Text style={{ opacity: 0.7 }}>No Image</Text>
+                </Box>
+              </EmptyPreview>
             )}
           </Box>
         </a>
