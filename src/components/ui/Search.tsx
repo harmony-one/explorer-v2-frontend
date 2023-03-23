@@ -312,6 +312,7 @@ export const SearchInput = () => {
         style={{
           backgroundColor: themeMode === "light" ? "white" : "transparent",
           fontWeight: 500,
+          borderRadius: '8px'
         }}
         placeholder="Search by Address / Transaction Hash / Block / Token"
       />

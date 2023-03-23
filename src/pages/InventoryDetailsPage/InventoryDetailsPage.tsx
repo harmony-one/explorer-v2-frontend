@@ -1,7 +1,10 @@
 import {Box, Text} from "grommet";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {getTokenERC1155Assets, getTokenERC1155Balances, getTokenERC721Assets} from "src/api/client";
+import {
+  getTokenERC1155AssetDetails,
+  getTokenERC721AssetDetails,
+} from "src/api/client";
 import {IUserERC721Assets} from "src/api/client.interface";
 import {BasePage} from "src/components/ui";
 import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
@@ -89,7 +92,6 @@ interface NFTInfoProps {
   tokenERC721: ERC721
   tokenERC1155: ERC1155
   asset: IUserERC721Assets
-  tokenOwnerAddress: string
 }
 
 const DetailsProp = styled(Box)`
@@ -116,7 +118,8 @@ const Attribute = styled(Box)`
 `
 
 const NFTDetails = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset, tokenOwnerAddress } = props
+  const { tokenERC721, tokenERC1155, asset } = props
+  const { ownerAddress } = asset
 
   const token = tokenERC721 || tokenERC1155 || {}
   const meta = asset.meta || {} as any
@@ -133,8 +136,8 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Owner:</Text>
         </DetailsProp>
         <Box>
-          <AddressLink href={`/address/${tokenOwnerAddress}`}>
-            <Text color={'brand'} size={'small'}>{tokenOwnerAddress}</Text>
+          <AddressLink href={`/address/${ownerAddress}`}>
+            <Text color={'brand'} size={'small'}>{ownerAddress}</Text>
           </AddressLink>
         </Box>
       </DetailsRow>
@@ -236,7 +239,6 @@ export function InventoryDetailsPage() {
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
   const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
-  const [tokenOwnerAddress, setTokenOwnerAddress] = useState(''); // TODO: create API to get all  token props in one request
 
   //  @ts-ignore
   const { address, tokenID, type } = useParams();
@@ -248,19 +250,10 @@ export function InventoryDetailsPage() {
     const loadData = async () => {
       try {
         if (type === "erc721" || type === "erc1155") {
-          let inventoryItems =
+          let inventoryItem =
             type === "erc721"
-              ? await getTokenERC721Assets([address])
-              : await getTokenERC1155Assets([address]);
-          const inventoryItem = inventoryItems.filter((item) => item.tokenID === tokenID)[0]
-
-          if(type === 'erc1155') {
-            const balances = await getTokenERC1155Balances([address]);
-            const userBalance = balances.find((b) => b.tokenID === inventoryItem.tokenID)
-            if(userBalance) {
-              setTokenOwnerAddress(userBalance.ownerAddress)
-            }
-          }
+              ? await getTokenERC721AssetDetails(address, tokenID)
+              : await getTokenERC1155AssetDetails(address, tokenID);
           setInventory(inventoryItem);
         }
       } catch (e) {
@@ -269,13 +262,6 @@ export function InventoryDetailsPage() {
     };
     loadData();
   }, [address]);
-
-  // let meta = "";
-  // try {
-  //   meta = JSON.stringify(inventory.meta, null, 4);
-  // } catch {
-  //   meta = "";
-  // }
 
   const metaImageUrl = inventory.meta?.image || ''
   const imageUrl = metaImageUrl.includes('http') ? metaImageUrl : `${config.ipfsGateway}${metaImageUrl}`
@@ -292,7 +278,6 @@ export function InventoryDetailsPage() {
               tokenERC721={token721}
               tokenERC1155={token1155}
               asset={inventory}
-              tokenOwnerAddress={tokenOwnerAddress}
             />
           </DetailsWrapper>
         </Box>

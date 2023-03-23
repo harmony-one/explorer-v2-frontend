@@ -13,17 +13,19 @@ export function Pagination(props: IPaginationProps) {
   return (
     <Box direction={"row"}>
       <FormPrevious
+        size={'32px'}
         style={{
-          opacity: props.disablePrev ? 0.7 : 1,
+          opacity: props.disablePrev ? 0.4 : 1,
           cursor: props.disablePrev ? "not-allowed" : "pointer",
-          marginRight: "10px",
+          marginRight: "2px",
           userSelect: "none",
         }}
         onClick={props.disablePrev ? undefined : () => props.onClickPrev()}
       />
       <FormNext
+        size={'32px'}
         style={{
-          opacity: props.disableNext ? 0.7 : 1,
+          opacity: props.disableNext ? 0.4 : 1,
           cursor: props.disableNext ? "not-allowed" : "pointer",
           userSelect: "none",
         }}

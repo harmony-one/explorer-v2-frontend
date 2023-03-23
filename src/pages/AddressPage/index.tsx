@@ -127,7 +127,7 @@ export function AddressPage() {
         let { contract, shardId } = await getContractByAddress(id);
         if (contract) {
           const mergedContracts: any = erc721Map[contract.address]
-            ? { ...contracts, ...erc721Map[contract.address] }
+            ? { ...contracts, ...erc721Map[contract.address], ...contract }
             : contract;
           const code = await getContractCode(contract.address, shardId || 0)
           setContracts(mergedContracts);
@@ -174,41 +174,30 @@ export function AddressPage() {
     const getInventory = async () => {
       try {
         if (type === "erc721" || type === "erc1155") {
-          let inventory =
-            type === "erc721"
-              ? await getTokenERC721Assets([id])
-              : await (
-                await getTokenERC1155Assets([id])
-              ).map((item) => {
-                if (item.meta && item.meta.image) {
-                  const { image } = item.meta
-                  item.meta.image = image.includes('http')
-                    ? image
-                    : `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${image}`;
-                }
-                return item;
-              });
+          let items = type === "erc721"
+            ? await getTokenERC721Assets([id])
+            : await getTokenERC1155Assets([id])
 
-          let inventoryHolders1155 = [] as any[];
-
-          if (type === "erc1155") {
-            inventoryHolders1155 = await getTokenERC1155Balances([id]);
-          }
-
-          setInventoryForHolders(inventoryHolders1155);
-
-          setInventory(
-            inventory
-              .filter((item) => item.meta)
-              .map((item) => {
-                item.type = type;
-                return item;
-              })
-          );
+          items = items.map((item) => {
+            if (item.meta && item.meta.image) {
+              const {image} = item.meta
+              item.meta.image = image.includes('http')
+                ? image
+                : `${process.env.REACT_APP_INDEXER_IPFS_GATEWAY}${image}`;
+            }
+            return item;
+          })
+          .filter((item) => item.meta)
+          .map((item) => {
+            item.type = type;
+            return item;
+          })
+          setInventory(items);
         } else {
           setInventory([]);
         }
       } catch (err) {
+        console.log('Cannot load inventory:', err)
         setInventory([]);
       }
     };
@@ -351,23 +340,21 @@ export function AddressPage() {
             <Transactions {...txsCommonProps} type={"erc20"} />
           </Tab>
 
-          <Tab title={<Text size="small">NFT Transfers</Text>}>
-            <Transactions {...txsCommonProps} type={"erc721"} />
-          </Tab>
+          {/*<Tab title={<Text size="small">NFT Transfers</Text>}>*/}
+          {/*  <Transactions {...txsCommonProps} type={"erc721"} />*/}
+          {/*</Tab>*/}
 
           {type === "erc721" || type === "erc1155" || type === "erc20" ? (
             <Tab title={<Text size="small">Holders</Text>}>
               <HoldersTab
                 id={id}
                 type={type}
-                inventory={
-                  inventoryHolders.length ? inventoryHolders : inventory
-                }
+                inventory={inventory}
               />
             </Tab>
           ) : null}
 
-          {(type === "erc721" || type === "erc1155") && inventory.length ? (
+          {(type === "erc721" || type === "erc1155") ? (
             <Tab
               title={<Text size="small">Inventory ({inventory.length})</Text>}
             >
