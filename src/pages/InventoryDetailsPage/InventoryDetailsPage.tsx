@@ -14,6 +14,7 @@ import HarmonyLogo from '../../assets/Logo.svg';
 import { config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
 import dayjs from "dayjs";
+import {CopyBtn} from "../../components/ui/CopyBtn";
 
 const AddressLink = styled.a`
   text-decoration: none;
@@ -119,7 +120,7 @@ const Attribute = styled(Box)`
 
 const NFTDetails = (props: NFTInfoProps) => {
   const { tokenERC721, tokenERC1155, asset } = props
-  const { ownerAddress } = asset
+  const { ownerAddress, tokenID } = asset
 
   const token = tokenERC721 || tokenERC1155 || {}
   const meta = asset.meta || {} as any
@@ -163,8 +164,14 @@ const NFTDetails = (props: NFTInfoProps) => {
         <DetailsProp>
           <Text size={'small'}>Token ID:</Text>
         </DetailsProp>
-        <Box>
-          <Text size={'small'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{asset.tokenID}</Text>
+        <Box direction={'row'} align={'center'}>
+          <CopyBtn
+            value={tokenID}
+            showNotification={true}
+          />
+          <Text size={'small'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginLeft: '4px' }}>
+            {tokenID}
+          </Text>
         </Box>
       </DetailsRow>
       <DetailsRow>
