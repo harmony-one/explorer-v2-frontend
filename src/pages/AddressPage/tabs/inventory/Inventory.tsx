@@ -6,6 +6,7 @@ import { InventoryItem } from "./InventoryItem";
 import { Pagination } from "src/components/pagination/Pagination";
 import {Search} from "grommet-icons";
 import {useDebounce} from "../../../../hooks/debounce";
+import {levenshteinDistance} from "../../../../utils";
 
 export interface IInventoryProps {
   inventory: IUserERC721Assets[];
@@ -33,15 +34,27 @@ export function Inventory(props: IInventoryProps) {
   const onSearch = (event: { target: { value: any; }; }) => {
     const value = event.target.value.toLowerCase()
 
-    if(value) {
-      const values = inventory.filter(item => {
-        const { ownerAddress = '', tokenID, meta } = item
-        let name = meta && meta.name ? meta.name.toLowerCase() : ''
+    const sortByDistance = (a: IUserERC721Assets, b: IUserERC721Assets, targetString: string) => {
+      if(a.meta?.name && b.meta?.name) {
+        const distanceA = levenshteinDistance(a.meta?.name, targetString)
+        const distanceB = levenshteinDistance(b.meta?.name, targetString)
+        return distanceA - distanceB
+      }
+      return 0
+    }
 
-        return ownerAddress.toLowerCase().includes(value)
-          || tokenID.toLowerCase().includes(value)
-          || name.includes(value)
-      })
+    if(value) {
+      const values = inventory
+        .filter(item => {
+          const { ownerAddress = '', tokenID, meta } = item
+          const name = meta && meta.name ? meta.name.toLowerCase() : ''
+
+          return ownerAddress.toLowerCase().includes(value)
+            || tokenID.toLowerCase().includes(value)
+            || name.includes(value)
+        })
+        .sort((a, b) => sortByDistance(a, b, value))
+
       setFilteredInventory(values)
     } else {
       setFilteredInventory(inventory)
