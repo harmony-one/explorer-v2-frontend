@@ -59,6 +59,7 @@ export function Inventory(props: IInventoryProps) {
     } else {
       setFilteredInventory(inventory)
     }
+    setPage(0)
   }
 
   const onSearchDebounce = useDebounce(onSearch, 300)
