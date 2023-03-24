@@ -355,9 +355,7 @@ export function AddressPage() {
           ) : null}
 
           {(type === "erc721" || type === "erc1155") ? (
-            <Tab
-              title={<Text size="small">Inventory ({inventory.length})</Text>}
-            >
+            <Tab title={<Text size="small">Inventory ({inventory.length})</Text>}>
               <Inventory inventory={inventory} />
             </Tab>
           ) : null}
