@@ -90,6 +90,7 @@ const NFTImage = (props: NFTImageProps) => {
 }
 
 interface NFTInfoProps {
+  isLoading: boolean
   tokenERC721: ERC721
   tokenERC1155: ERC1155
   asset: IUserERC721Assets
@@ -118,14 +119,25 @@ const Attribute = styled(Box)`
   }
 `
 
-const NFTDetails = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset } = props
-  const { ownerAddress, tokenID } = asset
+const TextEllipsis = styled(Text)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 4px;
+`
 
-  const token = tokenERC721 || tokenERC1155 || {}
+const NotAvailable = 'N/A'
+
+const NFTDetails = (props: NFTInfoProps) => {
+  const { tokenERC721, asset, isLoading } = props
+  const { ownerAddress, tokenID, tokenAddress } = asset
+
+  // const token = tokenERC721 || tokenERC1155 || {}
   const meta = asset.meta || {} as any
   const metaImage = meta?.image ? meta?.image : ''
-  const classification = metaImage?.includes('google') ? 'GCP': 'IPFS'
+
+  const EmptyValue = isLoading ? '' : NotAvailable
+  const tokenStandard = tokenID ? tokenERC721 ? 'ERC721' : 'ERC1155' : EmptyValue
 
   return <Box round={'8px'} border={{ color: 'border' }} style={{ boxShadow: '0 0.5rem 1.2rem rgb(189 197 209 / 20%)' }}>
     <Box pad={'16px'} border={{ side: 'bottom' }}>
@@ -137,7 +149,7 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Owner:</Text>
         </DetailsProp>
         <Box>
-          <Address address={ownerAddress} />
+          {ownerAddress ? <Address address={ownerAddress} /> : EmptyValue}
         </Box>
       </DetailsRow>
       <DetailsRow>
@@ -145,29 +157,25 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Contract Address:</Text>
         </DetailsProp>
         <Box>
-          <Address address={token.address} displayHash />
+          {tokenAddress ? <Address address={tokenAddress} displayHash /> : EmptyValue}
         </Box>
       </DetailsRow>
-      {/*<DetailsRow>*/}
-      {/*  <DetailsProp>*/}
-      {/*    <Text size={'small'}>Classification:</Text>*/}
-      {/*  </DetailsProp>*/}
-      {/*  <Box>*/}
-      {/*    <Text size={'small'}>Off-Chain ({classification})</Text>*/}
-      {/*  </Box>*/}
-      {/*</DetailsRow>*/}
       <DetailsRow>
         <DetailsProp>
           <Text size={'small'}>Token ID:</Text>
         </DetailsProp>
-        <Box direction={'row'} align={'center'}>
-          <CopyBtn
-            value={tokenID}
-            showNotification={true}
-          />
-          <Text size={'small'} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginLeft: '4px' }}>
-            {tokenID}
-          </Text>
+        <Box>
+          {tokenID
+            ? <Box direction={'row'} align={'center'}>
+                <CopyBtn
+                  value={tokenID}
+                  showNotification={true}
+                />
+                <TextEllipsis size={'small'}>
+                  {tokenID}
+                </TextEllipsis>
+              </Box>
+            : EmptyValue}
         </Box>
       </DetailsRow>
       <DetailsRow>
@@ -175,7 +183,7 @@ const NFTDetails = (props: NFTInfoProps) => {
           <Text size={'small'}>Token Standard:</Text>
         </DetailsProp>
         <Box>
-          <Text size={'small'}>{tokenERC721 ? 'ERC721' : 'ERC1155'}</Text>
+          <Text size={'small'}>{tokenStandard}</Text>
         </Box>
       </DetailsRow>
     </Box>
@@ -183,7 +191,7 @@ const NFTDetails = (props: NFTInfoProps) => {
       <Text weight={'bold'}>Description</Text>
     </Box>
     <Box pad={'16px'}>
-      {asset.meta?.description}
+      {asset.meta?.description || EmptyValue}
     </Box>
     {meta.attributes &&
       <Box border={{ side: 'top' }}>
@@ -213,17 +221,21 @@ const NFTDetails = (props: NFTInfoProps) => {
 }
 
 const NFTInfo = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset } = props
-  const { meta } = asset
+  const { tokenERC721, tokenERC1155, asset, isLoading } = props
+  const { meta, tokenID } = asset
+
+  const EmptyValue = isLoading ? '' : NotAvailable
 
   const token = tokenERC721 || tokenERC1155 || {}
-  const name = token.name || '';
+  const nameValue = tokenID && token.name
+    ? `${token.name} ${meta?.name || ''}`
+    : EmptyValue;
   const erc1155Image = tokenERC1155 && tokenERC1155.meta ? tokenERC1155.meta.image : ''
 
   return <Box>
     <Box>
-      <Box>
-        <Text weight={'bold'} size={'large'}>{name} {meta?.name || ""}</Text>
+      <Box height={'28px'}>
+        <Text weight={'bold'} size={'large'}>{nameValue}</Text>
       </Box>
       <Box direction={'row'} align={'center'} gap={'12px'} margin={{ top: '4px' }}>
         <ERC1155Icon imageUrl={erc1155Image} />
@@ -241,43 +253,53 @@ const NFTInfo = (props: NFTInfoProps) => {
 export function InventoryDetailsPage() {
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
-  const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
 
-  //  @ts-ignore
-  const { address, tokenID, type } = useParams();
+  const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
+  const [isLoading, setIsLoading] = useState(false)
+
+
+  const {
+    address = '',
+    tokenID = '',
+    type = ''
+  }: { address: string, tokenID: string, type: string } = useParams();
 
   const token721 = erc721Map[address]
   const token1155 = erc1155Map[address]
 
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true)
       try {
         if (type === "erc721" || type === "erc1155") {
           let inventoryItem =
             type === "erc721"
               ? await getTokenERC721AssetDetails(address, tokenID)
               : await getTokenERC1155AssetDetails(address, tokenID);
-          setInventory(inventoryItem);
+          setInventory(inventoryItem || {});
         }
       } catch (e) {
         console.error('Cannot load token data:', e)
+      } finally {
+        setIsLoading(false)
       }
     };
     loadData();
   }, [address]);
 
-  const metaImageUrl = inventory.meta?.image || ''
-  const imageUrl = metaImageUrl.includes('http') ? metaImageUrl : `${config.ipfsGateway}${metaImageUrl}`
+  const metaImageUrl = inventory && inventory.meta && inventory.meta?.image ? inventory.meta?.image : ''
+  const fullImageUrl = metaImageUrl.includes('http') ? metaImageUrl : `${config.ipfsGateway}${metaImageUrl}`
 
   return (
     <>
       <BasePage>
         <Box direction={'row'} justify={'between'} wrap={true}>
           <NFTContainer>
-            <NFTImage imageUrl={imageUrl} />
+            <NFTImage imageUrl={fullImageUrl} />
           </NFTContainer>
           <DetailsWrapper>
             <NFTInfo
+              isLoading={isLoading}
               tokenERC721={token721}
               tokenERC1155={token1155}
               asset={inventory}
