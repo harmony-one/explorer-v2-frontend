@@ -17,7 +17,7 @@ import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Address } from "./Address";
 import { config } from "../../config";
-import {getAddressByName} from "../../utils/oneCountry";
+import {getAddressByName, OneCountryTLD} from "../../utils/oneCountry";
 import {toaster} from "../../App";
 
 let timeoutID: any | null = null;
@@ -31,7 +31,7 @@ export interface ISearchItem {
 
 const oneCountryPostfix = {
   dotOne: '.1',
-  dotCountry: '.country'
+  dotCountry: OneCountryTLD
 }
 
 export const SearchInput = () => {

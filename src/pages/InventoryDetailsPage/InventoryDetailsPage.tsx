@@ -15,6 +15,7 @@ import { config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
 import dayjs from "dayjs";
 import {CopyBtn} from "../../components/ui/CopyBtn";
+import {OneCountryTLD} from "../../utils/oneCountry";
 
 const AddressLink = styled.a`
   text-decoration: none;
@@ -127,6 +128,23 @@ const TextEllipsis = styled(Text)`
 `
 
 const NotAvailable = 'N/A'
+const urlPattern = /([a-zA-Z0-9\-\.]+\.[a-zA-Z]{3,7})|(\n)/g;
+
+const MetaDescription = (props: { text: string, domainParseLinks?: string }) => {
+  const { text, domainParseLinks: tld } = props
+
+  if(tld) {
+    const richText = text.replace(urlPattern, function(url) {
+      const link = 'https://' + url
+      return `<a href="${link}" style="color: #00AEE9;">${url}</a>`
+    })
+    return <div dangerouslySetInnerHTML={{ __html: richText }} />
+  }
+
+    return <Box>
+      {text}
+    </Box>
+}
 
 const NFTDetails = (props: NFTInfoProps) => {
   const { tokenERC721, asset, isLoading } = props
@@ -134,7 +152,6 @@ const NFTDetails = (props: NFTInfoProps) => {
 
   // const token = tokenERC721 || tokenERC1155 || {}
   const meta = asset.meta || {} as any
-  const metaImage = meta?.image ? meta?.image : ''
 
   const EmptyValue = isLoading ? '' : NotAvailable
   const tokenStandard = tokenID ? tokenERC721 ? 'ERC721' : 'ERC1155' : EmptyValue
@@ -191,7 +208,13 @@ const NFTDetails = (props: NFTInfoProps) => {
       <Text weight={'bold'}>Description</Text>
     </Box>
     <Box pad={'16px'}>
-      {asset.meta?.description || EmptyValue}
+      {asset.meta?.description
+        ? <MetaDescription
+          text={asset.meta?.description}
+          domainParseLinks={tokenAddress === config.oneCountryNFTContractAddress ? OneCountryTLD : ''}
+        />
+        : EmptyValue
+      }
     </Box>
     {meta.attributes &&
       <Box border={{ side: 'top' }}>
