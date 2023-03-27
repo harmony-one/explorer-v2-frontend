@@ -257,7 +257,7 @@ const NFTInfo = (props: NFTInfoProps) => {
 
   return <Box>
     <Box>
-      <Box height={'28px'}>
+      <Box style={{ minHeight: '28px' }}>
         <Text weight={'bold'} size={'large'}>{nameValue}</Text>
       </Box>
       <Box direction={'row'} align={'center'} gap={'12px'} margin={{ top: '4px' }}>
