@@ -15,7 +15,7 @@ import { linkedContractsMap, config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
 import dayjs from "dayjs";
 import {CopyBtn} from "../../components/ui/CopyBtn";
-import {OneCountryTLD} from "../../utils/oneCountry";
+import {convertErc721TokenId, OneCountryTLD} from "../../utils/oneCountry";
 
 const AddressLink = styled.a`
   text-decoration: none;
@@ -157,25 +157,12 @@ const NFTDetails = (props: NFTInfoProps) => {
 
   const EmptyValue = isLoading ? '' : NotAvailable
   const tokenStandard = tokenID ? tokenERC721 ? 'ERC721' : 'ERC1155' : EmptyValue
-  const linkedContract = linkedContractsMap[tokenAddressParam.toLowerCase()]
 
   return <Box round={'8px'} border={{ color: 'border' }} style={{ boxShadow: '0 0.5rem 1.2rem rgb(189 197 209 / 20%)' }}>
     <Box pad={'16px'} border={{ side: 'bottom' }}>
       <Text weight={'bold'}>Details</Text>
     </Box>
     <Box pad={'16px'} border={{ side: 'bottom'}} gap={'16px'}>
-      {linkedContract &&
-          <DetailsRow>
-              <DetailsProp>
-                  Linked page:
-              </DetailsProp>
-              <Box>
-                  <AddressLink href={`/inventory/${linkedContract.type}/${linkedContract.address}/${tokenIDParam}`}>
-                      <Text color={'brand'} size={'small'}>{linkedContract.name} NFT</Text>
-                  </AddressLink>
-              </Box>
-          </DetailsRow>
-      }
       <DetailsRow>
         <DetailsProp>
           <Text size={'small'}>Owner:</Text>
@@ -259,7 +246,7 @@ const NFTDetails = (props: NFTInfoProps) => {
 }
 
 const NFTInfo = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset, isLoading } = props
+  const { tokenAddressParam, tokenIDParam, tokenERC721, tokenERC1155, asset, isLoading } = props
   const { meta, tokenID } = asset
 
   const EmptyValue = isLoading ? '' : NotAvailable
@@ -269,6 +256,11 @@ const NFTInfo = (props: NFTInfoProps) => {
     ? `${token.name} ${meta?.name || ''}`
     : EmptyValue;
   const erc1155Image = tokenERC1155 && tokenERC1155.meta ? tokenERC1155.meta.image : ''
+
+  const linkedContract = linkedContractsMap[tokenAddressParam]
+  const linkTokenId = linkedContract && linkedContract.address === config.oneCountryNFTContractAddress
+    ? convertErc721TokenId(tokenIDParam)
+    : tokenIDParam
 
   return <Box>
     <Box>
@@ -280,6 +272,13 @@ const NFTInfo = (props: NFTInfoProps) => {
         <AddressLink href={`/address/${token.address}`}>
           <Text color={'brand'} size={'small'}>{token.name}</Text>
         </AddressLink>
+        {linkedContract &&
+          <Box>
+            <AddressLink href={`/inventory/${linkedContract.type}/${linkedContract.address}/${linkTokenId}`}>
+                <Text color={'brand'} size={'medium'}>Show this NFT on {linkedContract.name} page</Text>
+            </AddressLink>
+          </Box>
+        }
       </Box>
       <Box margin={{ top: '24px' }}>
         <NFTDetails {...props} />
@@ -336,7 +335,7 @@ export function InventoryDetailsPage() {
           </NFTContainer>
           <DetailsWrapper>
             <NFTInfo
-              tokenAddressParam={address}
+              tokenAddressParam={address.toLowerCase()}
               tokenIDParam={tokenID}
               isLoading={isLoading}
               tokenERC721={token721}
