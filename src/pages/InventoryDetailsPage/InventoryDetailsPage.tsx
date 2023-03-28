@@ -11,7 +11,7 @@ import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
 import {ERC721, useERC721Pool} from "src/hooks/ERC721_Pool";
 import styled from "styled-components";
 import HarmonyLogo from '../../assets/Logo.svg';
-import { config } from '../../config'
+import { linkedContractsMap, config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
 import dayjs from "dayjs";
 import {CopyBtn} from "../../components/ui/CopyBtn";
@@ -91,6 +91,8 @@ const NFTImage = (props: NFTImageProps) => {
 }
 
 interface NFTInfoProps {
+  tokenIDParam: string;
+  tokenAddressParam: string;
   isLoading: boolean
   tokenERC721: ERC721
   tokenERC1155: ERC1155
@@ -147,7 +149,7 @@ const MetaDescription = (props: { text: string, domainParseLinks?: string }) => 
 }
 
 const NFTDetails = (props: NFTInfoProps) => {
-  const { tokenERC721, asset, isLoading } = props
+  const { tokenAddressParam, tokenIDParam, tokenERC721, asset, isLoading } = props
   const { ownerAddress, tokenID, tokenAddress } = asset
 
   // const token = tokenERC721 || tokenERC1155 || {}
@@ -155,12 +157,25 @@ const NFTDetails = (props: NFTInfoProps) => {
 
   const EmptyValue = isLoading ? '' : NotAvailable
   const tokenStandard = tokenID ? tokenERC721 ? 'ERC721' : 'ERC1155' : EmptyValue
+  const linkedContract = linkedContractsMap[tokenAddressParam.toLowerCase()]
 
   return <Box round={'8px'} border={{ color: 'border' }} style={{ boxShadow: '0 0.5rem 1.2rem rgb(189 197 209 / 20%)' }}>
     <Box pad={'16px'} border={{ side: 'bottom' }}>
       <Text weight={'bold'}>Details</Text>
     </Box>
     <Box pad={'16px'} border={{ side: 'bottom'}} gap={'16px'}>
+      {linkedContract &&
+          <DetailsRow>
+              <DetailsProp>
+                  Linked page:
+              </DetailsProp>
+              <Box>
+                  <AddressLink href={`/inventory/${linkedContract.type}/${linkedContract.address}/${tokenIDParam}`}>
+                      <Text color={'brand'} size={'small'}>{linkedContract.name} NFT</Text>
+                  </AddressLink>
+              </Box>
+          </DetailsRow>
+      }
       <DetailsRow>
         <DetailsProp>
           <Text size={'small'}>Owner:</Text>
@@ -280,7 +295,6 @@ export function InventoryDetailsPage() {
   const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
   const [isLoading, setIsLoading] = useState(false)
 
-
   const {
     address = '',
     tokenID = '',
@@ -322,6 +336,8 @@ export function InventoryDetailsPage() {
           </NFTContainer>
           <DetailsWrapper>
             <NFTInfo
+              tokenAddressParam={address}
+              tokenIDParam={tokenID}
               isLoading={isLoading}
               tokenERC721={token721}
               tokenERC1155={token1155}
