@@ -17,10 +17,11 @@ export const getAddressByName = async (name: string) => {
 }
 
 export const convertErc721TokenId = (erc721TokenId: string) => {
-    const labelHashReverse = '0x' + BigInt(erc721TokenId).toString(16)
+    let labelHash = Web3.utils.toBN(erc721TokenId).toString('hex', 64)
+    labelHash = '0x' + labelHash
     const encodePacked = Web3.utils.encodePacked(
       {value: OneCountryTLDNode, type: 'bytes32'},
-      {value: labelHashReverse, type: 'bytes32'},
+      {value: labelHash, type: 'bytes32'},
     ) || '';
-    return BigInt(keccak256(encodePacked)).toString()
+    return Web3.utils.toBN(keccak256(encodePacked)).toString()
 }
