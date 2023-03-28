@@ -11,11 +11,11 @@ import {ERC1155, useERC1155Pool} from "src/hooks/ERC1155_Pool";
 import {ERC721, useERC721Pool} from "src/hooks/ERC721_Pool";
 import styled from "styled-components";
 import HarmonyLogo from '../../assets/Logo.svg';
-import { config } from '../../config'
+import { linkedContractsMap, config } from '../../config'
 import {ERC1155Icon} from "../../components/ui/ERC1155Icon";
 import dayjs from "dayjs";
 import {CopyBtn} from "../../components/ui/CopyBtn";
-import {OneCountryTLD} from "../../utils/oneCountry";
+import {convertErc721TokenId, OneCountryTLD} from "../../utils/oneCountry";
 
 const AddressLink = styled.a`
   text-decoration: none;
@@ -91,6 +91,8 @@ const NFTImage = (props: NFTImageProps) => {
 }
 
 interface NFTInfoProps {
+  tokenIDParam: string;
+  tokenAddressParam: string;
   isLoading: boolean
   tokenERC721: ERC721
   tokenERC1155: ERC1155
@@ -147,7 +149,7 @@ const MetaDescription = (props: { text: string, domainParseLinks?: string }) => 
 }
 
 const NFTDetails = (props: NFTInfoProps) => {
-  const { tokenERC721, asset, isLoading } = props
+  const { tokenAddressParam, tokenIDParam, tokenERC721, asset, isLoading } = props
   const { ownerAddress, tokenID, tokenAddress } = asset
 
   // const token = tokenERC721 || tokenERC1155 || {}
@@ -244,7 +246,7 @@ const NFTDetails = (props: NFTInfoProps) => {
 }
 
 const NFTInfo = (props: NFTInfoProps) => {
-  const { tokenERC721, tokenERC1155, asset, isLoading } = props
+  const { tokenAddressParam, tokenIDParam, tokenERC721, tokenERC1155, asset, isLoading } = props
   const { meta, tokenID } = asset
 
   const EmptyValue = isLoading ? '' : NotAvailable
@@ -254,6 +256,11 @@ const NFTInfo = (props: NFTInfoProps) => {
     ? `${token.name} ${meta?.name || ''}`
     : EmptyValue;
   const erc1155Image = tokenERC1155 && tokenERC1155.meta ? tokenERC1155.meta.image : ''
+
+  const linkedContract = linkedContractsMap[tokenAddressParam]
+  const linkTokenId = linkedContract && linkedContract.address === config.oneCountryNFTContractAddress
+    ? convertErc721TokenId(tokenIDParam)
+    : tokenIDParam
 
   return <Box>
     <Box>
@@ -265,6 +272,13 @@ const NFTInfo = (props: NFTInfoProps) => {
         <AddressLink href={`/address/${token.address}`}>
           <Text color={'brand'} size={'small'}>{token.name}</Text>
         </AddressLink>
+        {linkedContract &&
+          <Box>
+            <AddressLink href={`/inventory/${linkedContract.type}/${linkedContract.address}/${linkTokenId}`}>
+                <Text color={'brand'} size={'medium'}>Show this NFT on {linkedContract.name} page</Text>
+            </AddressLink>
+          </Box>
+        }
       </Box>
       <Box margin={{ top: '24px' }}>
         <NFTDetails {...props} />
@@ -279,7 +293,6 @@ export function InventoryDetailsPage() {
 
   const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
   const [isLoading, setIsLoading] = useState(false)
-
 
   const {
     address = '',
@@ -322,6 +335,8 @@ export function InventoryDetailsPage() {
           </NFTContainer>
           <DetailsWrapper>
             <NFTInfo
+              tokenAddressParam={address.toLowerCase()}
+              tokenIDParam={tokenID}
               isLoading={isLoading}
               tokenERC721={token721}
               tokenERC1155={token1155}

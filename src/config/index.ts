@@ -1,5 +1,6 @@
 import { default as bridgeTokens } from "src/config/bridgeTokensMap.json";
 import { default as addressAliases } from "src/config/addressAliasMap.json";
+import { default as linkedContracts } from "src/config/linkedContractsMap.json";
 import { ShardID } from "../types";
 
 interface AddressMap {
@@ -15,6 +16,7 @@ const mapKeysToLowerCase = (input: AddressMap): AddressMap => {
 };
 
 export const bridgeTokensMap: Record<string, string> = bridgeTokens || {}
+export const linkedContractsMap: Record<string, { address: string; name: string; type: string; }> = linkedContracts || {}
 export const addressAliasMap: AddressMap = mapKeysToLowerCase(addressAliases) || {}
 
 const availableShards = (process.env.REACT_APP_AVAILABLE_SHARDS || '')
