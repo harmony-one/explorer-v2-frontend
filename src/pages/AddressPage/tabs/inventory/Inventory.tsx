@@ -49,7 +49,7 @@ export function Inventory(props: IInventoryProps) {
           const { ownerAddress = '', tokenID, meta } = item
           const name = meta && meta.name ? meta.name.toLowerCase() : ''
 
-          return ownerAddress.toLowerCase().includes(value)
+          return (ownerAddress || '').toLowerCase().includes(value)
             || tokenID.toLowerCase().includes(value)
             || name.includes(value)
         })
