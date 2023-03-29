@@ -8,7 +8,6 @@ import {
   getTokenERC721Assets,
   getTokenERC1155Assets,
   getUserERC1155Balances,
-  getTokenERC1155Balances,
 } from "src/api/client";
 import { useHistory, useParams } from "react-router-dom";
 import { useERC20Pool } from "src/hooks/ERC20_Pool";
@@ -29,10 +28,10 @@ import { getAddress } from "src/utils";
 import { useCurrency } from "src/hooks/ONE-ETH-SwitcherHook";
 import { HoldersTab } from "./tabs/holders/HoldersTab";
 import { parseHexToText } from "../../web3/parseHex";
-import { EventsTab } from "./tabs/events/Events";
 import { ToolsTab } from "./tabs/tools";
 import useQuery from "../../hooks/useQuery";
 import {getContractByAddress} from "./ContractDetails/helpers";
+import {linkedContractsMap} from "../../config";
 
 export function AddressPage() {
   const history = useHistory();
@@ -57,7 +56,6 @@ export function AddressPage() {
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
-  const currency = useCurrency();
 
   //TODO remove hardcode
   // @ts-ignore
@@ -94,24 +92,6 @@ export function AddressPage() {
     getBal();
   }, [id]);
 
-  // useEffect(() => {
-  //   const loadCode = async () => {
-  //     try {
-  //       const data = await loadSourceCode(id, contractShardId || 0)
-  //       setSourceCode(data)
-  //     } catch (e) {
-  //       setSourceCode(null)
-  //       console.log('Error on loading source code:', e);
-  //     }
-  //   }
-  //   // contract defined and contract address same as id
-  //   // note: when we toggle there is scenarios where the id are not the same
-  //   // @ts-ignore
-  //   if (!!contracts && contracts?.address === id && contractShardId !== null) {
-  //     loadCode()
-  //   }
-  // }, [id, contracts, contractShardId]);
-
   useEffect(() => {
     const getContractCode = async (id: string, shardId: ShardID) => {
       try {
@@ -141,7 +121,6 @@ export function AddressPage() {
               console.log('Implementation contract loaded:', contractData)
               setImplementation(contractData)
               setImplementationSourceCode(implCode)
-              // setSourceCode(implCode)
             }
           } else {
             setImplementation(null)
@@ -274,15 +253,6 @@ export function AddressPage() {
     return "Address";
   };
 
-  const tabs: TRelatedTransaction[] = [
-    "transaction",
-    "staking_transaction",
-    "internal_transaction",
-    "erc20",
-    "erc721",
-    "erc1155",
-  ];
-
   const txsCommonProps = {
     onTxsLoaded: (txs: RelatedTransaction[]) => {
       let description = ''
@@ -296,11 +266,20 @@ export function AddressPage() {
     }
   }
 
+  const linkedContract = linkedContractsMap[id]
+
   return (
     <BaseContainer pad={{ horizontal: "0" }}>
-      <Text size="xlarge" weight="bold" margin={{ bottom: "medium" }}>
-        {renderTitle()}
-      </Text>
+      <Box direction={'row'} align={'baseline'} gap={'16px'}>
+        <Text size="xlarge" weight="bold" margin={{ bottom: "medium" }}>
+          {renderTitle()}
+        </Text>
+        {linkedContract &&
+            <a href={`/address/${linkedContract.address}`}>
+                <Text color={'brand'} size={'medium'}>Open {linkedContract.name} contract ({linkedContract.type})</Text>
+            </a>
+        }
+      </Box>
       <BasePage margin={{ vertical: "0" }} style={{ overflow: "inherit" }}>
         <AddressDetailsDisplay
           address={id}
@@ -384,14 +363,6 @@ export function AddressPage() {
               <ToolsTab contractAddress={id} showTools={true} />
             </Tab>
           ) : null}
-
-          {/*{type === "erc1155" && inventory.length ? (*/}
-          {/*  <Tab*/}
-          {/*    title={<Text size="small">Inventory ({inventory.length})</Text>}*/}
-          {/*  >*/}
-          {/*    <Inventory inventory={inventory} />*/}
-          {/*  </Tab>*/}
-          {/*) : null}*/}
         </Tabs>
       </BasePage>
     </BaseContainer>

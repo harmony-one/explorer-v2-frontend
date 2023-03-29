@@ -2,6 +2,6 @@
   "0x4d64b78eaf6129fac30ab51e6d2d679993ea9ddd": {
     "address": "0x4cd2563118e57b19179d8dc033f2b0c5b5d69ff5",
     "name": "1country domains",
-    "type": "erc1155"
+    "type": "HRC1155"
   }
 }
