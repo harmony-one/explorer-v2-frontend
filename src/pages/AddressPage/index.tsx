@@ -187,7 +187,7 @@ export function AddressPage() {
             }
             return item;
           })
-          .filter((item) => item.meta)
+          // .filter((item) => item.meta)
           .map((item) => {
             item.type = type;
             return item;
