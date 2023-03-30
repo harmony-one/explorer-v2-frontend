@@ -124,8 +124,8 @@ export function InventoryItem(props: IInventoryItemProps) {
                 align={"center"}
               >
                 <Image src={HarmonyLogo} />
-                <Box style={{ position: 'absolute' }}>
-                  <Text style={{ opacity: 0.7 }}>No Image</Text>
+                <Box style={{ position: 'absolute', bottom: '8px' }}>
+                  <Text style={{ opacity: 0.5 }}>No Image</Text>
                 </Box>
               </ErrorPreview>
             ) : url ? (
@@ -146,8 +146,8 @@ export function InventoryItem(props: IInventoryItemProps) {
                 align={"center"}
               >
                 <Image src={HarmonyLogo} />
-                <Box style={{ position: 'absolute' }}>
-                  <Text style={{ opacity: 0.7 }}>No Image</Text>
+                <Box style={{ position: 'absolute', bottom: '8px' }}>
+                  <Text style={{ opacity: 0.5 }}>No Image</Text>
                 </Box>
               </EmptyPreview>
             )}
