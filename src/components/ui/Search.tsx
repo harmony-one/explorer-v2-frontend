@@ -347,7 +347,7 @@ export const SearchInput = () => {
                 height={height as number}
                 itemCount={results.length}
                 itemSize={40}
-                width={width}
+                width={width as number}
               >
                 {Row}
               </List>
