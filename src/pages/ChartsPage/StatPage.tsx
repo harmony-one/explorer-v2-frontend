@@ -1,7 +1,5 @@
-import React, {useEffect, useState} from 'react'
 import {Box, Heading, Spinner, Text} from "grommet";
 import {BaseContainer, BasePage} from "../../components/ui";
-import {MetricsDailyItem} from "../../types";
 import styled from "styled-components";
 import {Link} from "react-router-dom";
 import {useMediaQuery} from "react-responsive";
@@ -13,10 +11,6 @@ const TextLink = styled(Text)`
 `
 
 const ChartModalContainer = styled(Box)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `
 
 const LoadingErrorModal = () => {
@@ -60,7 +54,7 @@ export const StatPage = (props: StatProps) => {
         rows.push(
             <Box 
                 key={String(i)} 
-                style={{ display: (isLoading || loadingError) ? 'none' : 'block'}}
+                // style={{ display: (isLoading || loadingError) ? 'none' : 'block'}}
                 width={{width: '40%'}} 
                 margin={{bottom: '8px'}} 
                 border={{ size: '1px' }} 
@@ -75,11 +69,6 @@ export const StatPage = (props: StatProps) => {
                         return <Text>{parseKeyValue(key)}: {props.items[i][key]}</Text>
                     })}
                 </Box>
-                {/* <Box pad={'8px'}>
-                    {props.keys.map((key, _) => {
-                        return <Text>{parseKeyValue(key)}: <span style={{float: 'right'}}>{props.items[i][key]}</span></Text>
-                    })}
-                </Box> */}
             </Box>
         )
     }
@@ -129,7 +118,7 @@ export const StatPage = (props: StatProps) => {
                     <Text>Loading Data</Text>
                 </ChartModalContainer>}
                 {!isLoading && loadingError && <LoadingErrorModal />}
-                {rows}
+                {!isLoading && !loadingError && rows}
             </Box>
         </BasePage>
     </BaseContainer>
