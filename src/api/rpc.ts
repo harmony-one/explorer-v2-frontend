@@ -145,6 +145,24 @@ export const hmyv2_getTransactionsCount = (address: string, txType: RequestTxTyp
   });
 };
 
+export const hmyv2_getNodeMetadata = (shard: string) => {
+  return rpcAdapter<TRPCResponse<any>>(getApiUrl(shard), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "hmyv2_getNodeMetadata",
+      id: 1,
+      params: [],
+    }),
+  }).then(data => {
+    if (data.error) {
+      throw new Error(data.error.message)
+    }
+    return data.result
+  });
+};
+
 export const hmyv2_getStakingTransactionsHistory = (params: IGetTxsHistoryParams[]) => {
   return rpcAdapter<TRPCResponse<{ staking_transactions: RPCTransactionHarmony[] }>>(API_URL, {
     method: "POST",
@@ -279,4 +297,17 @@ export const getAllApprovalsForTokens = async (address: string,
   }
 
   return { txnHistory, dataObj };
+}
+
+const getApiUrl = (shard: string) => {
+  switch (shard) {
+    case "1": 
+      return process.env.REACT_APP_RPC_URL_SHARD1 || 'https://a.api.s1.t.hmny.io/'
+    case "2":
+      return process.env.REACT_APP_RPC_URL_SHARD2 || 'https://a.api.s2.t.hmny.io/'
+    case "3":
+      return process.env.REACT_APP_RPC_URL_SHARD3 || 'https://a.api.s3.t.hmny.io/'
+    default:
+      return process.env.REACT_APP_RPC_URL_SHARD0 || 'https://a.api.s0.t.hmny.io/'
+  }
 }
