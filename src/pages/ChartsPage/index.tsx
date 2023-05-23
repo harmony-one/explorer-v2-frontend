@@ -8,15 +8,14 @@ import {AverageFee} from "./AverageFee";
 import {AverageBlockSize} from "./AverageBlockSize";
 import styled from "styled-components";
 import {useThemeMode} from "../../hooks/themeSwitcherHook";
-import { StatPage } from "./StatPage";
-import { ViewChangeMetric } from "./ViewChangeMetric";
+import { ViewChangeStats } from "./ViewChangeStats";
 
 enum ChartType {
     tx = 'tx',
     addresses = 'addresses',
     fee = 'fee',
     blockSize = 'blocksize',
-    viewChange = 'viewChange'
+    viewChange = 'viewchange'
 }
 
 const PreviewContainer = styled(Box)`
@@ -80,7 +79,7 @@ export function ChartsPage() {
     } else if(route === ChartType.blockSize) {
         return <AverageBlockSize />
     } else if(route === ChartType.viewChange) {
-        return <ViewChangeMetric />
+        return <ViewChangeStats />
     }
 
     return (
@@ -103,7 +102,7 @@ export function ChartsPage() {
                     <PreviewCard type={ChartType.addresses} title={'Daily Active Addresses'} />
                     <PreviewCard type={ChartType.fee} title={'Average Transaction Fee'} />
                     <PreviewCard type={ChartType.blockSize} title={'Average Block Size'} />
-                    <PreviewCard type={ChartType.viewChange} title={'View Change Metrics'} />
+                    <PreviewCard type={ChartType.viewChange} title={'View Change Statistics'} />
                 </Box>
             </BasePage>
         </BaseContainer>

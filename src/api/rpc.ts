@@ -301,13 +301,13 @@ export const getAllApprovalsForTokens = async (address: string,
 
 const getApiUrl = (shard: string) => {
   switch (shard) {
-    case "1": 
+    case "1":
       return process.env.REACT_APP_RPC_URL_SHARD1 || 'https://a.api.s1.t.hmny.io/'
     case "2":
       return process.env.REACT_APP_RPC_URL_SHARD2 || 'https://a.api.s2.t.hmny.io/'
     case "3":
       return process.env.REACT_APP_RPC_URL_SHARD3 || 'https://a.api.s3.t.hmny.io/'
     default:
-      return process.env.REACT_APP_RPC_URL_SHARD0 || 'https://a.api.s0.t.hmny.io/'
+      return 'https://api.s0.t.hmny.io/' || process.env.REACT_APP_RPC_URL_SHARD0 
   }
 }

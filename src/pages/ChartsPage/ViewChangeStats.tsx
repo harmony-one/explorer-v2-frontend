@@ -3,7 +3,11 @@ import { StatPage } from './StatPage';
 import { hmyv2_getNodeMetadata } from 'src/api/rpc';
 import { config } from 'src/config';
 
-export const ViewChangeMetric = () => {
+const CONSENSUS = "consensus"
+const BLOCK_NUM = "blocknum"
+const VIEW_ID = "viewId"
+
+export const ViewChangeStats = () => {
     const { availableShards } = config
     const [items, setItems] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -16,8 +20,8 @@ export const ViewChangeMetric = () => {
                 setIsLoading(true) 
                 for (let i in availableShards) {
                     const nodeMetadata = await hmyv2_getNodeMetadata(i)
-                    const blockHeight = nodeMetadata['consensus']['blocknum']
-                    const viewId = nodeMetadata['consensus']['viewId']
+                    const blockHeight = nodeMetadata[CONSENSUS][BLOCK_NUM]
+                    const viewId = nodeMetadata[CONSENSUS][VIEW_ID]
                     const viewChange = viewId - blockHeight
                     setItems(items => [...items, {
                         viewChange: viewChange,
@@ -37,13 +41,14 @@ export const ViewChangeMetric = () => {
     }, [])
 
     const viewChangeProps = {
-        title: 'Harmony View Change Metric',
+        title: 'Harmony View Change Statistics',
         description: '',
         items: items,
         keys: ['viewChange', 'viewId', 'blockHeight'],
         isLoading,
         loadingError,
-        value: `A total of ${totalViewChange} view changes have occurred across ${availableShards.length} shards`,
+        infoLeft: `Total of ${totalViewChange} view changes across ${availableShards.length} shards`,
+        infoRight: 'Data is obtained from the explorer node, which may result in a slight delay'
     }
 
     return <StatPage {...viewChangeProps} />

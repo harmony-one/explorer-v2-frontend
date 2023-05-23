@@ -41,7 +41,8 @@ export interface StatProps {
     description?: string
     items: any[]
     keys: string[]
-    value?: string
+    infoLeft: string
+    infoRight?: string
     isLoading: boolean
     loadingError?: string
 }
@@ -54,7 +55,6 @@ export const StatPage = (props: StatProps) => {
         rows.push(
             <Box 
                 key={String(i)} 
-                // style={{ display: (isLoading || loadingError) ? 'none' : 'block'}}
                 width={{width: '40%'}} 
                 margin={{bottom: '8px'}} 
                 border={{ size: '1px' }} 
@@ -100,8 +100,12 @@ export const StatPage = (props: StatProps) => {
             <Box direction={'row'} justify={'between'} flex={'grow'} wrap={true}>
                 <Box direction={'row'} gap={'8px'} justify={'center'} align={'center'} style={{ flexGrow: 2 }}>
                     <Info size={'small'} />
-                    <Text size={'small'}> {props.value} </Text>
+                    <Text size={'small'}> {props.infoLeft} </Text>
                 </Box>
+               {props.infoRight && <Box direction={'row'} gap={'8px'} justify={'center'} align={'center'} style={{ flexGrow: 2 }}>
+                    <Info size={'small'} />
+                    <Text size={'small'}> {props.infoRight} </Text>
+                </Box>}
             </Box>
         </BasePage>
         <BasePage pad={"small"} style={{overflow: 'inherit', marginTop: '16px'}}>
