@@ -43,7 +43,6 @@ export function ResourcesButton() {
                     >
                         <Box direction={'row'} align={'center'} gap={'4px'}>
                             Charts & Stats
-                            <Text size={'xsmall'} color={'successText'}>(new)</Text>
                         </Box>
                     </Anchor>
                     <Anchor
@@ -55,7 +54,6 @@ export function ResourcesButton() {
                     >
                         <Box direction={'row'} align={'center'} gap={'4px'}>
                             Top Statistics
-                            <Text size={'xsmall'} color={'successText'}>(new)</Text>
                         </Box>
                     </Anchor>
                 </Box>

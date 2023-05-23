@@ -8,12 +8,14 @@ import {AverageFee} from "./AverageFee";
 import {AverageBlockSize} from "./AverageBlockSize";
 import styled from "styled-components";
 import {useThemeMode} from "../../hooks/themeSwitcherHook";
+import { ViewChangeStats } from "./ViewChangeStats";
 
 enum ChartType {
     tx = 'tx',
     addresses = 'addresses',
     fee = 'fee',
-    blockSize = 'blocksize'
+    blockSize = 'blocksize',
+    viewChange = 'viewchange'
 }
 
 const PreviewContainer = styled(Box)`
@@ -46,6 +48,7 @@ const PreviewCard = (props: { type: ChartType, title: string }) => {
 
     return <PreviewContainer
         border={{ size: '1px' }}
+        margin={{ bottom: '12px'}}
         round={'8px'}
         overflow={'hidden'}
         onClick={onClick}
@@ -53,11 +56,12 @@ const PreviewCard = (props: { type: ChartType, title: string }) => {
         <Box pad={'8px'} background={'backgroundDropdownItem'}>
             <Text size={'small'} color={'brand'}>{title}</Text>
         </Box>
-        <Box pad={'8px'} border={{ side: 'top' }} style={{ filter: themeMode === 'dark' ? 'unset' : 'grayscale(0.8)' }}>
-            {type === ChartType.tx && <img src={require(`./thumbnails/daily_txs${previewImgPostfix}.png`).default} {...imgProps} />}
-            {type === ChartType.addresses && <img src={require(`./thumbnails/daily_addresses${previewImgPostfix}.png`).default} {...imgProps} />}
-            {type === ChartType.fee && <img src={require(`./thumbnails/daily_fee${previewImgPostfix}.png`).default} {...imgProps} />}
-            {type === ChartType.blockSize && <img src={require(`./thumbnails/daily_blocksize${previewImgPostfix}.png`).default} {...imgProps} />}
+        <Box pad={'8px'} height={'11.2vh'} border={{ side: 'top' }} style={{ filter: themeMode === 'dark' ? 'unset' : 'grayscale(0.8)' }}>
+            {type === ChartType.tx && <img src={require(`./thumbnails/daily_txs${previewImgPostfix}.png`).default} height={'100%'} {...imgProps} />}
+            {type === ChartType.addresses && <img src={require(`./thumbnails/daily_addresses${previewImgPostfix}.png`).default} height={'100%'} {...imgProps} />}
+            {type === ChartType.fee && <img src={require(`./thumbnails/daily_fee${previewImgPostfix}.png`).default} height={'100%'} {...imgProps} />}
+            {type === ChartType.blockSize && <img src={require(`./thumbnails/daily_blocksize${previewImgPostfix}.png`).default} height={'100%'} {...imgProps} />}
+            {type === ChartType.viewChange && <img src={require(`./thumbnails/view_change${previewImgPostfix}.png`).default} height={'100%'} {...imgProps} />}
         </Box>
     </PreviewContainer>
 }
@@ -74,6 +78,8 @@ export function ChartsPage() {
         return <AverageFee />
     } else if(route === ChartType.blockSize) {
         return <AverageBlockSize />
+    } else if(route === ChartType.viewChange) {
+        return <ViewChangeStats />
     }
 
     return (
@@ -89,13 +95,14 @@ export function ChartsPage() {
                     wrap
                     direction={'row'}
                     pad={"small"}
-                    justify={'center'}
+                    justify={'start'}
                     align={'center'}
                 >
                     <PreviewCard type={ChartType.tx} title={'Daily Transactions Chart'} />
                     <PreviewCard type={ChartType.addresses} title={'Daily Active Addresses'} />
                     <PreviewCard type={ChartType.fee} title={'Average Transaction Fee'} />
                     <PreviewCard type={ChartType.blockSize} title={'Average Block Size'} />
+                    <PreviewCard type={ChartType.viewChange} title={'View Change Statistics'} />
                 </Box>
             </BasePage>
         </BaseContainer>
