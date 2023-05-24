@@ -38,10 +38,11 @@ interface AddressDetailsProps {
   tokens: any[];
   balance?: string;
   delegations: StakingDelegation[]
+  holdersCount?: number
 }
 
 export function AddressDetailsDisplay(props: AddressDetailsProps) {
-  const { address, addressDescription, contracts, contractShardId, tokens, balance, delegations } = props;
+  const { address, addressDescription, contracts, contractShardId, tokens, balance, delegations, holdersCount } = props;
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
@@ -77,6 +78,10 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
     delegations,
     contractShardId
   };
+
+  if(holdersCount) {
+    data.holders = holdersCount
+  }
 
   if (!data) {
     return null;
