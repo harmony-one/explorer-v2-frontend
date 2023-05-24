@@ -65,7 +65,7 @@ export function AddressPage() {
   id = id.slice(0, 3) === "one" ? getAddress(id).basicHex : id;
 
   const erc20Token = erc20Map[id] || null;
-
+  const erc1155Token = erc1155Map[id] || null
   let type = erc721Map[id]
     ? "erc721"
     : erc1155Map[id]
@@ -192,7 +192,9 @@ export function AddressPage() {
               }
               return acc
             }, {} as Record<string, boolean>)
-            setHoldersCount(Object.keys(holdersMap).length)
+            const holdersInventoryLength = Object.keys(holdersMap).length
+            const tokenHolders = erc1155Token ? erc1155Token.holders : 0
+            setHoldersCount(Math.max(holdersInventoryLength, +tokenHolders))
           }
         } else {
           setInventory([]);
