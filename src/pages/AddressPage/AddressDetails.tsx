@@ -79,7 +79,7 @@ export function AddressDetailsDisplay(props: AddressDetailsProps) {
     contractShardId
   };
 
-  if(holdersCount) {
+  if(holdersCount !== undefined) {
     data.holders = holdersCount
   }
 

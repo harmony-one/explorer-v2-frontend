@@ -154,6 +154,9 @@ export function AddressPage() {
     const getInventory = async () => {
       try {
         if (type === "erc721" || type === "erc1155") {
+          if(type === "erc1155") {
+            setHoldersCount(0)
+          }
           let items = type === "erc721"
             ? await getTokenERC721Assets([id])
             : await getTokenERC1155Assets([id])
