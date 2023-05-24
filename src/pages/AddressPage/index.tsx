@@ -53,6 +53,7 @@ export function AddressPage() {
     IUserERC721Assets[]
     >([]);
   const [activeIndex, setActiveIndex] = useState(activeTab);
+  const [holdersCount, setHoldersCount] = useState<number | undefined>()
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
@@ -171,7 +172,25 @@ export function AddressPage() {
             item.type = type;
             return item;
           })
+
+          if(type === 'erc1155') {
+            items = items.filter((item) => item && item.ownerAddress && item.ownerAddress.startsWith('0x'))
+          }
+
           setInventory(items);
+
+          // TODO remove after fix on backend, workaround
+          if(type === "erc1155") {
+            const holdersMap = items
+              .reduce((acc, nextItem) => {
+              const { ownerAddress } = nextItem
+              if(ownerAddress && !acc[ownerAddress.toLowerCase()]) {
+                acc[ownerAddress.toLowerCase()] = true
+              }
+              return acc
+            }, {} as Record<string, boolean>)
+            setHoldersCount(Object.keys(holdersMap).length)
+          }
         } else {
           setInventory([]);
         }
@@ -289,6 +308,7 @@ export function AddressPage() {
           tokens={tokens}
           balance={balance}
           delegations={delegations}
+          holdersCount={holdersCount}
         />
       </BasePage>
       <BasePage margin={{ top: "15px" }}>
@@ -329,6 +349,7 @@ export function AddressPage() {
                 id={id}
                 type={type}
                 inventory={inventory}
+                holdersCount={holdersCount}
               />
             </Tab>
           ) : null}

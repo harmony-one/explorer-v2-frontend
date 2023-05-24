@@ -81,12 +81,14 @@ export function HoldersTab(props: {
   id: string;
   type: "erc20" | "erc721" | "erc1155";
   inventory?: IUserERC721Assets[];
+  holdersCount?: number
 }) {
   const erc20Map = useERC20Pool();
   const erc721Map = useERC721Pool();
   const erc1155Map = useERC1155Pool();
 
-  const holdersTotal =
+  let holdersTotal =
+    props.holdersCount ||
     erc20Map[props.id]?.holders ||
     erc721Map[props.id]?.holders ||
     erc1155Map[props.id]?.holders;
