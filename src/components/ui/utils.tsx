@@ -2,6 +2,7 @@ import Big from "big.js";
 import React from "react";
 import { useONEExchangeRate } from "src/hooks/useONEExchangeRate";
 import { calculateFee } from "../../utils/fee";
+import {RPCStakingTransactionHarmony, RPCTransactionHarmony} from "../../types";
 
 export function formatNumber(
   num: number,
@@ -32,6 +33,10 @@ Big.PE = 15;
 
 export function CalculateFee(transaction: any) {
   const { lastPrice } = useONEExchangeRate();
+
+  if(!(transaction && transaction.gasPrice)) {
+    return ''
+  }
 
   const fee = isNaN(transaction.gasPrice)
     ? 0
@@ -67,8 +72,12 @@ export function CalculateFee(transaction: any) {
   );
 }
 
-export function CalculateTransactionFee(transaction: any) {
+export function CalculateTransactionFee(transaction: RPCTransactionHarmony | RPCStakingTransactionHarmony) {
   const { lastPrice: price } = useONEExchangeRate();
+
+  if(!(transaction && transaction.gas)) {
+    return ''
+  }
 
   const fee = calculateFee(transaction.gas, transaction.gasPrice)
 
