@@ -235,6 +235,7 @@ export const TransactionPage = () => {
               internalTxs={trxs}
               inputSignature={inputSignature}
               errorMsg={txErrorMsg || internalErrorMsg || txReceiptErrorMsg}
+              hideShowMore={isLoading || Boolean(txErrorMsg)}
             />
           </Tab>
           {trxs.length ? (

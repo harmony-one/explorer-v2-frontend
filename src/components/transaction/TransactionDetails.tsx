@@ -68,7 +68,7 @@ type TransactionDetailsProps = {
   stakingData?: boolean;
   logs?: Log[];
   errorMsg: string | undefined;
-  shorMoreHide?: boolean;
+  hideShowMore?: boolean;
 };
 
 type tableEntry = {
@@ -108,7 +108,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
   type,
   logs = [],
   errorMsg,
-  shorMoreHide,
+  hideShowMore,
   stakingData,
   internalTxs = [],
   inputSignature
@@ -197,7 +197,7 @@ export const TransactionDetails: FunctionComponent<TransactionDetailsProps> = ({
           }}
         />
       </Box>
-      {shorMoreHide ? null : (
+      {hideShowMore ? null : (
         <Box align="center" justify="center" style={{ userSelect: "none" }}>
           <Anchor
             onClick={() => setShowDetails(!showDetails)}
