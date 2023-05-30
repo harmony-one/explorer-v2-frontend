@@ -97,7 +97,7 @@ export const StakingTransactionPage = () => {
         type={subTypeMap[tx.type] || ""}
         stakingData
         errorMsg={""}
-        shorMoreHide={true}
+        hideShowMore={true}
       />
     </BasePage>
   );

@@ -29,6 +29,29 @@ const extractError = (err: any) => {
   return errorMessage || err;
 };
 
+const getTxInputSignature = async (trx: RPCTransactionHarmony) => {
+  let signature
+  try {
+    const signatures = await getByteCodeSignatureByHash([trx.input.slice(0, 10)])
+    if(signatures && signatures.length > 0) {
+      signature = signatures[0]
+    }
+  } catch (e) {
+    console.error('Cannot get tx input signature: ', (e as Error).message)
+  }
+  return signature
+}
+
+const getTransactionErrorMessage = (txHash: string, tx: RPCTransactionHarmony) => {
+  if(txHash.length !== 66) {
+    return 'Invalid Txn hash'
+  }
+  if(!tx || !tx.hash) {
+    return 'Unable to locate this TxnHash'
+  }
+  return ''
+}
+
 export const TransactionPage = () => {
   const history = useHistory();
   const { id } = useParams<{id: string}>();
@@ -40,27 +63,13 @@ export const TransactionPage = () => {
   const [txReceipt, setTxReceipt] = useState<TxReceipt>();
   const [trxs, setTrxs] = useState<InternalTransaction[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [txrsLoading, setTxrsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(+activeTab);
   const [inputSignature, setInputSignature] = useState<IHexSignature>()
 
   const { availableShards } = config
 
   useEffect(() => {
-    const getTxInputSignature = async (trx: RPCTransactionHarmony) => {
-      let signature
-      try {
-        const signatures = await getByteCodeSignatureByHash([trx.input.slice(0, 10)])
-        if(signatures && signatures.length > 0) {
-          signature = signatures[0]
-        }
-      } catch (e) {
-        console.error('Cannot get tx input signature: ', (e as Error).message)
-      }
-      return signature
-    }
-
     const getTx = async () => {
       let trx;
       let trxInputSignature;
@@ -98,19 +107,16 @@ export const TransactionPage = () => {
         }
       }
 
-      setTx((trx || {}) as RPCTransactionHarmony);
+      const txData = trx || {}
+      setTx(txData as RPCTransactionHarmony);
       setInputSignature(trxInputSignature)
+      return txData
     };
 
-    getTx();
-  }, [id]);
-
-  useEffect(() => {
     const getInternalTxs = async () => {
       if (tx.hash && tx.shardID === 0) {
-        try {
-          //@ts-ignore
-          const txs = await getInternalTransactionsByField([
+        //@ts-ignore
+        const txs = await getInternalTransactionsByField([
             0,
             "transaction_hash",
             tx.hash,
@@ -118,76 +124,70 @@ export const TransactionPage = () => {
           // need to track fallback
           tx.blockNumber
         );
-          const methodSignatures = await Promise.all(
-            txs.map((tx) => {
-              return tx.input && tx.input.length > 10
-                ? getByteCodeSignatureByHash([tx.input.slice(0, 10)])
-                : Promise.resolve([]);
-            })
-          );
+        const methodSignatures = await Promise.all(
+          txs.map((tx) => {
+            return tx.input && tx.input.length > 10
+              ? getByteCodeSignatureByHash([tx.input.slice(0, 10)])
+              : Promise.resolve([]);
+          })
+        );
 
-          const txsWithSignatures = txs.map((l, i) => ({
-            ...l,
-            signatures: methodSignatures[i],
-          }));
+        const txsWithSignatures = txs.map((l, i) => ({
+          ...l,
+          signatures: methodSignatures[i],
+        }));
 
-          setTrxs(txsWithSignatures as InternalTransaction[]);
-          setTxrsLoading(false);
-        } catch (err) {
-          console.log(err);
-        }
+        setTrxs(txsWithSignatures as InternalTransaction[]);
       } else {
         setTrxs([]);
       }
     };
 
-    getInternalTxs();
-  }, [tx.hash]);
-
-  useEffect(() => {
     const getLogs = async () => {
-      //
       const contractShardID = process.env.REACT_APP_CONTRACT_SHARD ? (process.env.REACT_APP_CONTRACT_SHARD || 0) : 0
       if (tx.hash && [0, contractShardID].includes(tx.shardID)) {
+        //@ts-ignore
+        const logs: any[] = await getTransactionLogsByField([
+          0,
+          "transaction_hash",
+          tx.hash,
+        ]);
 
-        // const SevenDaysBlock = 60 * 60 * 24 * 7 / 2
-        // const txDate = new Date(tx.timestamp).getTime()
-        // const now = Date.now()
-        //
-        // if (now - txDate > SevenDaysBlock) {
-        //   console.log('no logs served')
-        //   return
-        // }
+        const logsSignatures = await Promise.all(
+          logs.map((l) => getByteCodeSignatureByHash([l.topics[0]]))
+        );
 
-        try {
-          //@ts-ignore
-          const logs: any[] = await getTransactionLogsByField([
-            0,
-            "transaction_hash",
-            tx.hash,
-          ]);
+        const logsWithSignatures = logs.map((l, i) => ({
+          ...l,
+          signatures: logsSignatures[i],
+        }));
 
-          const logsSignatures = await Promise.all(
-            logs.map((l) => getByteCodeSignatureByHash([l.topics[0]]))
-          );
-
-          const logsWithSignatures = logs.map((l, i) => ({
-            ...l,
-            signatures: logsSignatures[i],
-          }));
-
-          setLogs(logsWithSignatures as any);
-          setIsLoading(false);
-        } catch (err) {
-          console.log(err);
-        }
+        setLogs(logsWithSignatures as any);
       } else {
         setLogs([]);
       }
     };
 
-    getLogs();
-  }, [tx]);
+    const loadTxData = async () => {
+      let tx = {}
+      try {
+        setIsLoading(true)
+        tx = await getTx()
+      } catch (e) {
+        console.log('Cannot load tx data:', e)
+      } finally {
+        setIsLoading(false)
+      }
+      if(tx) {
+        try {
+          await Promise.allSettled([getLogs(), getInternalTxs()])
+        } catch (e) {
+          console.log('Cannot load transaction logs:', e)
+        }
+      }
+    }
+    loadTxData()
+  }, [tx.hash]);
 
   if (isLoading) {
     return (
@@ -197,15 +197,14 @@ export const TransactionPage = () => {
     );
   }
 
-  const internalErrorMsg = txrsLoading
-    ? undefined
-    : trxs.length
-      ? trxs
-        .map((t) => t.error)
-        .filter((_) => _)
-        .map(extractError)
-        .join(",")
-      : ""
+  const txErrorMsg = isLoading ? '' : getTransactionErrorMessage(id, tx)
+
+  const internalErrorMsg = trxs
+    .map((t) => t.error)
+    .filter((_) => _)
+    .map(extractError)
+    .join(",")
+
   const txReceiptErrorMsg = txReceipt && txReceipt.status === 0
     ? 'Failed (from receipt)'
     : ''
@@ -235,7 +234,8 @@ export const TransactionPage = () => {
               logs={logs}
               internalTxs={trxs}
               inputSignature={inputSignature}
-              errorMsg={internalErrorMsg || txReceiptErrorMsg}
+              errorMsg={txErrorMsg || internalErrorMsg || txReceiptErrorMsg}
+              hideShowMore={isLoading || Boolean(txErrorMsg)}
             />
           </Tab>
           {trxs.length ? (
