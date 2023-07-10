@@ -14,7 +14,7 @@ import { useERC721Pool } from "src/hooks/ERC721_Pool";
 import { useERC1155Pool } from "src/hooks/ERC1155_Pool";
 
 import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import AutoSizer, {Size} from "react-virtualized-auto-sizer";
 import { Address } from "./Address";
 import { config } from "../../config";
 import {getAddressByName, OneCountryTLD} from "../../utils/oneCountry";
@@ -341,7 +341,7 @@ export const SearchInput = () => {
             </Text>
           </Box>
           <AutoSizer>
-            {({ height, width }) => (
+            {({ height, width }: Size) => (
               <List
                 className="List"
                 height={height as number}
