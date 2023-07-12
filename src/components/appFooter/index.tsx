@@ -3,7 +3,7 @@ import { Box, Text } from "grommet"
 import { Group, Medium, Twitter } from 'grommet-icons'
 import styled, {CSSProperties} from 'styled-components';
 
-import { TelegramIcon, DiscordIcon } from 'src/components/ui/icons'
+import { TelegramIcon, DiscordIcon, SubstackIcon } from 'src/components/ui/icons'
 
 const IconAhchor = styled.a`
   opacity: 0.9;
@@ -26,8 +26,8 @@ export function AppFooter(props: { style: CSSProperties }) {
           <IconAhchor href="https://harmony.one/discord" target="_blank" rel="noreferrer">
             <DiscordIcon size="23px" color="minorText" />
           </IconAhchor>
-          <IconAhchor href="https://medium.com/harmony-one" target="_blank" rel="noreferrer">
-            <Medium size="23px" color="minorText" style={{ cursor: 'pointer'}} />
+          <IconAhchor href="https://substack.com/@harmonyone" target="_blank" rel="noreferrer">
+            <SubstackIcon size="23px" color="minorText" />
           </IconAhchor>
           <IconAhchor href="https://t.me/harmony_one" target="_blank" rel="noreferrer">
             <TelegramIcon size="22px" color="minorText" />
