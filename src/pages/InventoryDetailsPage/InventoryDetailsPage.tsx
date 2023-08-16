@@ -294,11 +294,13 @@ export function InventoryDetailsPage() {
   const [inventory, setInventory] = useState<IUserERC721Assets>({} as any);
   const [isLoading, setIsLoading] = useState(false)
 
-  const {
+  let {
     address = '',
     tokenID = '',
     type = ''
   }: { address: string, tokenID: string, type: string } = useParams();
+  address = address.toLowerCase()
+  tokenID = tokenID.toLowerCase()
 
   const token721 = erc721Map[address]
   const token1155 = erc1155Map[address]
