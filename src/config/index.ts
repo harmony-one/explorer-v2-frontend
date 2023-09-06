@@ -31,6 +31,7 @@ const contractShardId = +(process.env.REACT_APP_CONTRACT_SHARD || '0') as ShardI
 const oneCountryContractAddress = process.env.REACT_APP_ONE_COUNTRY_CONTRACT_ADDRESS || ''
 const oneCountryNFTContractAddress = process.env.REACT_APP_ONE_COUNTRY_NFT_CONTRACT_ADDRESS || ''
 const ipfsGateway = process.env.REACT_APP_INDEXER_IPFS_GATEWAY || ''
+const verificationServiceUrl = process.env.REACT_APP_VERIFICATION_SERVICE_URL || 'https://ctrver.t.hmny.io'
 
 export const config = {
   availableShards,
@@ -38,5 +39,6 @@ export const config = {
   contractShardId,
   oneCountryContractAddress,
   oneCountryNFTContractAddress,
-  ipfsGateway
+  ipfsGateway,
+  verificationServiceUrl
 }

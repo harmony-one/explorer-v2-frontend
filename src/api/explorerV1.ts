@@ -1,6 +1,6 @@
 import { ShardID } from "src/types";
 import { AbiItem } from "web3-utils";
-import { getContractsByField } from "./client";
+import { config } from '../config'
 
 export interface IVerifyContractData {
   contractAddress: string;
@@ -65,7 +65,7 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
     }
 
     const response = await fetch(
-      `${process.env.REACT_APP_EXPLORER_V1_API_URL}codeVerification`,
+      `${config.verificationServiceUrl}/codeVerification`,
       {
         method: "POST",
         mode: "cors",
@@ -86,7 +86,7 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
   }
   else {
     const response = await fetch(
-      `${process.env.REACT_APP_EXPLORER_V1_API_URL}codeVerification`,
+      `${config.verificationServiceUrl}/codeVerification`,
       {
         method: "POST",
         mode: "cors",
@@ -113,7 +113,7 @@ export const verifyContractCode = async (data: IVerifyContractDataSendData) => {
 
 export const loadSourceCode = async (address: string, shard: ShardID): Promise<ISourceCode> => {
   const response = await fetch(
-    `${process.env.REACT_APP_EXPLORER_V1_API_URL}fetchContractCode?contractAddress=${address}&shard=${shard}`,
+    `${config.verificationServiceUrl}/fetchContractCode?contractAddress=${address}&shard=${shard}`,
     {
       mode: "cors",
       cache: "no-cache",

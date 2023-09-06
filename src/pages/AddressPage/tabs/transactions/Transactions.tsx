@@ -130,18 +130,27 @@ export function Transactions(props: {
 
       // for transactions we display call method if any
       if (props.type === "transaction") {
-        const methodSignatures = await Promise.all(
-          txs.map((tx: any) => {
-            return tx.input && tx.input.length > 10
-              ? getByteCodeSignatureByHash([tx.input.slice(0, 10)])
-              : Promise.resolve([]);
+        const txInputsMap: Record<string, string> = {}
+        txs.forEach((tx) => {
+          if(tx.input && tx.input.length > 10) {
+            txInputsMap[tx.input.slice(0, 10)] = ''
+          }
+        })
+
+        await Promise.all(
+          Object.keys(txInputsMap).map(async (txInput: string) => {
+            txInputsMap[txInput] = await getByteCodeSignatureByHash([txInput]);
           })
         );
 
-        txs = txs.map((l, i) => ({
-          ...l,
-          signatures: methodSignatures[i],
-        }));
+        txs = txs.map((tx, i) => {
+          return {
+            ...tx,
+            signatures: tx.input
+              ? txInputsMap[tx.input.slice(0, 10)] || []
+              : [],
+          }
+        });
       }
 
       txs = txs.map((tx: any) => {
