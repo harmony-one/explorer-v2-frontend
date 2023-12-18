@@ -68,6 +68,14 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
           <Text size={'small'}>Reward</Text>
           {+item.reward > 0 ? <ONEValue value={item.reward} />: '0 ONE'}
         </Box>
+        {item.undelegations.length > 0 &&
+          item.undelegations.map((undelegation) => {
+            return <Box direction={'row'} gap={'8px'}>
+              <Text size={'small'}>Undelegation (Epoch {undelegation.epoch})</Text>
+              {+item.reward > 0 ? <ONEValue value={undelegation.amount} />: '0 ONE'}
+            </Box>
+          })
+        }
       </Box>
     },
     renderValue: () => {
