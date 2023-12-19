@@ -32,10 +32,16 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
 
   let totalAmountBig = Big(0)
   let totalRewardsBig = Big(0)
+  let totalUndelegated = Big(0)
 
   delegations.forEach(delegation => {
     totalAmountBig = totalAmountBig.plus(Big(delegation.amount))
     totalRewardsBig = totalRewardsBig.plus(Big(delegation.reward))
+
+    const undelegated = delegation.undelegations.reduce((acc, item) => {
+      return acc.plus(Big(item.amount))
+    }, Big(0))
+    totalUndelegated = totalUndelegated.plus(undelegated)
   })
 
   const totalAmount = totalAmountBig.div(Big(10 ** 18)).round(2).toString()
@@ -83,6 +89,12 @@ function StakingDelegations(props: { delegations: StakingDelegation[] }) {
         <ONEValue value={totalAmountBig.toString()} />
         {items.length > 0 &&
           <DelegationsCount count={items.length} />
+        }
+        {totalUndelegated.gt(0) &&
+            <Box direction={'row'} gap={'4px'}>
+                Undelegated:
+                <ONEValue value={totalUndelegated.toString()} />
+            </Box>
         }
       </Box>
     }
